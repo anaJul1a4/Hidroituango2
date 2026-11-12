@@ -1,0 +1,35 @@
+{
+ "emision": "2026-10",
+ "ONI ASO 2026": 2.46,
+ "ONI disponible (predictor)": 2.46,
+ "lluvia jul-sep 2026 (% de lo normal)": 50.65824647251345,
+ "S z": -0.5047030612392938,
+ "G z": -1.2265324984006154,
+ "P(seco) KNN": 0.5333333333333333,
+ "P(seco) logística ONI+S": 0.6126341963882503,
+ "P(seco) logística ONI": 0.8638827487861875,
+ "nivel logística": "rojo",
+ "nivel KNN": "rojo",
+ "umbral p20 Q3 (m³/s, IDEAM)": 858.5719999999998,
+ "r anomalías verificación XM": 0.8982378513164677,
+ "sensibilidad octubre": {
+  "c": {
+   "S z": -0.5047030612392938,
+   "G z": -1.2265324984006154,
+   "P(seco) logística": 0.6126341963882503
+  },
+  "a": {
+   "S z": -2.995980213711517,
+   "G z": -2.084758162327414,
+   "P(seco) logística": 0.9806725949727577
+  },
+  "b": {
+   "S z": -0.8761223196406441,
+   "G z": -1.446941533696365,
+   "P(seco) logística": 0.7262109208345927
+  }
+ },
+ "lluvia octubre (% de la normal)": 111.4605712890625,
+ "anomalía XM octubre (%)": -48.0662171394862,
+ "Q3 mediana KNN (m³/s)": 875.0599242263966
+}

@@ -861,6 +861,44 @@ par("**Valor agregado.** La regresión logística traduce la relación física e
     "de un trimestre seco es bajo. Además, el resultado muestra que un sistema operativo de pronóstico necesita la humedad del suelo, que "
     "no se mide en la cuenca pero que el modelo abcd sí estima.")
 
+titulo("5.4. Aplicación: pronóstico emitido al final de octubre de 2026", 2)
+P26 = R2 / "12_pronostico_2026"
+s26 = json.loads((P26 / "resumen.json").read_text(encoding="utf-8"))
+pr26 = pd.read_csv(P26 / "pronostico_nov2026_abr2027.csv")
+an26 = pd.read_csv(P26 / "analogos.csv")
+se = s26["sensibilidad octubre"]
+par(f"Las dos técnicas se aplicaron al evento El Niño en curso, que en agosto-octubre de 2026 alcanzó un ONI de +{n(s26['ONI ASO 2026'], 2)} °C, "
+    f"el mayor del registro. Para conocer el estado actual del suelo y del acuífero, el modelo abcd se extendió de enero de 2024 a octubre de "
+    f"2026 con la lluvia de CHIRPS v2.0, igualada al Cubo con la razón entre ambos productos de cada celda y mes calendario en 1981-2010, y "
+    f"con la ETo de Hargreaves climatológica, porque el Cubo termina en 2023. Entre julio y septiembre de 2026 la cuenca recibió el "
+    f"{n(s26['lluvia jul-sep 2026 (% de lo normal)'])} % de su lluvia normal. CHIRPS de octubre aún no estaba publicado; su lluvia se ajustó "
+    f"para que el caudal simulado de octubre tuviera la misma anomalía que los aportes diarios a Ituango publicados por XM del 1 al 23 de "
+    f"octubre ({n(s26['anomalía XM octubre (%)'])} %), y resultó del {n(s26['lluvia octubre (% de la normal)'])} % de la normal. Entre octubre "
+    f"de 2022 y octubre de 2026 las anomalías mensuales simuladas siguen a las de XM con r = {n(s26['r anomalías verificación XM'], 2)} "
+    f"(Figura 21b), lo que respalda el estado inicial.")
+par(f"Al final de octubre de 2026 el suelo de la cuenca está en z = {n(s26['S z'], 2)} y el acuífero en z = {n(s26['G z'], 2)}, mientras que "
+    f"el ONI está 2.9 desviaciones estándar por encima de su media. Con estos valores la regresión logística da una probabilidad de "
+    f"{n(100 * s26['P(seco) logística ONI+S'])} % de que el trimestre noviembre-enero sea seco, y el KNN de {n(100 * s26['P(seco) KNN'])} %: "
+    f"alerta roja con los dos métodos. La mediana de los análogos ubica el aporte de enero a abril de 2027 entre un "
+    f"{n(-pr26['mediana frente a la climatología (%)'].iloc[2:].max())} % y un {n(-pr26['mediana frente a la climatología (%)'].iloc[2:].min())} % "
+    f"por debajo de la climatología (Tabla 14 y Figura 21a). Los análogos más cercanos son {', '.join(an26['mes análogo'].head(5))}, es decir, "
+    f"el comienzo de los El Niño de 1997-1998, 1982-1983, 1987-1988 y 2015-2016.")
+leyenda_tabla("Pronóstico del aporte mensual a la presa emitido al final de octubre de 2026 (KNN, k = 15; m³/s en la escala de Puerto "
+              "Valdivia transferido).")
+tabla(["Mes", "Mediana", "Percentil 10", "Percentil 90", "Climatología (mediana)", "Mediana frente a la climatología (%)"],
+      [[r_["mes"], n(r_["mediana (m³/s)"]), n(r_["p10 (m³/s)"]), n(r_["p90 (m³/s)"]), n(r_["climatología, mediana (m³/s)"]),
+        n(r_["mediana frente a la climatología (%)"], 0, True)] for _, r_ in pr26.iterrows()], anchos=[2.2, 2.2, 2.4, 2.4, 3.0, 3.6])
+figura(FG / "fig_pronostico_2026.png", "a) Pronóstico del aporte mensual a la presa de noviembre de 2026 a abril de 2027 por años análogos; b) "
+       "anomalía del aporte mensual simulado frente a la de los aportes publicados por XM (2023-2026). La banda gris es el periodo en que el "
+       "modelo se alimentó con CHIRPS.")
+par(f"El pronóstico tiene dos fuentes de incertidumbre. La primera es la lluvia de octubre: si se hubiera supuesto un octubre tan seco "
+    f"como julio-septiembre, el suelo habría quedado en z = {n(se['a']['S z'], 1)} y la probabilidad de trimestre seco en "
+    f"{n(100 * se['a']['P(seco) logística'])} %; con un octubre normal, en {n(100 * se['b']['P(seco) logística'])} %. El dato de XM de "
+    f"octubre fue el que permitió acotarla. La segunda es que ningún mes de la historia tuvo un ONI tan alto, así que los análogos "
+    f"corresponden a eventos más débiles y el pronóstico probablemente subestima la sequía; el caso de 2015 (sección 5.2) muestra ese "
+    f"mismo sesgo. Los caudales están en la escala de Puerto Valdivia transferido, cuya media es entre 10 % y 30 % mayor que la de los "
+    f"aportes que publica XM, por lo que para la operación conviene leerlos como anomalías.")
+
 # ============================================================================================ 6. proyecciones CMIP6
 CM = R2 / "11_cmip6"
 tam = pd.read_csv(CM / "tamizaje_modelos.csv", index_col=0)
@@ -886,7 +924,7 @@ par(f"Se revisaron los {len(tam)} modelos del archivo CMIP6 que tienen lluvia, t
     f"cuenca y se comparó su ciclo anual de 1981-2010 con el del Cubo. El criterio principal fue la forma del ciclo, medida con la "
     f"correlación y con el error del ciclo normalizado por su media; el sesgo de la lluvia anual se usó con la mitad del peso, porque la "
     f"corrección posterior lo elimina, pero un sesgo enorme puede indicar una física pobre. Se eligió el mejor modelo de cada familia (los "
-    f"que comparten el componente atmosférico no son independientes), hasta seis (Tabla 14 y Figura 21).")
+    f"que comparten el componente atmosférico no son independientes), hasta seis (Tabla 15 y Figura 22).")
 leyenda_tabla("Modelos CMIP6 elegidos por su ciclo anual de lluvia en la cuenca (1981-2010).")
 fil = [[m, tam.loc[m, "familia"], tam.loc[m, "miembro"], n(tam.loc[m, "resolución (°)"], 2), n(tam.loc[m, "r del ciclo"], 2),
         n(tam.loc[m, "RMSE del ciclo normalizado"], 2), n(tam.loc[m, "sesgo (%)"], 0, True)] for m in EL]
@@ -926,10 +964,10 @@ figura(FG / "fig_cmip6_cambios.png", "Cambios proyectados frente a 1981-2010 en 
        "trimestres secos. Las barras son la mediana de los seis modelos y los puntos, cada modelo.")
 par(f"**Temperatura y evapotranspiración.** Es el cambio más robusto: los seis modelos coinciden en el aumento. Hacia 2071-2100 la cuenca "
     f"se calienta {n(v('SSP2-4.5', '2071–2100', 'ΔT (°C)'), 1)} °C en SSP2-4.5 y {n(v('SSP5-8.5', '2071–2100', 'ΔT (°C)'), 1)} °C en SSP5-8.5, "
-    f"y la ETo sube un {n(v('SSP2-4.5', '2071–2100', 'ΔETo (%)'))} % y un {n(v('SSP5-8.5', '2071–2100', 'ΔETo (%)'))} % (Tabla 15 y Figura 22).")
+    f"y la ETo sube un {n(v('SSP2-4.5', '2071–2100', 'ΔETo (%)'))} % y un {n(v('SSP5-8.5', '2071–2100', 'ΔETo (%)'))} % (Tabla 16 y Figura 23).")
 par(f"**Lluvia.** La mediana cambia poco, entre {n(md['ΔP (%)'].min(), 0, True)} % y {n(md['ΔP (%)'].max(), 0, True)} % según el escenario y el "
     f"periodo, y los modelos no coinciden en el signo: en SSP5-8.5 hacia 2071-2100 van de {n(mn.loc[('SSP5-8.5', '2071–2100'), 'ΔP (%)'], 0, True)} % "
-    f"(MRI-ESM2-0) a {n(mx.loc[('SSP5-8.5', '2071–2100'), 'ΔP (%)'], 0, True)} % (GISS-E2-1-G). En el espacio (Figura 23), SSP2-4.5 da algo más "
+    f"(MRI-ESM2-0) a {n(mx.loc[('SSP5-8.5', '2071–2100'), 'ΔP (%)'], 0, True)} % (GISS-E2-1-G). En el espacio (Figura 24), SSP2-4.5 da algo más "
     f"de lluvia en casi toda la cuenca, y SSP5-8.5 acentúa el contraste entre estaciones: junio-agosto más húmedo en el alto Cauca y el "
     f"valle, y diciembre-febrero más seco en el cañón antioqueño, la zona que más aporta a la presa. En la mayor parte de la cuenca, sin "
     f"embargo, menos de cinco de los seis modelos coinciden en el signo del cambio de la lluvia.")
@@ -941,7 +979,7 @@ par(f"**Caudales.** El caudal medio en la presa cambia poco: la mediana va de {n
     f"reducen: en SSP5-8.5 el percentil 10 del caudal mensual cae un {n(-v('SSP5-8.5', '2071–2100', 'ΔQ10 presa (%)'))} % hacia 2071-2100, y "
     f"la frecuencia de trimestres secos (la misma definición de la alerta de la sección 5.3) pasa del 20 % de los meses a "
     f"{n(v('SSP5-8.5', '2071–2100', 'trimestres secos (%)'))} %. La razón es la combinación de más evapotranspiración y menos lluvia en "
-    f"diciembre-febrero. El ciclo anual del aporte conserva su forma bimodal (Figura 24), pero en SSP5-8.5 el estiaje de comienzo de año se "
+    f"diciembre-febrero. El ciclo anual del aporte conserva su forma bimodal (Figura 25), pero en SSP5-8.5 el estiaje de comienzo de año se "
     f"hace más profundo: hacia 2071-2100 el aporte de febrero-marzo baja un {n(-d_fm)} %, mientras que el de mayo sube un {n(d_my)} %.")
 figura(FG / "fig_cmip6_ciclo_presa.png", "Ciclo anual del aporte a la presa simulado con el clima de los seis modelos corregidos (mediana) en "
        "cada periodo, con el rango entre modelos en 2041-2070 y 2071-2100, en los dos escenarios.")
@@ -975,7 +1013,9 @@ par(f"Los caudales caen en todos los trimestres de El Niño, con la mayor reducc
     f"está ligado al ENSO.")
 par("La memoria de la cuenca permite anticipar los aportes. Un pronóstico por años análogos supera a la persistencia desde el segundo "
     "mes, y una regresión logística con el ONI y la humedad del suelo simulada da una probabilidad confiable de trimestre seco: con alerta "
-    "roja, tres de cada cuatro trimestres siguientes fueron secos.")
+    "roja, tres de cada cuatro trimestres siguientes fueron secos. Aplicados al El Niño 2026-2027, el más intenso del registro, los dos "
+    "métodos emiten alerta roja al final de octubre de 2026 y anticipan aportes de enero a abril de 2027 entre un tercio y un 40 % por "
+    "debajo de lo normal.")
 par(f"Con seis modelos CMIP6 elegidos por su ciclo anual y corregidos por QDM, el caudal medio en la presa cambia poco en este siglo, pero "
     f"los estiajes se profundizan: en SSP5-8.5 hacia 2071-2100 el caudal bajo cae un {n(-v('SSP5-8.5', '2071–2100', 'ΔQ10 presa (%)'))} % y "
     f"los trimestres secos pasan del 20 % al {n(v('SSP5-8.5', '2071–2100', 'trimestres secos (%)'))} % de los meses, por el aumento de la "

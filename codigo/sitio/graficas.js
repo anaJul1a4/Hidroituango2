@@ -227,6 +227,25 @@ const G = {
       plot("cmFig", t, { hovermode: "x unified", xaxis: ax(""), yaxis: ax("Aporte anual frente a 1981–2010 (%, media móvil de 10 años)", { zeroline: true, zerolinecolor: css("--muted") }) });
     }
   },
+  "g-2026"() {
+    const p = D.p26;
+    if (ESTADO.p26Vista === "pron") {
+      const t = p.ens.map((e, i) => ({ type: "scatter", mode: "lines", x: p.meses, y: e, line: { color: "rgba(29,78,216,.25)", width: 1 }, showlegend: i === 0,
+        name: "Trayectorias de los 15 análogos", hovertemplate: "análogo: %{y:,.0f} m³/s<extra></extra>" }));
+      t.push({ type: "scatter", mode: "lines", x: p.meses, y: p.p90, line: { width: 0 }, showlegend: false, hoverinfo: "skip" });
+      t.push({ type: "scatter", mode: "lines", x: p.meses, y: p.p10, fill: "tonexty", fillcolor: "rgba(29,78,216,.15)", line: { width: 0 }, name: "Intervalo 80 %",
+        customdata: p.p90, hovertemplate: "Intervalo 80 %: %{y:,.0f}–%{customdata:,.0f} m³/s<extra></extra>" });
+      t.push(linea("Mediana de los análogos", p.meses, p.med, "#1d4ed8", { line: { color: "#1d4ed8", width: 3 }, hovertemplate: "Mediana: %{y:,.0f} m³/s<extra></extra>" }));
+      t.push(linea("Climatología", p.meses, p.clim, "#9aa3b2", { line: { color: "#9aa3b2", width: 2, dash: "dash" }, hovertemplate: "Climatología: %{y:,.0f} m³/s<extra></extra>" }));
+      plot("p26Fig", t, { hovermode: "x unified", xaxis: ax("", { type: "category" }), yaxis: ax("Aporte medio mensual a la presa (m³/s, escala IDEAM)", { rangemode: "tozero" }) });
+    } else {
+      plot("p26Fig", [
+        { type: "scatter", mode: "lines+markers", x: p.ver_t, y: p.ver_xm, name: "Aporte XM frente a su media histórica", line: { color: css("--fg"), width: 1.8 }, marker: { size: 4 }, hovertemplate: "XM: %{y:+.0f} %<extra></extra>" },
+        { type: "scatter", mode: "lines", x: p.sim_t, y: p.sim, name: "Simulado abcd frente a 1981–2010", line: { color: "#ea580c", width: 2 }, hovertemplate: "Simulado: %{y:+.0f} %<extra></extra>" }],
+        { hovermode: "x unified", xaxis: ax("", { type: "date" }), yaxis: ax("Anomalía del aporte mensual (%)", { zeroline: true, zerolinecolor: css("--muted") }),
+          shapes: [{ type: "rect", xref: "x", yref: "paper", x0: "2024-01", x1: "2026-10", y0: 0, y1: 1, fillcolor: css("--line"), opacity: .35, line: { width: 0 }, layer: "below" }] });
+    }
+  },
   "q-rez"() {
     const k = [0, 1, 2, 3, 4, 5, 6];
     const s = [["ONI → lluvia", D.rez.P, "#60a5fa", "solid"], ["ONI → suelo", D.rez.S, "#b07a0c", "solid"],

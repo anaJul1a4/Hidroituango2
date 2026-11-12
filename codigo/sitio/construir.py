@@ -496,6 +496,8 @@ conjunto de trayectorias: mediana, intervalo y su confiabilidad verificada.</p><
 sean secos, comparada con la que dan los análogos.</p></button>
 <button class='card lift pick' type='button' data-go='g-alertas'><h4>Umbrales de alerta</h4><p>Verde, amarillo y rojo: cuántas veces
 acertó cada nivel entre 1982 y 2017.</p></button>
+<button class='card lift pick' type='button' data-go='g-2026'><h4>Pronóstico nov 2026 – abr 2027</h4><p>Los dos métodos aplicados al El Niño
+en curso: alerta roja.</p></button>
 <button class='card lift pick' type='button' data-go='g-eof'><h4>Funciones ortogonales empíricas</h4><p>¿Es el ENSO el modo principal de
 variabilidad de la cuenca, y lo ven igual todos los productos?</p></button>
 <button class='card lift pick' type='button' data-go='g-fourier'><h4>Transformada de Fourier</h4><p>La cuenca como filtro: por qué los
@@ -566,6 +568,30 @@ y 2015–16.</li></ul>
 <p class='note'>Barras: trimestres que sí fueron secos. Probabilidades de la validación cruzada (cada año sin conocerse a sí mismo). Con el KNN
 el rojo es más raro ({f(alK.loc[RO, PCT])} % de los meses) pero acierta el {f(alK.loc[RO, FRQ])} %.</p>
 </div><div>{tabla(tal)}</div></div>""", g="g")
+
+p26 = json.loads((R2 / "12_pronostico_2026" / "sitio.json").read_text(encoding="utf-8"))
+D["p26"] = p26
+pr26 = pd.read_csv(R2 / "12_pronostico_2026" / "pronostico_nov2026_abr2027.csv")
+an26 = pd.read_csv(R2 / "12_pronostico_2026" / "analogos.csv")
+sens26 = p26["sensibilidad octubre"]
+t26 = pr26.set_index("mes")[["mediana (m³/s)", "p10 (m³/s)", "p90 (m³/s)", "climatología, mediana (m³/s)", "mediana frente a la climatología (%)"]]
+t26.index.name = "mes pronosticado"
+slide("g-2026", "6 · Decisiones de generación", "5 · aplicación · pronóstico emitido al final de octubre de 2026",
+      f"Con El Niño más fuerte del registro (ONI ASO = +{f(p26['ONI ASO 2026'], 2)} °C), los análogos anticipan una temporada seca de enero–abril de 2027 entre 34 % y 41 % por debajo de lo normal: alerta roja", f"""
+<div class='two fig'><div>
+{chips('p26Vista', [('pron', 'Pronóstico nov 2026 – abr 2027'), ('ver', 'Estado inicial frente a XM')])}
+<p><b>Estado inicial.</b> El modelo abcd se extendió hasta octubre de 2026 con CHIRPS v2.0 igualado al Cubo (julio–septiembre de 2026 llovió
+el {f(p26['lluvia jul-sep 2026 (% de lo normal)'])} % de lo normal) y ETo climatológica. CHIRPS de octubre aún no se publica: su lluvia se ajustó
+para que el caudal simulado de octubre tenga la anomalía de los aportes de XM del 1 al 23 de octubre ({f(p26['anomalía XM octubre (%)'])} %), y
+resultó del {f(p26['lluvia octubre (% de la normal)'])} % de la normal. Desde 2022 el modelo sigue las anomalías de XM con r = {f(p26['r anomalías verificación XM'], 2)}.</p>
+<ul class='pts'><li><b>Predictores</b>: ONI = +{f(p26['ONI disponible (predictor)'], 2)} °C (z = +2,9, fuera del rango histórico); suelo z = {f(p26['S z'], 2)}; acuífero z = {f(p26['G z'], 2)}.</li>
+<li><b>Trimestre noviembre–enero</b>: P(seco) = {f(100 * p26['P(seco) logística ONI+S'])} % con la regresión logística y {f(100 * p26['P(seco) KNN'])} % con los análogos: <b>alerta roja</b> con los dos métodos.</li>
+<li><b>Sensibilidad</b>: si octubre hubiera sido tan seco como julio–septiembre, el suelo estaría en z = {f(sens26['a']['S z'], 1)} y P(seco) subiría a {f(100 * sens26['a']['P(seco) logística'])} %; con
+octubre normal, {f(100 * sens26['b']['P(seco) logística'])} %. El dato de XM de octubre es el que más pesa en el pronóstico.</li></ul>
+<p class='note'>Análogos más cercanos: {', '.join(an26['mes análogo'].head(5))}. Ningún análogo tiene un ONI tan alto: el pronóstico probablemente
+subestima la sequía. Caudales en la escala IDEAM (Puerto Valdivia transferido), cuya media es 10–30 % mayor que la de XM.</p>
+{tabla(t26, {c: 0 for c in t26.columns})}
+</div><div class='panel'><div class='tshost' id='p26Fig' style='height:520px'></div></div></div>""", g="g")
 
 e1 = eofr.loc["Cubo IDEAM"]
 slide("g-eof", "6 · Decisiones de generación", "5 · EOF · modos de variabilidad de la lluvia y del suelo",
