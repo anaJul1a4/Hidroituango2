@@ -33,3 +33,11 @@ button.theme-tg{width:auto;padding:0 12px;gap:7px;grid-auto-flow:column;font:500
 .full .cols2txt{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 28px;margin-bottom:12px}
 .full .cols2txt p,.full .cols2txt ul{max-width:none}
 @media (max-width:900px){.full .cols2txt{grid-template-columns:minmax(0,1fr)}}
+
+/* figuras de varios paneles: a todo el ancho, encima del texto */
+.stackfig{display:flex;flex-direction:column;gap:18px}
+.stackfig>.panel{order:-1}
+.stackfig .txtcols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 32px;align-items:start}
+.stackfig .txtcols>.tw{grid-column:2;grid-row:1 / span 4}
+.stackfig .txtcols p,.stackfig .txtcols ul{max-width:none}
+@media (max-width:900px){.stackfig .txtcols{grid-template-columns:minmax(0,1fr)}.stackfig .txtcols>.tw{grid-column:auto;grid-row:auto}}

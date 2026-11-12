@@ -213,7 +213,7 @@ limpio y ERA5 corregido.</p></button>
 <button class='card lift pick' type='button' data-go='p-mapas'><h4>3 · ENSO y lluvia</h4><p>Anomalías por trimestre y producto.</p></button>
 <button class='card lift pick' type='button' data-go='s-mapas'><h4>4 · Humedad del suelo</h4><p>El suelo alarga la sequía de El Niño.</p></button>
 <button class='card lift pick' type='button' data-go='q-comp'><h4>5 · Caudales</h4><p>Observados y simulados en El Niño y La Niña.</p></button>
-<button class='card lift pick' type='button' data-go='cierre'><h4>6 · Respuestas</h4><p>Qué combinación sirve para operar y qué sigue.</p></button>
+<button class='card lift pick' type='button' data-go='g-intro'><h4>6 · Decisiones de generación</h4><p>KNN, regresión logística, EOF y Fourier.</p></button>
 </div></section>""")
 
 # ---- 1. datos
@@ -455,24 +455,175 @@ slide("q-rez", "5 · Caudales", "4 · lluvia, suelo y caudal: almacenamiento y m
 fuerza que la lluvia y con algunos meses de retraso. Ese rezago es aprovechable: el estado del ENSO y la humedad del suelo de hoy anticipan
 los caudales de los próximos meses.</li></ul></div></div>""")
 
+# ---- 6. técnicas para decisiones de generación (numeral 5)
+PRN, EOFD, FOU = R2 / "08_pronostico", R2 / "09_eof", R2 / "10_fourier"
+pr_s = json.loads((PRN / "sitio.json").read_text(encoding="utf-8"))
+D["knn"] = pr_s["ejemplos"]
+D["prob"] = pr_s["prob"]
+_pb = pd.DataFrame({k: v for k, v in pr_s["prob"].items() if k != "t"}, index=pd.to_datetime(pr_s["prob"]["t"]))
+_pb = _pb.reindex(pd.date_range(_pb.index[0], _pb.index[-1], freq="MS"))   # meses sin dato → huecos en la gráfica
+D["prob"] = {"t": _pb.index.strftime("%Y-%m").tolist(), **{k: _pb[k].tolist() for k in _pb.columns}}
+KK = pr_s["K"]
+mq3 = pd.read_csv(PRN / "metricas_Q3.csv", index_col=0)
+mpb = pd.read_csv(PRN / "metricas_probabilidad.csv", index_col=0)
+hzm = pd.read_csv(PRN / "horizonte_mensual.csv", index_col=0)
+alr = pd.read_csv(PRN / "alertas.csv")
+cof = pd.read_csv(PRN / "coeficientes_logistica.csv")
+eofr = pd.read_csv(EOFD / "eof_resumen.csv", index_col=0)
+D["eof"] = json.loads((EOFD / "sitio.json").read_text(encoding="utf-8"))
+fbt = pd.read_csv(FOU / "bandas_y_memoria.csv", index_col=0)
+fcg = pd.read_csv(FOU / "coherencia_ganancia.csv", index_col=0)
+FG = R2 / "07_figuras"
+kq = f"KNN (k = {KK})"
+LS = "Logística · ONI + suelo"
+or_s = float(cof[(cof.modelo == LS) & (cof.variable == "S")]["razón de odds por 1 σ"].iloc[0])
+or_o1 = float(cof[(cof.modelo == "Logística · ONI") & (cof.variable == "ONI")]["razón de odds por 1 σ"].iloc[0])
+or_o2 = float(cof[(cof.modelo == LS) & (cof.variable == "ONI")]["razón de odds por 1 σ"].iloc[0])
+alS = alr[alr["método"] == LS].set_index("nivel")
+alK = alr[alr["método"] == kq].set_index("nivel")
+VE, AM, RO = "Verde (< 20 %)", "Amarillo (20–50 %)", "Rojo (≥ 50 %)"
+FRQ, PCT = "frecuencia observada del trimestre seco (%)", "% de los meses"
+
+slide("g-intro", "6 · Decisiones de generación", "5 · técnicas de análisis de datos para la operación",
+      "¿Qué puede saber hoy el operador de Hidroituango sobre el agua de los próximos meses?", f"""
+<p class='lead'>Los numerales 2 a 4 mostraron que el ENSO se adelanta unos dos meses a los caudales y que el suelo y el acuífero guardan
+esa señal. Aquí se convierte en información para decidir: cuánta agua llegará, con qué confianza, y cuándo encender una alerta.</p>
+<div class='cards3'>
+<button class='card lift pick' type='button' data-go='g-knn'><h4>KNN · años análogos</h4><p>Pronóstico del aporte a 1–6 meses como
+conjunto de trayectorias: mediana, intervalo y su confiabilidad verificada.</p></button>
+<button class='card lift pick' type='button' data-go='g-logit'><h4>Regresión logística</h4><p>Probabilidad de que los próximos tres meses
+sean secos, comparada con la que dan los análogos.</p></button>
+<button class='card lift pick' type='button' data-go='g-alertas'><h4>Umbrales de alerta</h4><p>Verde, amarillo y rojo: cuántas veces
+acertó cada nivel entre 1982 y 2017.</p></button>
+<button class='card lift pick' type='button' data-go='g-eof'><h4>Funciones ortogonales empíricas</h4><p>¿Es el ENSO el modo principal de
+variabilidad de la cuenca, y lo ven igual todos los productos?</p></button>
+<button class='card lift pick' type='button' data-go='g-fourier'><h4>Transformada de Fourier</h4><p>La cuenca como filtro: por qué los
+caudales responden al ENSO más que la lluvia.</p></button>
+<div class='card'><h4>Mapeo de cuantiles con deltas (QDM)</h4><p>Para las proyecciones CMIP6, cuando se descarguen.</p></div>
+</div>
+<p class='note'>Todo se evalúa con validación cruzada dejando un año fuera (1982–2017, caudal observado en la presa): cada pronóstico se
+hace sin conocer su año ni el semestre anterior y el siguiente.</p>""", g="g")
+
+slide("g-knn", "6 · Decisiones de generación", "5 · KNN · pronóstico estacional con años análogos",
+      "Se buscan en la historia los meses que más se parecen a hoy y se mira qué pasó después", f"""
+<div class='two fig'><div>
+<p><b>Estado de hoy</b> (fin del mes t): ONI del trimestre que acaba de terminar, su cambio en 3 meses, y la humedad del suelo S y el
+agua subterránea G de la cuenca según el modelo abcd. Los cuatro, estandarizados por mes calendario.</p>
+<p><b>Análogos</b>: los {KK} meses históricos más cercanos (distancia euclidiana), del mismo mes calendario ± 1. Lo que ocurrió en los 6 meses
+siguientes de cada uno, como anomalía de su mes, se lleva a la climatología de hoy: son {KK} trayectorias posibles. k = {KK} minimiza el
+CRPS en la validación cruzada.</p>
+{chips('knnEj', [(k, k) for k in D['knn']])}
+<p class='tryit'>mira agosto de 1997 y de 2015, al comienzo de los dos El Niño más fuertes, y compáralos con agosto de 2010 (La Niña).</p>
+<p class='note' id='knnTxt'></p>
+</div><div class='panel'><div class='tshost' id='knnFig' style='height:500px'></div></div></div>""", g="g")
+
+cob = mq3.loc[kq, "Cobertura del intervalo 80 % (%)"]
+anc = 100 * (1 - mq3.loc[kq, "Ancho medio del intervalo 80 % (m³/s)"] / mq3.loc["Climatología", "Ancho medio del intervalo 80 % (m³/s)"])
+slide("g-knn-hab", "6 · Decisiones de generación", "5 · KNN · habilidad y confiabilidad",
+      f"Los análogos le ganan a la persistencia desde el segundo mes y reducen el error de la climatología en un {f(100 * mq3.loc[kq, 'CRPSS'])} %", f"""
+<div class='two fig'><div>
+<ul class='pts'><li><b>Aporte de los próximos 3 meses</b>: NSE de la mediana {f(mq3.loc[kq, 'NSE de la mediana'], 2)}, frente a
+{f(mq3.loc['Persistencia', 'NSE de la mediana'], 2)} de la persistencia y {f(mq3.loc['Climatología', 'NSE de la mediana'], 2)} de la climatología.</li>
+<li><b>Mes a mes</b>: a 1 mes empata con la persistencia (NSE {f(hzm.loc[1, 'NSE KNN'], 2)}); a 6 meses conserva {f(hzm.loc[6, 'NSE KNN'], 2)}
+cuando la persistencia ya cayó a {f(hzm.loc[6, 'NSE persistencia'], 2)}: es la memoria del suelo y del ENSO.</li>
+<li><b>Confiabilidad</b>: el intervalo nominal del 80 % contiene al observado el {f(cob)} % de las veces y es un {f(anc)} % más angosto que el
+de la climatología. Para operar debe leerse como un intervalo del ≈ {f(cob)} %: los análogos son algo optimistas.</li></ul>
+{tabla(mq3, {"NSE de la mediana": 2, "CRPS (m³/s)": 0, "CRPSS": 2, "Cobertura del intervalo 80 % (%)": 0, "Ancho medio del intervalo 80 % (m³/s)": 0})}
+<p class='note'>CRPSS: mejora del CRPS (error de toda la distribución) frente a la climatología. En el Trabajo 1, el KNN diario a 10 días
+apenas igualaba a la persistencia; a escala mensual sí hay información aprovechable.</p>
+</div><div class='panel'>{fig(FG / 'fig_knn_horizonte.png', 'knn_horizonte', 'Habilidad del KNN por anticipación')}</div></div>""", g="g")
+
+slide("g-logit", "6 · Decisiones de generación", "5 · regresión logística · probabilidad de un trimestre seco",
+      "El estado del suelo dice más que el ONI: con los dos, la probabilidad de un trimestre seco es confiable", f"""
+<div class='stackfig'><div class='txtcols'>
+<p><b>Evento</b>: el aporte medio de los tres meses siguientes queda por debajo de su percentil 20 (para ese mes de emisión).
+P = 1 / (1 + e<sup>−(β₀ + β·x)</sup>), ajustada por máxima verosimilitud.</p>
+<ul class='pts'><li><b>Sólo ONI</b>: cada desviación estándar del ONI multiplica los odds de un trimestre seco por {f(or_o1, 1)}.</li>
+<li><b>ONI y suelo</b>: domina el suelo. Un suelo una desviación estándar más seco multiplica los odds por {f(1 / or_s, 1)} y el ONI queda en
+{f(or_o2, 1)}: S ya integra el ENSO de los meses anteriores.</li>
+<li><b>Frente a los análogos</b>: la logística con ONI y suelo y el KNN discriminan igual (AUC {f(mpb.loc[LS, 'AUC (ROC)'], 2)} y
+{f(mpb.loc[kq, 'AUC (ROC)'], 2)}); la logística está mejor calibrada (BSS {f(mpb.loc[LS, 'BSS'], 2)} frente a {f(mpb.loc[kq, 'BSS'], 2)}).
+No son excluyentes: si las dos coinciden, la alerta es más firme.</li></ul>
+{tabla(mpb, {"Brier": 3, "BSS": 2, "AUC (ROC)": 2})}
+</div><div class='panel'>{fig(FG / 'fig_prob_trimestre_seco.png', 'prob_seco', 'Regresión logística, confiabilidad y ROC')}</div></div>""", g="g")
+
+orden_n = [VE, AM, RO]
+t_f = alr.pivot(index="nivel", columns="método", values=FRQ).loc[orden_n]
+t_p = alr.pivot(index="nivel", columns="método", values=PCT).loc[orden_n]
+tal = pd.DataFrame({m_: [f"{f(t_f.loc[n, m_])} % ({f(t_p.loc[n, m_])} % de los meses)" for n in orden_n]
+                    for m_ in [LS, kq, "Logística · ONI"]}, index=orden_n).T
+tal.index.name = "trimestre seco observado"
+slide("g-alertas", "6 · Decisiones de generación", "5 · umbrales de alerta",
+      f"Con alerta roja el trimestre fue seco el {f(alS.loc[RO, FRQ])} % de las veces; con verde, sólo el {f(alS.loc[VE, FRQ])} %", f"""
+{chips('alMet', [('logS', LS), ('knn', kq), ('log', 'Logística · ONI')])}
+<div class='panel'><div class='tshost' id='alFig' style='height:440px'></div></div>
+<div class='two even'><div>
+<ul class='pts'><li><b>Verde</b> (P &lt; 20 %): operación normal; el {f(alS.loc[VE, PCT])} % de los meses.</li>
+<li><b>Amarillo</b> (20–50 %): vigilar el embalse; el trimestre fue seco {f(alS.loc[AM, FRQ])} % de las veces.</li>
+<li><b>Rojo</b> (≥ 50 %): conservar agua; el {f(alS.loc[RO, PCT])} % de los meses, concentrados en los El Niño de 1991–92, 1997–98, 2009–10
+y 2015–16.</li></ul>
+<p class='note'>Barras: trimestres que sí fueron secos. Probabilidades de la validación cruzada (cada año sin conocerse a sí mismo). Con el KNN
+el rojo es más raro ({f(alK.loc[RO, PCT])} % de los meses) pero acierta el {f(alK.loc[RO, FRQ])} %.</p>
+</div><div>{tabla(tal)}</div></div>""", g="g")
+
+e1 = eofr.loc["Cubo IDEAM"]
+slide("g-eof", "6 · Decisiones de generación", "5 · EOF · modos de variabilidad de la lluvia y del suelo",
+      f"El primer modo es toda la cuenca a la vez ({f(e1['varianza EOF1 (%)'])} % de la varianza) y es el ENSO; ERA5 muestra un segundo modo que las estaciones no ven", f"""
+<div class='two fig'><div>
+<p>Anomalías trimestrales móviles de cada celda, ponderadas por área; EOF por descomposición en valores singulares. Los mapas son la
+correlación entre la componente principal (CP) y cada celda.</p>
+<ul class='pts'><li><b>EOF1</b>: un solo signo en toda la cuenca, con {f(eofr['varianza EOF1 (%)'].min())}–{f(eofr['varianza EOF1 (%)'].max())} %
+de la varianza según el campo. Su CP se correlaciona con el ONI: {f(e1['r(CP1, ONI) máxima'], 2)} en el Cubo y
+{f(eofr.loc['Suelo S (abcd)', 'r(CP1, ONI) máxima'], 2)} en el suelo. El ENSO aparece como modo dominante sin haberlo supuesto.</li>
+<li><b>EOF2</b>: en el Cubo explica {f(e1['varianza EOF2 (%)'])} % y no se separa de la EOF3 (regla de North): no hay un segundo modo robusto.
+CHIRPS muestra un contraste débil norte (Antioquia)–sur (Valle). ERA5-Land y ERA5 corregidos le dan {f(eofr.loc['ERA5-Land QM', 'varianza EOF2 (%)'])} y
+{f(eofr.loc['ERA5 QM', 'varianza EOF2 (%)'])} %, con manchas aisladas y una CP opuesta a la del Cubo (r = {f(eofr.loc['ERA5 QM', 'r temporal CP2 con el Cubo'], 2)}).</li>
+<li><b>Consistencia</b>: la CP1 de CHIRPS v2.0 sigue a la del Cubo (r = {f(eofr.loc['CHIRPS v2.0', 'r temporal CP1 con el Cubo'], 2)}); la de ERA5
+corregido, menos ({f(eofr.loc['ERA5 QM', 'r temporal CP1 con el Cubo'], 2)}).</li></ul>
+</div><div class='panel'>{fig(FG / 'fig_eof_mapas.png', 'eof_mapas', 'EOF de la lluvia y del suelo')}</div></div>
+<div class='panel'><div class='tshost' id='eofFig' style='height:380px'></div></div>
+<p class='note'>Componente principal 1 de la lluvia (Cubo) y del suelo frente al ONI, con el eje del ONI invertido: cuando el ONI sube, la cuenca se seca.</p>""", g="g")
+
+bP, bQ = fbt.loc["Lluvia P (Cubo)"], fbt.loc["Caudal observado (presa)"]
+CS = "Caudal simulado (presa)"
+tfb = fbt[["r(1 mes)", "escala integral de tiempo (meses)", "varianza < 1 año (%)", "varianza 2–7 años, ENSO (%)", "varianza > 7 años (%)"]]
+slide("g-fourier", "6 · Decisiones de generación", "5 · transformada de Fourier · la cuenca como filtro",
+      f"La lluvia pone el {f(bP['varianza 2–7 años, ENSO (%)'])} % de su varianza en la banda del ENSO; el caudal, el {f(bQ['varianza 2–7 años, ENSO (%)'])} %", f"""
+<div class='stackfig'><div class='txtcols'>
+<p>Densidad espectral de las anomalías mensuales (Welch: FFT en segmentos de 128 meses), ganancia de cada variable frente a la lluvia y
+coherencia con el ONI.</p>
+<ul class='pts'><li><b>Filtro pasa-bajos</b>: el suelo, el acuífero y el caudal amortiguan las fluctuaciones de menos de un año (ganancia ≈
+{f(fcg.loc[CS, 'ganancia media respecto a la lluvia, < 1 año'], 1)}) y refuerzan las de 2–7 años (≈ {f(fcg.loc[CS, 'ganancia media respecto a la lluvia, 2–7 años'], 1)}).</li>
+<li><b>Memoria</b>: la escala integral de tiempo es de {f(bP['escala integral de tiempo (meses)'])} meses para la lluvia y de ≈ {f(bQ['escala integral de tiempo (meses)'])}
+para el suelo, el acuífero y el caudal.</li>
+<li><b>ENSO</b>: la lluvia tiene picos sobre el ruido rojo en {str(bP['picos sobre ruido rojo (años)']).replace('.', ',')} años; en la banda de 2–7 años la coherencia
+con el ONI es {f(fcg.loc['Lluvia P (Cubo)', 'coherencia media con el ONI, 2–7 años'], 2)} para la lluvia y {f(fcg.loc['Caudal observado (presa)', 'coherencia media con el ONI, 2–7 años'], 2)}
+para el caudal observado (umbral del 95 %: {f(fcg.loc['Caudal observado (presa)', 'nivel 95 %'], 2)}).</li></ul>
+<p>Es la conclusión de los rezagos del numeral 4, ahora en frecuencia: la cuenca acumula, y por eso los caudales dependen del ENSO más que la
+lluvia que los produce. Esa memoria es la que aprovechan el KNN y la regresión logística.</p>
+{tabla(tfb, {"r(1 mes)": 2, "escala integral de tiempo (meses)": 1, "varianza < 1 año (%)": 0, "varianza 2–7 años, ENSO (%)": 0, "varianza > 7 años (%)": 0})}
+</div><div class='panel'>{fig(FG / 'fig_fourier.png', 'fourier', 'Espectros, ganancia y coherencia')}</div></div>""", g="g")
+
 # ---- cierre
-slide("cierre", "6 · Cierre", "Respuestas", "Qué aprendimos y lo que sigue", f"""
+slide("cierre", "7 · Cierre", "Respuestas", "Qué aprendimos y lo que sigue", f"""
 <div class='two even'><div class='stack'>
 <div class='card lift'><h4>Datos</h4><p>El Cubo del IDEAM es la mejor referencia de lluvia mensual una vez limpio; CHIRPS v2.0 casi lo iguala.
 ERA5 y ERA5-Land necesitan corrección y aun corregidos no capturan bien la variabilidad mes a mes.</p></div>
 <div class='card lift'><h4>Modelo</h4><p>El abcd semidistribuido reproduce los caudales de diez estaciones (KGE de validación ≈ {f(kv_med, 2)}); la
 ecuación empírica sin memoria no basta.</p></div>
 <div class='card lift'><h4>ENSO</h4><p>El Niño seca la lluvia en DEF y JJA, el suelo en todo el año y los caudales con 1–2 meses de rezago; el
-suelo prolonga la sequía hasta MAM.</p></div></div>
+suelo prolonga la sequía hasta MAM.</p></div>
+<div class='card lift'><h4>Decisiones</h4><p>Con el ONI y el suelo de hoy, los análogos pronostican los próximos meses mejor que la persistencia, y la regresión logística da una alerta de trimestre seco confiable (con rojo, 3 de cada 4 trimestres fueron secos).</p></div></div>
 <div class='panel'><h3>Lo que sigue</h3><ul class='pts'>
-<li><b>Numeral 5</b>: dos técnicas de análisis de datos (en elección).</li>
+<li><b>Pronóstico en tiempo real</b> para noviembre de 2026 – abril de 2027, con El Niño en curso: extender CHIRPS y la ETo hasta hoy para calcular el estado del suelo y emitir el pronóstico de análogos y la alerta.</li>
+<li><b>Llevar los pronósticos a energía</b> con el modelo de operación del embalse (pywr) del Trabajo 1.</li>
 <li><b>Proyecciones CMIP6</b> para el sector hidroeléctrico: selección de modelos por su ciclo anual, corrección con mapeo de cuantiles con
 deltas y escenarios SSP llevados al abcd y a la operación del embalse (pywr).</li>
-<li>Pronóstico estacional de caudales con el ONI y la humedad del suelo inicial.</li></ul>
+</ul>
 <p class='note'>Datos: IDEAM (Cubo de datos y caudales), CHIRPS (CHC–UCSB), ERA5 y ERA5-Land (ECMWF–Copernicus), ONI (NOAA CPC).</p>
 </div></div>""")
 
-slide("refs", "6 · Cierre", "Referencias", "Referencias", """
+slide("refs", "7 · Cierre", "Referencias", "Referencias", """
 <ul class='pts refs'>
 <li>Allen, R. G., Pereira, L. S., Raes, D. y Smith, M. (1998). <i>Crop evapotranspiration</i>. FAO Irrigation and Drainage Paper 56, Roma.</li>
 <li>Budyko, M. I. (1974). <i>Climate and Life</i>. Academic Press.</li>
@@ -486,6 +637,10 @@ slide("refs", "6 · Cierre", "Referencias", "Referencias", """
 <li>Martinez, G. F. y Gupta, H. V. (2010). Toward improved identification of hydrological models: A diagnostic evaluation of the “abcd”
 monthly water balance model for the conterminous United States. <i>Water Resources Research</i>, 46, W08507.</li>
 <li>Muñoz-Sabater, J. et al. (2021). ERA5-Land. <i>Earth System Science Data</i>, 13, 4349–4383.</li>
+<li>Hersbach, H. (2000). Decomposition of the continuous ranked probability score for ensemble prediction systems. <i>Weather and Forecasting</i>, 15, 559–570.</li>
+<li>Lall, U. y Sharma, A. (1996). A nearest neighbor bootstrap for resampling hydrologic time series. <i>Water Resources Research</i>, 32(3), 679–693.</li>
+<li>North, G. R., Bell, T. L., Cahalan, R. F. y Moeng, F. J. (1982). Sampling errors in the estimation of empirical orthogonal functions. <i>Monthly Weather Review</i>, 110, 699–706.</li>
+<li>Welch, P. (1967). The use of fast Fourier transform for the estimation of power spectra. <i>IEEE Transactions on Audio and Electroacoustics</i>, 15(2), 70–73.</li>
 <li>Thomas, H. A. (1981). <i>Improved methods for national water assessment</i>. U.S. Water Resources Council, Washington.</li>
 </ul>""")
 
@@ -504,7 +659,7 @@ def limpio(o):
 
 nav = "".join(f"<button type='button' class='mod' data-go='{g}'><span>{n}</span> {t}</button>" for g, n, t in
               [("d-cubo", "1", "Datos"), ("m-como", "2", "Modelo abcd"), ("p-mapas", "3", "ENSO y lluvia"),
-               ("s-mapas", "4", "Suelo"), ("q-comp", "5", "Caudales"), ("cierre", "6", "Cierre")])
+               ("s-mapas", "4", "Suelo"), ("q-comp", "5", "Caudales"), ("g-intro", "6", "Decisiones"), ("cierre", "7", "Cierre")])
 css = (SITIO / "estilo_deck.css").read_text(encoding="utf-8") + (SITIO / "estilo_extra.css").read_text(encoding="utf-8")
 js = (SITIO / "graficas.js").read_text(encoding="utf-8")
 pagina = f"""<!doctype html>

@@ -162,6 +162,39 @@ const G = {
     });
     plot("cFig", t, { xaxis: ax(""), yaxis: ax(`Caudal medio mensual en ${e} (m³/s)`, { rangemode: "tozero" }) });
   },
+  "g-knn"() {
+    const e = D.knn[ESTADO.knnEj], m = e.meses;
+    plot("knnFig", [
+      { type: "scatter", mode: "lines", x: m, y: e.p90, line: { width: 0 }, showlegend: false, hoverinfo: "skip" },
+      { type: "scatter", mode: "lines", x: m, y: e.p10, fill: "tonexty", fillcolor: "rgba(29,78,216,.18)", line: { width: 0 }, name: "Intervalo 80 % de los análogos",
+        customdata: e.p90, hovertemplate: "Intervalo 80 %: %{y:,.0f} – %{customdata:,.0f} m³/s<extra></extra>" },
+      linea("Mediana de los análogos", m, e.med, "#1d4ed8", { hovertemplate: "Mediana KNN: %{y:,.0f} m³/s<extra></extra>" }),
+      linea("Climatología (mediana)", m, e.clim, "#9aa3b2", { line: { color: "#9aa3b2", width: 2, dash: "dash" }, hovertemplate: "Climatología: %{y:,.0f} m³/s<extra></extra>" }),
+      linea("Observado", m, e.obs, css("--fg"), { line: { color: css("--fg"), width: 2.6 }, marker: { size: 7, color: css("--fg") }, hovertemplate: "Observado: %{y:,.0f} m³/s<extra></extra>" })],
+      { hovermode: "x unified", xaxis: ax("", { type: "category" }), yaxis: ax("Aporte medio mensual a la presa (m³/s)", { rangemode: "tozero" }) });
+    const pc = v => (100 * v).toFixed(0) + " %";
+    $("#knnTxt").textContent = `Emitido al final de ${ESTADO.knnEj}: ONI ${e.oni.toFixed(2).replace(".", ",")} °C, suelo z = ${e.S.toFixed(2).replace(".", ",")}. ` +
+      `P(trimestre seco): KNN ${pc(e.pknn)}, regresión logística ${pc(e.plog)}.`;
+  },
+  "g-alertas"() {
+    const p = D.prob, v = ESTADO.alMet, y = p[v];
+    const col = y.map(q => q == null ? "#9aa3b2" : q >= 0.5 ? "#b91c1c" : q >= 0.2 ? "#b07a0c" : "#9aa3b2");
+    plot("alFig", [
+      { type: "bar", x: p.t, y: p.ev.map(e => e ? 1 : null), marker: { color: "rgba(185,28,28,.14)" }, name: "Trimestre seco observado", hoverinfo: "skip", width: 2.6e9 },
+      { type: "scatter", mode: "lines+markers", x: p.t, y: y, line: { color: css("--fg"), width: 1.2 }, marker: { size: 4, color: col }, name: "P(trimestre seco)", connectgaps: false,
+        customdata: p.q3.map((q, i) => [q, p.thr[i]]), hovertemplate: "%{x}: P = %{y:.0%}<br>aporte de los 3 meses siguientes %{customdata[0]:,.0f} m³/s (umbral %{customdata[1]:,.0f})<extra></extra>" }],
+      { bargap: 0, xaxis: ax("Mes de emisión", { type: "date" }), yaxis: ax("Probabilidad de que el próximo trimestre sea seco", { range: [0, 1], tickformat: ".0%" }),
+        shapes: [0.2, 0.5].map(u => ({ type: "line", xref: "paper", x0: 0, x1: 1, y0: u, y1: u, line: { color: u === 0.5 ? "#b91c1c" : "#b07a0c", width: 1, dash: "dot" } })) });
+  },
+  "g-eof"() {
+    const e = D.eof;
+    plot("eofFig", [
+      { type: "scatter", mode: "lines", x: e.t, y: e.cp1["Cubo IDEAM"], name: "CP1 de la lluvia (Cubo)", line: { color: "#1d4ed8", width: 1.6 }, hovertemplate: "CP1 lluvia: %{y:+.2f}<extra></extra>" },
+      { type: "scatter", mode: "lines", x: e.t, y: e.cp1["Suelo S (abcd)"], name: "CP1 del suelo", line: { color: "#b07a0c", width: 1.6 }, hovertemplate: "CP1 suelo: %{y:+.2f}<extra></extra>" },
+      { type: "scatter", mode: "lines", x: e.t, y: e.oni, name: "ONI (eje der., invertido)", yaxis: "y2", line: { color: "#b91c1c", width: 1.3, dash: "dot" }, hovertemplate: "ONI: %{y:+.2f} °C<extra></extra>" }],
+      { hovermode: "x unified", xaxis: ax("", { type: "date" }), yaxis: ax("Componente principal 1"),
+        yaxis2: ax("ONI (°C)", { overlaying: "y", side: "right", showgrid: false, autorange: "reversed" }), margin: { l: 56, r: 56, t: 34, b: 36 } });
+  },
   "q-rez"() {
     const k = [0, 1, 2, 3, 4, 5, 6];
     const s = [["ONI → lluvia", D.rez.P, "#60a5fa", "solid"], ["ONI → suelo", D.rez.S, "#b07a0c", "solid"],

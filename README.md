@@ -29,13 +29,21 @@ Trabajo 2 de Hidrometeorología (Universidad Nacional de Colombia, sede Medellí
    - Anomalías estandarizadas trimestrales (DEF, MAM, JJA, SON) de la precipitación (por producto), de la humedad del suelo
      simulada y de los caudales observados y simulados.
    - Compuestos El Niño y La Niña (fases del CPC sobre el ONI), consistencia entre productos y rezagos de la respuesta.
+5. **Técnicas de análisis de datos para decisiones de generación** (numeral 5)
+   - **KNN (años análogos)**: pronóstico probabilístico del aporte a la presa a 1–6 meses a partir del ONI y del estado del suelo y
+     del acuífero del abcd. Validación cruzada dejando un año fuera (1982–2017): CRPSS del 34 % frente a la climatología para el
+     trimestre siguiente.
+   - **Regresión logística**: probabilidad de que el próximo trimestre quede bajo su percentil 20, comparada con la de los análogos,
+     y umbrales de alerta verde, amarillo y rojo.
+   - **EOF**: modos de variabilidad de la lluvia de cada producto y de la humedad del suelo, y su relación con el ONI.
+   - **Transformada de Fourier**: espectros, ganancia de la cuenca frente a la lluvia y coherencia con el ONI.
 
 ## Estructura
 
 | Carpeta | Contenido |
 |---|---|
 | `docs/` | Sitio publicado en GitHub Pages (`index.html`, figuras en `img/`, Plotly en `assets/`). |
-| `codigo/` | Scripts en orden: `00_limpieza_cubo.py`, `01_entradas.py`, `02_comparacion_productos.py`, `03_caudales_mensuales.py`, `04_modelo_abcd.py`, `04b_abcd_regionalizado.py`, `05_enso_precipitacion.py`, `06_enso_suelo_caudales.py`, `07_mapa_unidades.py`, `08_figuras_no_series.py`. |
+| `codigo/` | Scripts en orden: `00_limpieza_cubo.py`, `01_entradas.py`, `02_comparacion_productos.py`, `03_caudales_mensuales.py`, `04_modelo_abcd.py`, `04b_abcd_regionalizado.py`, `05_enso_precipitacion.py`, `06_enso_suelo_caudales.py`, `07_mapa_unidades.py`, `08_figuras_no_series.py`, `09_pronostico_knn_logistica.py`, `10_eof.py`, `11_fourier.py`. |
 | `codigo/sitio/` | Generador del sitio (`construir.py`), estilos y gráficas. El estilo de presentación es el de la presentación PAE Orinoquía–Amazonía. |
 | `memorias/` | Resultados: tablas CSV, figuras en PNG de 300 dpi (mapas y gráficas que no son series, listas para el informe), parámetros, métricas y estados del modelo final (S, G, ETR y Q por celda). |
 | `datos/` | Precipitación mensual del Cubo de datos IDEAM en la cuenca, tras el control de calidad. |
@@ -51,7 +59,7 @@ Los scripts esperan la estructura de carpetas del proyecto original:
 El Cubo de datos se descarga de https://bart.ideam.gov.co/meteorologia/DATOS/CUBO%20DE%20DATOS/. Se usan `prcp_dia_*.nc` (recortados
 a la cuenca) y `tmax_`, `tmin_`, `tmed_` y `humd_mes_prom_1981_2023.nc`.
 
-Python 3.13 con numpy, pandas, xarray, geopandas, rasterio, scipy, numba y matplotlib. Orden: 00 → 08 y luego
+Python 3.13 con numpy, pandas, xarray, geopandas, rasterio, scipy, numba y matplotlib. Orden: 00 → 11 y luego
 `python codigo/sitio/construir.py`.
 
 ## Fuentes de datos

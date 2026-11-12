@@ -1,0 +1,4 @@
+﻿Aporte medio de los 3 meses siguientes,NSE de la mediana,CRPS (m³/s),CRPSS,Cobertura del intervalo 80 % (%),Ancho medio del intervalo 80 % (m³/s)
+Climatología,0.01786965403878782,208.7871505772294,0.0,75.80645161290323,857.4257939068099
+Persistencia,0.48220032933837687,,,,
+KNN (k = 15),0.5540956246089295,138.93092339452366,0.3345810649246168,67.47311827956989,519.3308418893575
