@@ -720,6 +720,47 @@ antioqueño, que es la zona que más aporta a la presa, y SON más seco en la ve
 <li>El acuerdo entre modelos es bajo en la mayor parte de la cuenca. Lo robusto es el aumento de la ETo, no el signo del cambio de la lluvia.</li></ul>
 </div><div class='panel'>{fig(R2 / '07_figuras' / 'fig_cmip6_mapas_P.png', 'cmip6_mapas', 'Cambio proyectado de la lluvia')}</div></div>""", g="c")
 
+# ---- operación del embalse (pywr)
+PW = R2 / "13_pywr"
+pwr = json.loads((PW / "resumen.json").read_text(encoding="utf-8"))
+pa = pd.read_csv(PW / "pronostico_energia_por_analogo.csv")
+pb = pd.read_csv(PW / "proyecciones_energia_conjunto.csv", header=[0, 1], index_col=[0, 1])
+a12 = pa[pa.MW == 1200]
+cg = a12[a12["política"] == "Curva guía 50 %"].set_index("análogo")
+rs = a12[a12["política"] == "Reservar para feb–abr"].set_index("análogo")
+secos = cg.index[cg["Faltante ENFICC (GWh)"] > 50]
+t_pa = a12.groupby("política")[["Energía nov–abr (GWh)", "Energía feb–abr (GWh)", "Faltante ENFICC (GWh)"]].median()
+t_pa["Análogos con faltante de ENFICC"] = a12.groupby("política")["Faltante ENFICC (GWh)"].apply(lambda x: int((x > 50).sum()))
+t_pa["Faltante ENFICC, análogos tipo 2015 (GWh)"] = a12[a12["análogo"].isin(secos)].groupby("política")["Faltante ENFICC (GWh)"].mean()
+t_pa.index.name = "política (1200 MW)"
+pbm = pb["mediana"]
+t_pb = pd.DataFrame({f"{e} · {p}": {"Energía media (%)": pbm.loc[(e, p), "Δ Energía media (%)"],
+                                     "Energía del año seco, 5 % (%)": pbm.loc[(e, p), "Δ Energía anual excedida 95 % (%)"],
+                                     "Energía dic–abr (%)": pbm.loc[(e, p), "Δ Energía dic–abr (%)"]}
+                     for e in ["SSP2-4.5", "SSP5-8.5"] for p in ["2041–2070", "2071–2100"]})
+t_pb.index.name = "cambio (mediana de 6 modelos)"
+slide("c-energia", "7 · Proyecciones", "operación del embalse con pywr · pronóstico y proyecciones",
+      f"El riesgo inmediato está en una sequía como la de 2015–16: 3 de 15 análogos dejan a Ituango bajo su energía firme; a largo plazo, el año seco pierde un 20 % de energía en SSP5-8.5", f"""
+<div class='stackfig'><div class='txtcols'>
+<div><p><b>Pronóstico noviembre 2026 – abril 2027.</b> Las 15 trayectorias de los análogos se llevaron a escala diaria (forma diaria del mes
+análogo) y a la escala de XM, y se simularon con el modelo de operación del Trabajo 1 desde el estado real del embalse ({f(pwr['V0'])} de
+{f(pwr['V_UTIL'])} hm³ útiles el {pwr['fecha_estado']}), con 4 unidades (1200 MW) y la ENFICC de XM ({f(pwr['ENFICC_dia'], 1)} GWh/día).</p>
+<ul class='pts'><li>En 12 de los 15 análogos la central cubre su ENFICC casi todo el periodo.</li>
+<li>En los tres análogos de 2015 ({', '.join(secos)}) queda entre {f(cg.loc[secos, 'Días bajo la ENFICC'].min())} y {f(cg.loc[secos, 'Días bajo la ENFICC'].max())} días por debajo, con un
+faltante de {f(cg.loc[secos, 'Faltante ENFICC (GWh)'].min())} a {f(cg.loc[secos, 'Faltante ENFICC (GWh)'].max())} GWh que habría que comprar en bolsa.</li>
+<li>Reservar agua para febrero–abril reduce ese faltante en {f(100 * (1 - rs.loc[secos, 'Faltante ENFICC (GWh)'].sum() / cg.loc[secos, 'Faltante ENFICC (GWh)'].sum()))} %:
+el embalse útil actual ({f(pwr['V_UTIL'])} hm³) equivale a unos {f(pwr['V_UTIL'] / (a12['Aporte medio XM (m³/s)'].median() * 0.0864))} días del aporte pronosticado, así que la política ayuda poco.</li></ul></div>
+<div><p><b>Proyecciones CMIP6.</b> Para cada modelo y periodo se construyó una serie diaria de 30 años con la secuencia mensual del modelo y
+la forma diaria de 1981–2010, y se simuló la central completa (8 unidades, 2400 MW, caudal mínimo de 450 m³/s, curva guía del 50 %). Energía
+media de referencia: {f(pwr['E_base_mediana'])} GWh/año.</p>
+<ul class='pts'><li>La energía media cambia poco ({f(pbm['Δ Energía media (%)'].min(), 0)} % a +{f(pbm['Δ Energía media (%)'].max(), 0)} %).</li>
+<li>La energía del año seco (excedida el 95 % de los años), que es la que respalda la energía firme, cae un {f(-pbm.loc[('SSP5-8.5', '2041–2070'), 'Δ Energía anual excedida 95 % (%)'])} %
+desde 2041–2070 en SSP5-8.5, y la de diciembre–abril un {f(-pbm.loc[('SSP5-8.5', '2071–2100'), 'Δ Energía dic–abr (%)'])} % hacia 2071–2100.</li></ul>
+{tabla(t_pb, {c: 1 for c in t_pb.columns})}</div></div>
+<div class='panel'>{fig(R2 / '07_figuras' / 'fig_pywr_energia.png', 'pywr_energia', 'Energía en el pronóstico y en las proyecciones')}</div>
+{tabla(t_pa, {"Energía nov–abr (GWh)": 0, "Energía feb–abr (GWh)": 0, "Faltante ENFICC (GWh)": 0, "Análogos con faltante de ENFICC": 0, "Faltante ENFICC, análogos tipo 2015 (GWh)": 0})}
+</div>""", g="c")
+
 # ---- cierre
 slide("cierre", "8 · Cierre", "Respuestas", "Qué aprendimos y lo que sigue", f"""
 <div class='two even'><div class='stack'>
@@ -730,10 +771,11 @@ ecuación empírica sin memoria no basta.</p></div>
 <div class='card lift'><h4>ENSO</h4><p>El Niño seca la lluvia en DEF y JJA, el suelo en todo el año y los caudales con 1–2 meses de rezago; el
 suelo prolonga la sequía hasta MAM.</p></div>
 <div class='card lift'><h4>Decisiones</h4><p>Con el ONI y el suelo de hoy, los análogos pronostican los próximos meses mejor que la persistencia, y la regresión logística da una alerta de trimestre seco confiable (con rojo, 3 de cada 4 trimestres fueron secos).</p></div>
-<div class='card lift'><h4>Clima futuro</h4><p>Con seis modelos CMIP6 corregidos por QDM, el caudal medio en la presa cambia poco, pero en SSP5-8.5 los estiajes se profundizan: más ETo y menos lluvia en diciembre–febrero.</p></div></div>
+<div class='card lift'><h4>Clima futuro</h4><p>Con seis modelos CMIP6 corregidos por QDM, el caudal medio en la presa cambia poco, pero en SSP5-8.5 los estiajes se profundizan: más ETo y menos lluvia en diciembre–febrero, y la energía del año seco cae cerca de 20 %.</p></div></div>
 <div class='panel'><h3>Lo que sigue</h3><ul class='pts'>
 <li><b>Pronóstico en tiempo real</b> para noviembre de 2026 – abril de 2027, con El Niño en curso: extender CHIRPS y la ETo hasta hoy para calcular el estado del suelo y emitir el pronóstico de análogos y la alerta.</li>
-<li><b>Llevar los pronósticos y las proyecciones a energía</b> con el modelo de operación del embalse (pywr) del Trabajo 1.</li>
+<li><b>Actualizar el pronóstico cada mes</b> con CHIRPS, el ONI y los aportes de XM, y llevarlo a la operación del embalse.</li>
+<li><b>Energía firme bajo cambio climático</b>: repetir la simulación con más modelos y miembros, y con la curva cota–volumen real del embalse.</li>
 
 </ul>
 <p class='note'>Datos: IDEAM (Cubo de datos y caudales), CHIRPS (CHC–UCSB), ERA5 y ERA5-Land (ECMWF–Copernicus), ONI (NOAA CPC).</p>

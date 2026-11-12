@@ -1,0 +1,7 @@
+﻿MW,política,Energía nov–abr (GWh) p10,Energía nov–abr (GWh) p50,Energía nov–abr (GWh) p90,Energía feb–abr (GWh) p10,Energía feb–abr (GWh) p50,Energía feb–abr (GWh) p90,Días bajo la ENFICC p10,Días bajo la ENFICC p50,Días bajo la ENFICC p90,Faltante ENFICC (GWh) p10,Faltante ENFICC (GWh) p50,Faltante ENFICC (GWh) p90
+900,Curva guía 50 %,2304.8,3706.9,3874.3,1112.3,1720.9,1887.2,0.0,0.0,90.2,0.0,0.0,352.7
+900,Generar al máximo,2356.0,3774.3,3893.3,1065.8,1788.2,1906.2,0.0,0.0,88.0,0.0,0.0,364.2
+900,Reservar para feb–abr,2379.2,3738.5,3870.6,1277.8,1809.3,1894.2,0.0,0.0,79.6,0.0,0.0,299.1
+1200,Curva guía 50 %,2329.1,4259.1,4736.4,1154.8,1785.2,2153.3,0.0,0.0,89.8,0.0,0.0,356.2
+1200,Generar al máximo,2364.4,4297.7,4799.1,1101.4,1713.0,2150.6,0.0,0.0,93.0,0.0,0.0,387.6
+1200,Reservar para feb–abr,2439.6,4332.5,4793.5,1302.4,1982.9,2266.3,0.0,0.0,84.6,0.0,0.0,325.7

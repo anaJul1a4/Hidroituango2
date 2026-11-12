@@ -6,7 +6,7 @@ figuras con leyenda centrada debajo («Figura N.» en negrita), portada con el e
 Incluye los numerales 1 a 5 del enunciado. Técnicas del numeral 5: mapeo de cuantiles, KNN con años análogos y regresión logística.
 La EOF se reporta dentro del numeral 4. Las proyecciones CMIP6 y la operación del embalse (pywr) se agregarán después.
 
-Incluye además la sección 6 (proyecciones CMIP6 con QDM). La operación del embalse (pywr) se agregará después.
+Incluye además la sección 6 (proyecciones CMIP6 con QDM y operación del embalse con pywr).
 Las cifras se leen de los resultados (trabajo2/resultados/); las figuras son los PNG de 300 dpi de 07_figuras y de cada numeral.
 Salida: trabajo2/informe/Informe_Trabajo2_Hidroituango.docx
 """
@@ -339,7 +339,7 @@ par("En este trabajo se construye ese modelo y se usa para tres fines: (1) evalu
     "simular los caudales mensuales de la cuenca; (2) describir los efectos de El Niño y La Niña sobre la lluvia, la humedad del suelo y "
     "los caudales; (3) mostrar cómo la memoria del suelo y del acuífero permite anticipar los aportes de los meses siguientes, y (4) estimar "
     "con modelos climáticos CMIP6 cómo podría cambiar la oferta de agua de la cuenca en este siglo. El efecto sobre la operación del "
-    "embalse y la energía generada se presentará en una entrega posterior.")
+    "embalse y la energía generada se evalúa con el modelo de operación del Trabajo 1.")
 
 # zona de estudio
 titulo("Cuenca de estudio")
@@ -897,7 +897,8 @@ par(f"El pronóstico tiene dos fuentes de incertidumbre. La primera es la lluvia
     f"octubre fue el que permitió acotarla. La segunda es que ningún mes de la historia tuvo un ONI tan alto, así que los análogos "
     f"corresponden a eventos más débiles y el pronóstico probablemente subestima la sequía; el caso de 2015 (sección 5.2) muestra ese "
     f"mismo sesgo. Los caudales están en la escala de Puerto Valdivia transferido, cuya media es entre 10 % y 30 % mayor que la de los "
-    f"aportes que publica XM, por lo que para la operación conviene leerlos como anomalías.")
+    f"aportes que publica XM, por lo que para la operación conviene leerlos como anomalías. Su efecto sobre la generación se presenta en "
+    f"la sección 6.")
 
 # ============================================================================================ 6. proyecciones CMIP6
 CM = R2 / "11_cmip6"
@@ -987,7 +988,51 @@ par("**Implicaciones para la generación.** Para Hidroituango, la conclusión no
     "meses secos serían más secos y más frecuentes, sobre todo en un escenario de emisiones altas. Esto pesa más que el promedio, porque "
     "la energía firme de una central y el riesgo de desabastecimiento dependen de los estiajes. Además, la incertidumbre entre modelos es "
     "mayor que el cambio de la mediana, de modo que la planeación debería considerar el rango de escenarios y no solo un valor central. El "
-    "efecto de estos caudales sobre la operación del embalse y la energía generada se evaluará con el modelo de operación del Trabajo 1.")
+    "efecto de estos caudales sobre la energía generada se evalúa a continuación.")
+titulo("Efecto sobre la generación: operación del embalse con pywr", 2)
+PW = R2 / "13_pywr"
+pwr = json.loads((PW / "resumen.json").read_text(encoding="utf-8"))
+pa = pd.read_csv(PW / "pronostico_energia_por_analogo.csv")
+pb = pd.read_csv(PW / "proyecciones_energia_conjunto.csv", header=[0, 1], index_col=[0, 1])
+a12 = pa[pa.MW == 1200]
+cg = a12[a12["política"] == "Curva guía 50 %"].set_index("análogo")
+rs = a12[a12["política"] == "Reservar para feb–abr"].set_index("análogo")
+secos = list(cg.index[cg["Faltante ENFICC (GWh)"] > 50])
+pbm, pbn, pbx = pb["mediana"], pb["mínimo"], pb["máximo"]
+dias_emb = pwr["V_UTIL"] / (a12["Aporte medio XM (m³/s)"].median() * 0.0864)
+par("Para traducir los caudales en energía se usó el modelo de operación del embalse construido en el Trabajo 1 con pywr: un balance "
+    "diario del volumen útil con turbinas Francis de 168.8 m³/s y 300 MW cada una, un salto neto de diseño de 197.3 m que varía con la "
+    "cota, un caudal mínimo aguas abajo y una curva guía que define cuándo turbinar a plena capacidad y cuándo conservar agua.")
+par(f"**Pronóstico de noviembre de 2026 a abril de 2027.** Las 15 trayectorias mensuales de los análogos (sección 5.4) se llevaron a escala "
+    f"diaria con la forma diaria del mes que siguió a cada análogo, y a la escala de los aportes de XM multiplicando su anomalía por la "
+    f"media histórica de XM de cada mes. La simulación parte del estado real del embalse ({n(pwr['V0'])} de {n(pwr['V_UTIL'])} hm³ útiles el "
+    f"{pwr['fecha_estado']}), con las cuatro unidades hoy en operación (1200 MW), y compara la energía generada con la energía firme "
+    f"(ENFICC) asignada a Ituango, de {n(pwr['ENFICC_dia'], 1)} GWh/día. Se probaron tres políticas: generar al máximo, mantener la curva "
+    f"guía del 50 % y reservar agua para febrero-abril.")
+par(f"En 12 de los 15 análogos la central cubre su ENFICC prácticamente todo el periodo, con una energía mediana de "
+    f"{n(cg['Energía nov–abr (GWh)'].median())} GWh entre noviembre y abril. El riesgo se concentra en los tres análogos de 2015 "
+    f"({', '.join(secos)}): con ellos la central queda entre {n(cg.loc[secos, 'Días bajo la ENFICC'].min())} y "
+    f"{n(cg.loc[secos, 'Días bajo la ENFICC'].max())} días por debajo de su energía firme, con un faltante de "
+    f"{n(cg.loc[secos, 'Faltante ENFICC (GWh)'].min())} a {n(cg.loc[secos, 'Faltante ENFICC (GWh)'].max())} GWh que tendría que comprarse "
+    f"en bolsa (Figura 26a). Reservar agua para febrero-abril reduce ese faltante solo en un "
+    f"{n(100 * (1 - rs.loc[secos, 'Faltante ENFICC (GWh)'].sum() / cg.loc[secos, 'Faltante ENFICC (GWh)'].sum()))} %, porque el volumen "
+    f"útil actual equivale a unos {n(dias_emb)} días del aporte pronosticado: el embalse no alcanza a compensar una sequía de varios meses. "
+    f"Como el ONI de 2026 supera al de 2015, el escenario tipo 2015 no debería tratarse como un extremo improbable.")
+par(f"**Proyecciones CMIP6.** Para cada modelo, escenario y periodo se construyó una serie diaria de 30 años con la secuencia mensual de "
+    f"caudales del modelo y la forma diaria de 1981-2010, y se simuló la central completa (8 unidades, 2400 MW), con caudal mínimo de 450 "
+    f"m³/s y la curva guía del 50 %. Los cambios se midieron frente al periodo 1981-2010 de cada modelo, con una energía media de "
+    f"referencia de {n(pwr['E_base_mediana'])} GWh/año. La energía media cambia poco, entre {n(pbm['Δ Energía media (%)'].min(), 0, True)} % "
+    f"y {n(pbm['Δ Energía media (%)'].max(), 0, True)} % según el escenario y el periodo. La energía de los años secos, en cambio, sí se "
+    f"reduce: en SSP5-8.5 la energía anual excedida el 95 % de los años cae un "
+    f"{n(-pbm.loc[('SSP5-8.5', '2041–2070'), 'Δ Energía anual excedida 95 % (%)'])} % desde 2041-2070, y la de diciembre-abril un "
+    f"{n(-pbm.loc[('SSP5-8.5', '2071–2100'), 'Δ Energía dic–abr (%)'])} % hacia 2071-2100 (Figura 26b). El rango entre modelos es amplio "
+    f"(de {n(pbn.loc[('SSP5-8.5', '2071–2100'), 'Δ Energía anual excedida 95 % (%)'], 0, True)} % a "
+    f"{n(pbx.loc[('SSP5-8.5', '2071–2100'), 'Δ Energía anual excedida 95 % (%)'], 0, True)} % en ese indicador), pero la mediana confirma lo "
+    f"que mostraron los caudales: el cambio climático afecta más la energía firme que la energía media.")
+figura(FG / "fig_pywr_energia.png", "a) Energía generada de noviembre de 2026 a abril de 2027 con las 15 trayectorias de los análogos, tres "
+       "políticas de operación y el estado real del embalse (4 unidades), frente a la ENFICC del periodo; b) cambio proyectado de la energía "
+       "media y de la energía del año seco (excedida el 95 % de los años) con la central completa.")
+
 par("Estos resultados tienen varias limitaciones. Seis modelos con un solo miembro cada uno no representan toda la incertidumbre del "
     "CMIP6. El QDM corrige la distribución mensual de cada celda pero no los errores del modelo en la secuencia de los meses ni en la "
     "representación del ENSO. Y el modelo abcd se usa con los parámetros calibrados en el clima actual, sin cambios en la vegetación ni "
@@ -1020,7 +1065,9 @@ par(f"Con seis modelos CMIP6 elegidos por su ciclo anual y corregidos por QDM, e
     f"los estiajes se profundizan: en SSP5-8.5 hacia 2071-2100 el caudal bajo cae un {n(-v('SSP5-8.5', '2071–2100', 'ΔQ10 presa (%)'))} % y "
     f"los trimestres secos pasan del 20 % al {n(v('SSP5-8.5', '2071–2100', 'trimestres secos (%)'))} % de los meses, por el aumento de la "
     f"evapotranspiración y la menor lluvia de diciembre-febrero. El aumento de temperatura y de ETo es robusto; el signo del cambio de la "
-    f"lluvia, no.")
+    f"lluvia, no. Llevados al modelo de operación del embalse, estos caudales reducen poco la energía media, pero en SSP5-8.5 la "
+    f"energía de los años secos cae cerca de un 20 %; y en el corto plazo, una repetición de la sequía de 2015-2016 dejaría a Ituango "
+    f"varios meses por debajo de su energía firme, sin que el embalse actual alcance a compensarlo.")
 
 # ============================================================================================ referencias
 titulo("Referencias")

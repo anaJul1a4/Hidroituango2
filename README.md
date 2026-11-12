@@ -42,13 +42,18 @@ Trabajo 2 de Hidrometeorología (Universidad Nacional de Colombia, sede Medellí
    - Corrección por mapeo de cuantiles con deltas (QDM, Cannon et al., 2015) en la grilla del Cubo; ETo de Hargreaves; modelo abcd final.
    - SSP2-4.5 y SSP5-8.5, 2021–2100: el caudal medio en la presa cambia poco, pero en SSP5-8.5 el caudal bajo (percentil 10) cae
      cerca de 30 % hacia 2071–2100 y los trimestres secos pasan de 20 % a 35 % de los meses.
+7. **Pronóstico noviembre 2026 – abril 2027 y energía**
+   - Modelo abcd extendido hasta octubre de 2026 con CHIRPS v2.0 igualado al Cubo; octubre ajustado a los aportes de XM.
+   - KNN de años análogos y regresión logística: alerta roja de trimestre seco.
+   - Operación del embalse con pywr (modelo del Trabajo 1): estado real del embalse, ENFICC y tres políticas; y energía bajo las
+     proyecciones CMIP6 con la central completa.
 
 ## Estructura
 
 | Carpeta | Contenido |
 |---|---|
 | `docs/` | Sitio publicado en GitHub Pages (`index.html`, figuras en `img/`, Plotly en `assets/`). |
-| `codigo/` | Scripts en orden: `00_limpieza_cubo.py`, `01_entradas.py`, `02_comparacion_productos.py`, `03_caudales_mensuales.py`, `04_modelo_abcd.py`, `04b_abcd_regionalizado.py`, `05_enso_precipitacion.py`, `06_enso_suelo_caudales.py`, `07_mapa_unidades.py`, `08_figuras_no_series.py`, `09_pronostico_knn_logistica.py`, `10_eof.py`, `11_fourier.py`, `12_cmip6_descarga.py`, `13_cmip6_qdm_abcd.py`, `14_cmip6_analisis.py`, `15_figuras_informe.py`, `16_informe_word.py`. |
+| `codigo/` | Scripts en orden: `00_limpieza_cubo.py`, `01_entradas.py`, `02_comparacion_productos.py`, `03_caudales_mensuales.py`, `04_modelo_abcd.py`, `04b_abcd_regionalizado.py`, `05_enso_precipitacion.py`, `06_enso_suelo_caudales.py`, `07_mapa_unidades.py`, `08_figuras_no_series.py`, `09_pronostico_knn_logistica.py`, `10_eof.py`, `11_fourier.py`, `12_cmip6_descarga.py`, `13_cmip6_qdm_abcd.py`, `14_cmip6_analisis.py`, `15_figuras_informe.py`, `16_informe_word.py`, `17_pronostico_2026.py`, `18_pywr_pronostico_proyecciones.py`. |
 | `codigo/sitio/` | Generador del sitio (`construir.py`), estilos y gráficas. El estilo de presentación es el de la presentación PAE Orinoquía–Amazonía. |
 | `memorias/` | Resultados: tablas CSV, figuras en PNG de 300 dpi (mapas y gráficas que no son series, listas para el informe), parámetros, métricas y estados del modelo final (S, G, ETR y Q por celda). |
 | `datos/` | Precipitación mensual del Cubo de datos IDEAM en la cuenca, tras el control de calidad. |
@@ -64,7 +69,7 @@ Los scripts esperan la estructura de carpetas del proyecto original:
 El Cubo de datos se descarga de https://bart.ideam.gov.co/meteorologia/DATOS/CUBO%20DE%20DATOS/. Se usan `prcp_dia_*.nc` (recortados
 a la cuenca) y `tmax_`, `tmin_`, `tmed_` y `humd_mes_prom_1981_2023.nc`.
 
-Python 3.13 con numpy, pandas, xarray, geopandas, rasterio, scipy, numba y matplotlib. Orden: 00 → 16 y luego
+Python 3.13 con numpy, pandas, xarray, geopandas, rasterio, scipy, numba y matplotlib. Orden: 00 → 18 (el 18 con el entorno de pywr del Trabajo 1) y luego
 `python codigo/sitio/construir.py`.
 
 ## Fuentes de datos

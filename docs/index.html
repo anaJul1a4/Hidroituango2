@@ -640,7 +640,7 @@ No son excluyentes: si las dos coinciden, la alerta es más firme.</li></ul>
 y 2015–16.</li></ul>
 <p class='note'>Barras: trimestres que sí fueron secos. Probabilidades de la validación cruzada (cada año sin conocerse a sí mismo). Con el KNN
 el rojo es más raro (5 % de los meses) pero acierta el 82 %.</p>
-</div><div><div class='tw'><table class='tb'><thead><tr><th></th><th>Verde (&lt; 20 %)</th><th>Amarillo (20–50 %)</th><th>Rojo (≥ 50 %)</th></tr></thead><tbody><tr><td>Logística · ONI + suelo</td><td>8 % (63 % de los meses)</td><td>33 % (26 % de los meses)</td><td>75 % (12 % de los meses)</td></tr><tr><td>KNN (k = 15)</td><td>7 % (56 % de los meses)</td><td>38 % (39 % de los meses)</td><td>82 % (5 % de los meses)</td></tr><tr><td>Logística · ONI</td><td>9 % (63 % de los meses)</td><td>40 % (26 % de los meses)</td><td>56 % (12 % de los meses)</td></tr></tbody></table></div></div></div></section><section class='slide' id='g-2026' data-g='g' data-sec='6 · Decisiones de generación'><p class='kicker k-data'>5 · aplicación · pronóstico emitido al final de octubre de 2026</p><h2>Con El Niño más fuerte del registro (ONI ASO = +2,46 °C), los análogos anticipan un verano de 2027 entre 35 % y 41 % por debajo de lo normal: alerta roja</h2>
+</div><div><div class='tw'><table class='tb'><thead><tr><th></th><th>Verde (&lt; 20 %)</th><th>Amarillo (20–50 %)</th><th>Rojo (≥ 50 %)</th></tr></thead><tbody><tr><td>Logística · ONI + suelo</td><td>8 % (63 % de los meses)</td><td>33 % (26 % de los meses)</td><td>75 % (12 % de los meses)</td></tr><tr><td>KNN (k = 15)</td><td>7 % (56 % de los meses)</td><td>38 % (39 % de los meses)</td><td>82 % (5 % de los meses)</td></tr><tr><td>Logística · ONI</td><td>9 % (63 % de los meses)</td><td>40 % (26 % de los meses)</td><td>56 % (12 % de los meses)</td></tr></tbody></table></div></div></div></section><section class='slide' id='g-2026' data-g='g' data-sec='6 · Decisiones de generación'><p class='kicker k-data'>5 · aplicación · pronóstico emitido al final de octubre de 2026</p><h2>Con El Niño más fuerte del registro (ONI ASO = +2,46 °C), los análogos anticipan una temporada seca de enero–abril de 2027 entre 34 % y 41 % por debajo de lo normal: alerta roja</h2>
 <div class='two fig'><div>
 <div class='chips' id='p26Vista'><button class='chip' type='button' data-v='pron' aria-pressed="true">Pronóstico nov 2026 – abr 2027</button><button class='chip' type='button' data-v='ver'>Estado inicial frente a XM</button></div>
 <p><b>Estado inicial.</b> El modelo abcd se extendió hasta octubre de 2026 con CHIRPS v2.0 igualado al Cubo (julio–septiembre de 2026 llovió
@@ -734,7 +734,26 @@ seis modelos coinciden en el signo: allí el cambio no es robusto.</p>
 <li>En SSP5-8.5 hacia 2071–2100 el contraste estacional crece: JJA más húmedo en el alto Cauca y el valle; DEF más seco en el cañón
 antioqueño, que es la zona que más aporta a la presa, y SON más seco en la vertiente de la cordillera Central.</li>
 <li>El acuerdo entre modelos es bajo en la mayor parte de la cuenca. Lo robusto es el aumento de la ETo, no el signo del cambio de la lluvia.</li></ul>
-</div><div class='panel'><a href='img/cmip6_mapas.webp?v=b4e0fd8f' target='_blank' rel='noopener' title='Abrir en tamaño completo'><img class='figimg' src='img/cmip6_mapas.webp?v=b4e0fd8f' width='3200' height='4493' alt='Cambio proyectado de la lluvia' loading='lazy'></a></div></div></section><section class='slide' id='cierre' data-g='d' data-sec='8 · Cierre'><p class='kicker k-data'>Respuestas</p><h2>Qué aprendimos y lo que sigue</h2>
+</div><div class='panel'><a href='img/cmip6_mapas.webp?v=b4e0fd8f' target='_blank' rel='noopener' title='Abrir en tamaño completo'><img class='figimg' src='img/cmip6_mapas.webp?v=b4e0fd8f' width='3200' height='4493' alt='Cambio proyectado de la lluvia' loading='lazy'></a></div></div></section><section class='slide' id='c-energia' data-g='c' data-sec='7 · Proyecciones'><p class='kicker k-data'>operación del embalse con pywr · pronóstico y proyecciones</p><h2>El riesgo inmediato está en una sequía como la de 2015–16: 3 de 15 análogos dejan a Ituango bajo su energía firme; a largo plazo, el año seco pierde un 20 % de energía en SSP5-8.5</h2>
+<div class='stackfig'><div class='txtcols'>
+<div><p><b>Pronóstico noviembre 2026 – abril 2027.</b> Las 15 trayectorias de los análogos se llevaron a escala diaria (forma diaria del mes
+análogo) y a la escala de XM, y se simularon con el modelo de operación del Trabajo 1 desde el estado real del embalse (374 de
+522 hm³ útiles el 2026-10-23), con 4 unidades (1200 MW) y la ENFICC de XM (10,9 GWh/día).</p>
+<ul class='pts'><li>En 12 de los 15 análogos la central cubre su ENFICC casi todo el periodo.</li>
+<li>En los tres análogos de 2015 (2015-09, 2015-10, 2015-11) queda entre 85 y 99 días por debajo, con un
+faltante de 298 a 429 GWh que habría que comprar en bolsa.</li>
+<li>Reservar agua para febrero–abril reduce ese faltante en 8 %:
+el embalse útil actual (522 hm³) equivale a unos 9 días del aporte pronosticado, así que la política ayuda poco.</li></ul></div>
+<div><p><b>Proyecciones CMIP6.</b> Para cada modelo y periodo se construyó una serie diaria de 30 años con la secuencia mensual del modelo y
+la forma diaria de 1981–2010, y se simuló la central completa (8 unidades, 2400 MW, caudal mínimo de 450 m³/s, curva guía del 50 %). Energía
+media de referencia: 15 072 GWh/año.</p>
+<ul class='pts'><li>La energía media cambia poco (−8 % a +3 %).</li>
+<li>La energía del año seco (excedida el 95 % de los años), que es la que respalda la energía firme, cae un 21 %
+desde 2041–2070 en SSP5-8.5, y la de diciembre–abril un 11 % hacia 2071–2100.</li></ul>
+<div class='tw'><table class='tb'><thead><tr><th></th><th>SSP2-4.5 · 2041–2070</th><th>SSP2-4.5 · 2071–2100</th><th>SSP5-8.5 · 2041–2070</th><th>SSP5-8.5 · 2071–2100</th></tr></thead><tbody><tr><td>Energía media (%)</td><td class='n'>1,0</td><td class='n'>−1,6</td><td class='n'>−5,4</td><td class='n'>−8,4</td></tr><tr><td>Energía del año seco, 5 % (%)</td><td class='n'>6,8</td><td class='n'>−9,8</td><td class='n'>−20,8</td><td class='n'>−20,2</td></tr><tr><td>Energía dic–abr (%)</td><td class='n'>6,7</td><td class='n'>−1,9</td><td class='n'>−5,4</td><td class='n'>−11,2</td></tr></tbody></table></div></div></div>
+<div class='panel'><a href='img/pywr_energia.webp?v=938ca16c' target='_blank' rel='noopener' title='Abrir en tamaño completo'><img class='figimg' src='img/pywr_energia.webp?v=938ca16c' width='3200' height='1036' alt='Energía en el pronóstico y en las proyecciones' loading='lazy'></a></div>
+<div class='tw'><table class='tb'><thead><tr><th></th><th>Energía nov–abr (GWh)</th><th>Energía feb–abr (GWh)</th><th>Faltante ENFICC (GWh)</th><th>Análogos con faltante de ENFICC</th><th>Faltante ENFICC, análogos tipo 2015 (GWh)</th></tr></thead><tbody><tr><td>Curva guía 50 %</td><td class='n'>4 259</td><td class='n'>1 785</td><td class='n'>0</td><td class='n'>3</td><td class='n'>374</td></tr><tr><td>Generar al máximo</td><td class='n'>4 298</td><td class='n'>1 713</td><td class='n'>0</td><td class='n'>3</td><td class='n'>402</td></tr><tr><td>Reservar para feb–abr</td><td class='n'>4 332</td><td class='n'>1 983</td><td class='n'>0</td><td class='n'>3</td><td class='n'>344</td></tr></tbody></table></div>
+</div></section><section class='slide' id='cierre' data-g='d' data-sec='8 · Cierre'><p class='kicker k-data'>Respuestas</p><h2>Qué aprendimos y lo que sigue</h2>
 <div class='two even'><div class='stack'>
 <div class='card lift'><h4>Datos</h4><p>El Cubo del IDEAM es la mejor referencia de lluvia mensual una vez limpio; CHIRPS v2.0 casi lo iguala.
 ERA5 y ERA5-Land necesitan corrección y aun corregidos no capturan bien la variabilidad mes a mes.</p></div>
@@ -743,10 +762,11 @@ ecuación empírica sin memoria no basta.</p></div>
 <div class='card lift'><h4>ENSO</h4><p>El Niño seca la lluvia en DEF y JJA, el suelo en todo el año y los caudales con 1–2 meses de rezago; el
 suelo prolonga la sequía hasta MAM.</p></div>
 <div class='card lift'><h4>Decisiones</h4><p>Con el ONI y el suelo de hoy, los análogos pronostican los próximos meses mejor que la persistencia, y la regresión logística da una alerta de trimestre seco confiable (con rojo, 3 de cada 4 trimestres fueron secos).</p></div>
-<div class='card lift'><h4>Clima futuro</h4><p>Con seis modelos CMIP6 corregidos por QDM, el caudal medio en la presa cambia poco, pero en SSP5-8.5 los estiajes se profundizan: más ETo y menos lluvia en diciembre–febrero.</p></div></div>
+<div class='card lift'><h4>Clima futuro</h4><p>Con seis modelos CMIP6 corregidos por QDM, el caudal medio en la presa cambia poco, pero en SSP5-8.5 los estiajes se profundizan: más ETo y menos lluvia en diciembre–febrero, y la energía del año seco cae cerca de 20 %.</p></div></div>
 <div class='panel'><h3>Lo que sigue</h3><ul class='pts'>
 <li><b>Pronóstico en tiempo real</b> para noviembre de 2026 – abril de 2027, con El Niño en curso: extender CHIRPS y la ETo hasta hoy para calcular el estado del suelo y emitir el pronóstico de análogos y la alerta.</li>
-<li><b>Llevar los pronósticos y las proyecciones a energía</b> con el modelo de operación del embalse (pywr) del Trabajo 1.</li>
+<li><b>Actualizar el pronóstico cada mes</b> con CHIRPS, el ONI y los aportes de XM, y llevarlo a la operación del embalse.</li>
+<li><b>Energía firme bajo cambio climático</b>: repetir la simulación con más modelos y miembros, y con la curva cota–volumen real del embalse.</li>
 
 </ul>
 <p class='note'>Datos: IDEAM (Cubo de datos y caudales), CHIRPS (CHC–UCSB), ERA5 y ERA5-Land (ECMWF–Copernicus), ONI (NOAA CPC).</p>
