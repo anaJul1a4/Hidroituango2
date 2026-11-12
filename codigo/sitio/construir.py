@@ -214,6 +214,7 @@ limpio y ERA5 corregido.</p></button>
 <button class='card lift pick' type='button' data-go='s-mapas'><h4>4 · Humedad del suelo</h4><p>El suelo alarga la sequía de El Niño.</p></button>
 <button class='card lift pick' type='button' data-go='q-comp'><h4>5 · Caudales</h4><p>Observados y simulados en El Niño y La Niña.</p></button>
 <button class='card lift pick' type='button' data-go='g-intro'><h4>6 · Decisiones de generación</h4><p>KNN, regresión logística, EOF y Fourier.</p></button>
+<button class='card lift pick' type='button' data-go='c-tam'><h4>7 · Proyecciones CMIP6</h4><p>Seis modelos, dos escenarios, el abcd hasta 2100.</p></button>
 </div></section>""")
 
 # ---- 1. datos
@@ -499,7 +500,7 @@ acertó cada nivel entre 1982 y 2017.</p></button>
 variabilidad de la cuenca, y lo ven igual todos los productos?</p></button>
 <button class='card lift pick' type='button' data-go='g-fourier'><h4>Transformada de Fourier</h4><p>La cuenca como filtro: por qué los
 caudales responden al ENSO más que la lluvia.</p></button>
-<div class='card'><h4>Mapeo de cuantiles con deltas (QDM)</h4><p>Para las proyecciones CMIP6, cuando se descarguen.</p></div>
+<button class='card lift pick' type='button' data-go='c-qdm'><h4>Mapeo de cuantiles con deltas (QDM)</h4><p>Corrección de los modelos CMIP6 para las proyecciones de la sección 7.</p></button>
 </div>
 <p class='note'>Todo se evalúa con validación cruzada dejando un año fuera (1982–2017, caudal observado en la presa): cada pronóstico se
 hace sin conocer su año ni el semestre anterior y el siguiente.</p>""", g="g")
@@ -604,8 +605,97 @@ lluvia que los produce. Esa memoria es la que aprovechan el KNN y la regresión 
 {tabla(tfb, {"r(1 mes)": 2, "escala integral de tiempo (meses)": 1, "varianza < 1 año (%)": 0, "varianza 2–7 años, ENSO (%)": 0, "varianza > 7 años (%)": 0})}
 </div><div class='panel'>{fig(FG / 'fig_fourier.png', 'fourier', 'Espectros, ganancia y coherencia')}</div></div>""", g="g")
 
+# ---- 7. proyecciones CMIP6
+CM = R2 / "11_cmip6"
+cm_s = json.loads((CM / "sitio.json").read_text(encoding="utf-8"))
+D["cmip"] = cm_s
+tam = pd.read_csv(CM / "tamizaje_modelos.csv", index_col=0)
+cpm = pd.read_csv(CM / "cambios_por_modelo.csv")
+cme = pd.read_csv(CM / "cambios_conjunto.csv", header=[0, 1], index_col=[0, 1])
+med_ = cme["mediana"]; mn_ = cme["mínimo"]; mx_ = cme["máximo"]
+el = list(tam.index[tam.elegido])
+t_tam = tam.loc[el, ["familia", "resolución (°)", "r del ciclo", "RMSE del ciclo normalizado", "sesgo (%)"]].copy()
+t_tam.index.name = "modelo elegido"
+t_c = pd.DataFrame({f"{e} · {p}": {"Temperatura (°C)": med_.loc[(e, p), "ΔT (°C)"], "Lluvia (%)": med_.loc[(e, p), "ΔP (%)"],
+                                   "ETo (%)": med_.loc[(e, p), "ΔETo (%)"], "Humedad del suelo (%)": med_.loc[(e, p), "ΔS (%)"],
+                                   "Caudal medio en la presa (%)": med_.loc[(e, p), "ΔQ presa (%)"],
+                                   "Caudal bajo, percentil 10 (%)": med_.loc[(e, p), "ΔQ10 presa (%)"],
+                                   "Trimestres secos (% de los meses)": med_.loc[(e, p), "trimestres secos (%)"]}
+                    for e in ["SSP2-4.5", "SSP5-8.5"] for p in ["2041–2070", "2071–2100"]})
+t_c.index.name = "mediana de los 6 modelos"
+q85 = (mn_.loc[("SSP5-8.5", "2071–2100"), "ΔQ presa (%)"], mx_.loc[("SSP5-8.5", "2071–2100"), "ΔQ presa (%)"])
+cy85 = cm_s["ciclo"]["ssp585"]
+dfm = 100 * (np.mean(cy85["2071–2100"]["med"][1:3]) / np.mean(cy85["1981–2010"]["med"][1:3]) - 1)
+
+slide("c-tam", "7 · Proyecciones", "proyecciones CMIP6 · selección de modelos por su ciclo anual",
+      "De 28 modelos CMIP6, sólo unos pocos reproducen el régimen bimodal de la cuenca; se eligieron seis, uno por familia", f"""
+<div class='two fig'><div>
+<p>Se revisaron los 28 modelos del archivo CMIP6 (copia pública de Pangeo) que tienen lluvia, Tmax y Tmin mensuales en el periodo
+histórico y en SSP2-4.5 y SSP5-8.5. Para cada uno se calculó el ciclo anual de la lluvia de la cuenca en 1981–2010 y se comparó con el
+del Cubo por su forma (correlación y error del ciclo normalizado por su media) y, con la mitad del peso, por su sesgo.</p>
+<ul class='pts'><li>Se eligió el mejor de cada familia de modelos (los que comparten componente atmosférico no son independientes), hasta seis.</li>
+<li>Los modelos de la familia del Hadley Centre (ACCESS-CM2, UKESM1, HadGEM3) y los CNRM no reproducen el ciclo bimodal (r ≤ 0,35).</li>
+<li>El sesgo de la media no descarta un modelo: FGOALS-g3 cuadruplica la lluvia pero tiene la forma correcta del ciclo, y el mapeo de
+cuantiles corrige la magnitud.</li></ul>
+{tabla(t_tam, {"resolución (°)": 2, "r del ciclo": 2, "RMSE del ciclo normalizado": 2, "sesgo (%)": 0})}
+<p class='tryit'>pasa el cursor sobre las líneas grises: son los 22 modelos descartados.</p>
+</div><div class='panel'><div class='tshost' id='tamFig' style='height:500px'></div></div></div>""", g="c")
+
+slide("c-qdm", "7 · Proyecciones", "proyecciones CMIP6 · mapeo de cuantiles con deltas (QDM)",
+      "La corrección iguala el clima simulado de 1981–2010 al del Cubo y conserva el cambio que proyecta cada modelo en cada cuantil", f"""
+<div class='two even'><div>
+<p>Cannon et al. (2015) mostraron que el mapeo de cuantiles tradicional puede inflar el cambio proyectado de los extremos. El QDM lo evita:
+corrige la distribución del periodo histórico y le suma (o multiplica) el cambio del modelo en ese mismo cuantil.</p>
+<p class='eq'>τ = F<sub>modelo, ventana</sub>(x) &nbsp;·&nbsp; Δ = x / F<sub>modelo, 1981–2010</sub><sup>−1</sup>(τ)</p>
+<p class='eq'>x<sub>corregido</sub> = F<sub>Cubo, 1981–2010</sub><sup>−1</sup>(τ) · Δ</p>
+<ul class='pts'><li>Por celda (las 376 del Cubo) y por mes calendario; ventanas de 30 años centradas en cada década.</li>
+<li>Lluvia: Δ multiplicativo; Tmax y Tmin: Δ aditivo.</li>
+<li>Con Tmax y Tmin corregidas se calcula la ETo de Hargreaves y todo entra al modelo abcd final, con sus parámetros calibrados.</li>
+<li>Los cambios se miden siempre dentro de cada modelo: su futuro frente a su propio 1981–2010 corregido.</li></ul>
+</div><div>
+{tabla(t_c, {c: 1 for c in t_c.columns})}
+<p class='note'>Trimestres secos: meses en que el aporte medio de los tres siguientes queda bajo el percentil 20 de 1981–2010 (la definición de
+la alerta del numeral 5); en 1981–2010 es 20 % por construcción.</p></div></div>""", g="c")
+
+slide("c-cambios", "7 · Proyecciones", "proyecciones CMIP6 · cambios en la cuenca",
+      f"El caudal medio casi no cambia, pero los estiajes sí: en SSP5-8.5 el caudal bajo cae {f(-med_.loc[('SSP5-8.5', '2071–2100'), 'ΔQ10 presa (%)'])} % y los trimestres secos pasan de 20 % a {f(med_.loc[('SSP5-8.5', '2071–2100'), 'trimestres secos (%)'])} % de los meses", f"""
+<div class='stackfig'><div class='txtcols'>
+<ul class='pts'><li><b>Temperatura y ETo</b>: los seis modelos coinciden. Hacia 2071–2100 la cuenca se calienta {f(med_.loc[('SSP2-4.5', '2071–2100'), 'ΔT (°C)'], 1)} °C
+(SSP2-4.5) o {f(med_.loc[('SSP5-8.5', '2071–2100'), 'ΔT (°C)'], 1)} °C (SSP5-8.5), y la ETo sube {f(med_.loc[('SSP2-4.5', '2071–2100'), 'ΔETo (%)'])} % y {f(med_.loc[('SSP5-8.5', '2071–2100'), 'ΔETo (%)'])} %.</li>
+<li><b>Lluvia</b>: la mediana cambia poco ({f(med_.loc[('SSP5-8.5', '2071–2100'), 'ΔP (%)'], 0)} % a {f(med_.loc[('SSP2-4.5', '2041–2070'), 'ΔP (%)'], 0)} %), pero los modelos no coinciden
+en el signo: van de {f(mn_.loc[('SSP5-8.5', '2071–2100'), 'ΔP (%)'])} % a {f(mx_.loc[('SSP5-8.5', '2071–2100'), 'ΔP (%)'], 0)} % en SSP5-8.5.</li></ul>
+<ul class='pts'><li><b>Caudal medio en la presa</b>: entre {f(med_['ΔQ presa (%)'].min())} % y {f(med_['ΔQ presa (%)'].max(), 0)} % según el escenario y el periodo,
+con un rango entre modelos de {f(q85[0])} % a +{f(q85[1])} % en SSP5-8.5 hacia 2071–2100.</li>
+<li><b>Estiajes</b>: con más evaporación, los meses secos se vuelven más secos aunque la lluvia anual no cambie. Para la generación, este es
+el resultado que importa: la energía firme depende de los meses secos, no del promedio.</li></ul></div>
+<div class='panel'>{fig(R2 / '07_figuras' / 'fig_cmip6_cambios.png', 'cmip6_cambios', 'Cambios proyectados por modelo')}</div></div>""", g="c")
+
+slide("c-ciclo", "7 · Proyecciones", "proyecciones CMIP6 · ciclo anual del aporte a Hidroituango",
+      f"En SSP5-8.5 la temporada seca de comienzo de año se debilita: el aporte de febrero–marzo baja {f(-dfm)} % hacia 2071–2100", f"""
+<div class='two fig'><div>
+{chips('cmEsc', [('ssp245', 'SSP2-4.5'), ('ssp585', 'SSP5-8.5')], 1)}
+{chips('cmVista', [('ciclo', 'Ciclo anual por periodo'), ('anual', 'Aporte anual 1981–2100')])}
+<p>Aporte medio mensual a la presa simulado por el modelo abcd con el clima de cada modelo corregido (mediana de los seis y su rango).</p>
+<ul class='pts'><li>El ciclo bimodal se conserva, pero en SSP5-8.5 la lluvia se redistribuye: DEF pierde lluvia y MAM–JJA la ganan, así que
+el estiaje de enero–marzo se vuelve más profundo y el pico de mayo más alto.</li>
+<li>La banda es ancha: la incertidumbre entre modelos es mayor que el cambio de la mediana. Una planeación robusta debe considerar el rango
+y no sólo la mediana.</li></ul>
+<p class='tryit'>cambia a «Aporte anual» para ver la media móvil de 10 años de cada modelo.</p>
+</div><div class='panel'><div class='tshost' id='cmFig' style='height:500px'></div></div></div>""", g="c")
+
+slide("c-mapas", "7 · Proyecciones", "proyecciones CMIP6 · cambio espacial de la lluvia",
+      "Más lluvia en el alto Cauca en junio–agosto y menos en el cañón en diciembre–febrero, con poco acuerdo entre modelos", f"""
+<div class='two fig'><div>
+<p>Mediana de los seis modelos del cambio de la lluvia en cada celda, por trimestre. Los puntos marcan las celdas donde menos de cinco de los
+seis modelos coinciden en el signo: allí el cambio no es robusto.</p>
+<ul class='pts'><li>En SSP2-4.5 casi toda la cuenca recibe algo más de lluvia (+2 a +10 %), sobre todo en DEF y MAM.</li>
+<li>En SSP5-8.5 hacia 2071–2100 el contraste estacional crece: JJA más húmedo en el alto Cauca y el valle; DEF más seco en el cañón
+antioqueño, que es la zona que más aporta a la presa, y SON más seco en la vertiente de la cordillera Central.</li>
+<li>El acuerdo entre modelos es bajo en la mayor parte de la cuenca. Lo robusto es el aumento de la ETo, no el signo del cambio de la lluvia.</li></ul>
+</div><div class='panel'>{fig(R2 / '07_figuras' / 'fig_cmip6_mapas_P.png', 'cmip6_mapas', 'Cambio proyectado de la lluvia')}</div></div>""", g="c")
+
 # ---- cierre
-slide("cierre", "7 · Cierre", "Respuestas", "Qué aprendimos y lo que sigue", f"""
+slide("cierre", "8 · Cierre", "Respuestas", "Qué aprendimos y lo que sigue", f"""
 <div class='two even'><div class='stack'>
 <div class='card lift'><h4>Datos</h4><p>El Cubo del IDEAM es la mejor referencia de lluvia mensual una vez limpio; CHIRPS v2.0 casi lo iguala.
 ERA5 y ERA5-Land necesitan corrección y aun corregidos no capturan bien la variabilidad mes a mes.</p></div>
@@ -613,17 +703,17 @@ ERA5 y ERA5-Land necesitan corrección y aun corregidos no capturan bien la vari
 ecuación empírica sin memoria no basta.</p></div>
 <div class='card lift'><h4>ENSO</h4><p>El Niño seca la lluvia en DEF y JJA, el suelo en todo el año y los caudales con 1–2 meses de rezago; el
 suelo prolonga la sequía hasta MAM.</p></div>
-<div class='card lift'><h4>Decisiones</h4><p>Con el ONI y el suelo de hoy, los análogos pronostican los próximos meses mejor que la persistencia, y la regresión logística da una alerta de trimestre seco confiable (con rojo, 3 de cada 4 trimestres fueron secos).</p></div></div>
+<div class='card lift'><h4>Decisiones</h4><p>Con el ONI y el suelo de hoy, los análogos pronostican los próximos meses mejor que la persistencia, y la regresión logística da una alerta de trimestre seco confiable (con rojo, 3 de cada 4 trimestres fueron secos).</p></div>
+<div class='card lift'><h4>Clima futuro</h4><p>Con seis modelos CMIP6 corregidos por QDM, el caudal medio en la presa cambia poco, pero en SSP5-8.5 los estiajes se profundizan: más ETo y menos lluvia en diciembre–febrero.</p></div></div>
 <div class='panel'><h3>Lo que sigue</h3><ul class='pts'>
 <li><b>Pronóstico en tiempo real</b> para noviembre de 2026 – abril de 2027, con El Niño en curso: extender CHIRPS y la ETo hasta hoy para calcular el estado del suelo y emitir el pronóstico de análogos y la alerta.</li>
-<li><b>Llevar los pronósticos a energía</b> con el modelo de operación del embalse (pywr) del Trabajo 1.</li>
-<li><b>Proyecciones CMIP6</b> para el sector hidroeléctrico: selección de modelos por su ciclo anual, corrección con mapeo de cuantiles con
-deltas y escenarios SSP llevados al abcd y a la operación del embalse (pywr).</li>
+<li><b>Llevar los pronósticos y las proyecciones a energía</b> con el modelo de operación del embalse (pywr) del Trabajo 1.</li>
+
 </ul>
 <p class='note'>Datos: IDEAM (Cubo de datos y caudales), CHIRPS (CHC–UCSB), ERA5 y ERA5-Land (ECMWF–Copernicus), ONI (NOAA CPC).</p>
 </div></div>""")
 
-slide("refs", "7 · Cierre", "Referencias", "Referencias", """
+slide("refs", "8 · Cierre", "Referencias", "Referencias", """
 <ul class='pts refs'>
 <li>Allen, R. G., Pereira, L. S., Raes, D. y Smith, M. (1998). <i>Crop evapotranspiration</i>. FAO Irrigation and Drainage Paper 56, Roma.</li>
 <li>Budyko, M. I. (1974). <i>Climate and Life</i>. Academic Press.</li>
@@ -641,6 +731,9 @@ monthly water balance model for the conterminous United States. <i>Water Resourc
 <li>Lall, U. y Sharma, A. (1996). A nearest neighbor bootstrap for resampling hydrologic time series. <i>Water Resources Research</i>, 32(3), 679–693.</li>
 <li>North, G. R., Bell, T. L., Cahalan, R. F. y Moeng, F. J. (1982). Sampling errors in the estimation of empirical orthogonal functions. <i>Monthly Weather Review</i>, 110, 699–706.</li>
 <li>Welch, P. (1967). The use of fast Fourier transform for the estimation of power spectra. <i>IEEE Transactions on Audio and Electroacoustics</i>, 15(2), 70–73.</li>
+<li>Cannon, A. J., Sobie, S. R. y Murdock, T. Q. (2015). Bias correction of GCM precipitation by quantile mapping: How well do methods preserve changes in quantiles and extremes? <i>Journal of Climate</i>, 28(17), 6938–6959.</li>
+<li>Eyring, V. et al. (2016). Overview of the Coupled Model Intercomparison Project Phase 6 (CMIP6) experimental design and organization. <i>Geoscientific Model Development</i>, 9, 1937–1965.</li>
+<li>O'Neill, B. C. et al. (2016). The Scenario Model Intercomparison Project (ScenarioMIP) for CMIP6. <i>Geoscientific Model Development</i>, 9, 3461–3482.</li>
 <li>Thomas, H. A. (1981). <i>Improved methods for national water assessment</i>. U.S. Water Resources Council, Washington.</li>
 </ul>""")
 
@@ -659,7 +752,7 @@ def limpio(o):
 
 nav = "".join(f"<button type='button' class='mod' data-go='{g}'><span>{n}</span> {t}</button>" for g, n, t in
               [("d-cubo", "1", "Datos"), ("m-como", "2", "Modelo abcd"), ("p-mapas", "3", "ENSO y lluvia"),
-               ("s-mapas", "4", "Suelo"), ("q-comp", "5", "Caudales"), ("g-intro", "6", "Decisiones"), ("cierre", "7", "Cierre")])
+               ("s-mapas", "4", "Suelo"), ("q-comp", "5", "Caudales"), ("g-intro", "6", "Decisiones"), ("c-tam", "7", "Proyecciones"), ("cierre", "8", "Cierre")])
 css = (SITIO / "estilo_deck.css").read_text(encoding="utf-8") + (SITIO / "estilo_extra.css").read_text(encoding="utf-8")
 js = (SITIO / "graficas.js").read_text(encoding="utf-8")
 pagina = f"""<!doctype html>

@@ -195,7 +195,8 @@ for ax, (v, t, cm, cl) in zip(axs, [(mem.values, "Memoria: autocorrelación de 1
                                      [0, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 1.0]),
                                     (rez.values.astype(float), "Rezago de la respuesta de S\na la lluvia (meses)", "Oranges",
                                      [-0.5, 0.5, 1.5, 2.5, 3.5])]):
-    cmp = ListedColormap(plt.get_cmap(cm)(np.linspace(0.15, 0.95, len(cl) - 1)))
+    cmp = (ListedColormap(plt.get_cmap("RdYlBu")(np.linspace(0.05, 0.95, len(cl) - 1))) if cm == "Blues"
+           else ListedColormap(["#9aa3b2", "#e8b04a", "#ea580c", "#b91c1c"]))   # tonos distintos, no grados de un color
     im = ax.pcolormesh(lon, lat, malla(v), cmap=cmp, norm=BoundaryNorm(cl, cmp.N), shading="nearest")
     cu.boundary.plot(ax=ax, color="k", lw=0.7)
     ax.set_xticks([]); ax.set_yticks([]); ax.set_aspect("equal"); ax.set_title(t, fontsize=10); ax.set_xlabel(""); ax.set_ylabel("")

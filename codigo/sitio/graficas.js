@@ -195,6 +195,38 @@ const G = {
       { hovermode: "x unified", xaxis: ax("", { type: "date" }), yaxis: ax("Componente principal 1"),
         yaxis2: ax("ONI (°C)", { overlaying: "y", side: "right", showgrid: false, autorange: "reversed" }), margin: { l: 56, r: 56, t: 34, b: 36 } });
   },
+  "c-tam"() {
+    const c = D.cmip, el = c.elegidos, colm = ["#1d4ed8", "#b91c1c", "#b07a0c", css("--fg"), "#ea580c", "#9aa3b2"];
+    const t = [];
+    Object.keys(c.tam).filter(m => m !== "Cubo IDEAM" && !el.includes(m)).forEach(m => t.push({ type: "scatter", mode: "lines", x: MESES, y: c.tam[m], name: m,
+      line: { color: css("--line"), width: 1 }, showlegend: false, hovertemplate: `${m} (descartado) · %{x}: %{y:.2f}<extra></extra>` }));
+    el.forEach((m, i) => t.push(linea(m, MESES, c.tam[m], colm[i], { line: { color: colm[i], width: 2.2 }, marker: { size: 4, color: colm[i] }, hovertemplate: `${m} · %{x}: %{y:.2f}<extra></extra>` })));
+    t.push(linea("Cubo IDEAM", MESES, c.tam["Cubo IDEAM"], css("--fg"), { line: { color: css("--fg"), width: 3.4, dash: "dash" }, marker: { size: 6, color: css("--fg") }, hovertemplate: "Cubo IDEAM · %{x}: %{y:.2f}<extra></extra>" }));
+    plot("tamFig", t, { xaxis: ax(""), yaxis: ax("Lluvia del mes / lluvia media mensual (1981–2010)") });
+  },
+  "c-ciclo"() {
+    const c = D.cmip, e = ESTADO.cmEsc, v = ESTADO.cmVista;
+    const colp = { "1981–2010": css("--fg"), "2021–2050": "#9aa3b2", "2041–2070": "#b07a0c", "2071–2100": "#b91c1c" };
+    if (v === "ciclo") {
+      const t = [linea("Observado 1981–2010", MESES, c.ciclo.obs, "#9aa3b2", { mode: "lines", line: { color: css("--muted"), width: 1.6, dash: "dot" }, hovertemplate: "Observado · %{x}: %{y:,.0f} m³/s<extra></extra>" })];
+      ["2041–2070", "2071–2100"].forEach(p => {
+        const d = c.ciclo[e][p];
+        t.push({ type: "scatter", mode: "lines", x: MESES, y: d.max, line: { width: 0 }, showlegend: false, hoverinfo: "skip" });
+        t.push({ type: "scatter", mode: "lines", x: MESES, y: d.min, fill: "tonexty", fillcolor: colp[p] + "22", line: { width: 0 }, name: `Rango ${p}`, hoverinfo: "skip" });
+      });
+      Object.keys(colp).forEach(p => t.push(linea(p === "1981–2010" ? "1981–2010 simulado" : p, MESES, c.ciclo[e][p].med, colp[p],
+        { line: { color: colp[p], width: p === "1981–2010" ? 3 : 2 }, customdata: c.ciclo[e][p].min.map((m, i) => [m, c.ciclo[e][p].max[i]]),
+          hovertemplate: `${p} · %{x}: %{y:,.0f} m³/s (modelos: %{customdata[0]:,.0f}–%{customdata[1]:,.0f})<extra></extra>` })));
+      plot("cmFig", t, { hovermode: "x unified", xaxis: ax(""), yaxis: ax("Aporte medio mensual a la presa (m³/s)", { rangemode: "tozero" }) });
+    } else {
+      const a = c.anual[e], colm = ["#1d4ed8", "#b91c1c", "#b07a0c", css("--fg"), "#ea580c", "#9aa3b2"];
+      const t = [{ type: "scatter", mode: "lines", x: a.t, y: a.max, line: { width: 0 }, showlegend: false, hoverinfo: "skip" },
+        { type: "scatter", mode: "lines", x: a.t, y: a.min, fill: "tonexty", fillcolor: "rgba(154,163,178,.25)", line: { width: 0 }, name: "Rango de los 6 modelos", hoverinfo: "skip" }];
+      c.elegidos.forEach((m, i) => t.push({ type: "scatter", mode: "lines", x: a.t, y: a[m], name: m, line: { color: colm[i], width: 1.2 }, hovertemplate: `${m}: %{y:+.0f} %<extra></extra>` }));
+      t.push({ type: "scatter", mode: "lines", x: a.t, y: a.med, name: "Mediana", line: { color: css("--fg"), width: 3 }, hovertemplate: "Mediana: %{y:+.0f} %<extra></extra>" });
+      plot("cmFig", t, { hovermode: "x unified", xaxis: ax(""), yaxis: ax("Aporte anual frente a 1981–2010 (%, media móvil de 10 años)", { zeroline: true, zerolinecolor: css("--muted") }) });
+    }
+  },
   "q-rez"() {
     const k = [0, 1, 2, 3, 4, 5, 6];
     const s = [["ONI → lluvia", D.rez.P, "#60a5fa", "solid"], ["ONI → suelo", D.rez.S, "#b07a0c", "solid"],
