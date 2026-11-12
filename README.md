@@ -3,7 +3,7 @@
 Trabajo 2 de Hidrometeorología (Universidad Nacional de Colombia, sede Medellín). Continúa el
 [Trabajo 1: balance hídrico de largo plazo](https://anajul1a4.github.io/balance-hidrico-hidroituango/).
 
-**Sitio (presentación interactiva):** https://anajul1a4.github.io/hidroituango2/
+**Sitio (presentación interactiva):** https://anajul1a4.github.io/Hidroituango2/
 
 ## Qué hay
 
