@@ -1,0 +1,177 @@
+﻿producto,ETo,modelo,estación,codigo,periodo,n,NSE,KGE,RMSE,PBIAS,r
+Cubo IDEAM,Penman-Monteith,abcd semidistribuido,La Balsa,26027010,calibración 1982–2005,244,0.29,0.679,67.764,27.391,0.833
+Cubo IDEAM,Penman-Monteith,abcd semidistribuido,La Balsa,26027010,validación 2006–2023,117,0.13,0.651,72.323,26.883,0.777
+Cubo IDEAM,Penman-Monteith,abcd semidistribuido,Juanchito,26067010,calibración 1982–2005,248,0.741,0.847,61.719,10.967,0.897
+Cubo IDEAM,Penman-Monteith,abcd semidistribuido,Juanchito,26067010,validación 2006–2023,116,0.57,0.693,99.142,-13.726,0.83
+Cubo IDEAM,Penman-Monteith,abcd semidistribuido,La Victoria,26107070,calibración 1982–2005,263,0.802,0.884,81.315,5.574,0.904
+Cubo IDEAM,Penman-Monteith,abcd semidistribuido,La Victoria,26107070,validación 2006–2023,106,0.778,0.802,97.307,-1.491,0.884
+Cubo IDEAM,Penman-Monteith,abcd semidistribuido,La Virginia,26177030,calibración 1982–2005,287,0.842,0.911,95.953,0.251,0.919
+Cubo IDEAM,Penman-Monteith,abcd semidistribuido,La Virginia,26177030,validación 2006–2023,215,0.836,0.8,129.572,-7.201,0.93
+Cubo IDEAM,Penman-Monteith,abcd semidistribuido,Irra,26167070,calibración 1982–2005,284,0.84,0.909,121.508,2.479,0.919
+Cubo IDEAM,Penman-Monteith,abcd semidistribuido,Irra,26167070,validación 2006–2023,192,0.847,0.904,141.002,-0.804,0.921
+Cubo IDEAM,Penman-Monteith,abcd semidistribuido,La Pintada,26187110,calibración 1982–2005,288,0.831,0.9,125.149,5.514,0.92
+Cubo IDEAM,Penman-Monteith,abcd semidistribuido,La Pintada,26187110,validación 2006–2023,211,0.827,0.799,171.867,2.269,0.915
+Cubo IDEAM,Penman-Monteith,abcd semidistribuido,Puente Iglesias,26207030,calibración 1982–2005,276,0.814,0.896,135.707,4.893,0.911
+Cubo IDEAM,Penman-Monteith,abcd semidistribuido,Puente Iglesias,26207030,validación 2006–2023,185,0.827,0.794,178.32,5.769,0.923
+Cubo IDEAM,Penman-Monteith,abcd semidistribuido,Bolombolo,26207080,calibración 1982–2005,288,0.832,0.899,148.952,1.839,0.914
+Cubo IDEAM,Penman-Monteith,abcd semidistribuido,Bolombolo,26207080,validación 2006–2023,211,0.786,0.786,212.408,10.18,0.912
+Cubo IDEAM,Penman-Monteith,abcd semidistribuido,Cañafisto,26217050,calibración 1982–2005,284,0.814,0.889,165.423,1.955,0.904
+Cubo IDEAM,Penman-Monteith,abcd semidistribuido,Cañafisto,26217050,validación 2006–2023,75,0.829,0.855,207.094,6.364,0.921
+Cubo IDEAM,Penman-Monteith,abcd semidistribuido,Presa,PRESA,calibración 1982–2005,257,0.759,0.878,185.184,-0.155,0.885
+Cubo IDEAM,Penman-Monteith,abcd semidistribuido,Presa,PRESA,validación 2006–2023,137,0.802,0.836,234.001,13.905,0.937
+Cubo IDEAM,Penman-Monteith,abcd agregado,Presa,PRESA,calibración 1982–2005,257,0.768,0.883,181.672,3.788,0.89
+Cubo IDEAM,Penman-Monteith,abcd agregado,Presa,PRESA,validación 2006–2023,137,0.827,0.872,219.097,11.234,0.938
+CHIRPS v2.0,Penman-Monteith,abcd semidistribuido,La Balsa,26027010,calibración 1982–2005,244,0.691,0.842,44.698,-0.412,0.843
+CHIRPS v2.0,Penman-Monteith,abcd semidistribuido,La Balsa,26027010,validación 2006–2023,117,0.527,0.768,53.339,-5.033,0.795
+CHIRPS v2.0,Penman-Monteith,abcd semidistribuido,Juanchito,26067010,calibración 1982–2005,248,0.824,0.912,50.845,-0.129,0.912
+CHIRPS v2.0,Penman-Monteith,abcd semidistribuido,Juanchito,26067010,validación 2006–2023,116,0.236,0.642,132.185,-27.177,0.832
+CHIRPS v2.0,Penman-Monteith,abcd semidistribuido,La Victoria,26107070,calibración 1982–2005,263,0.833,0.914,74.627,0.263,0.915
+CHIRPS v2.0,Penman-Monteith,abcd semidistribuido,La Victoria,26107070,validación 2006–2023,106,0.694,0.817,114.287,-9.278,0.857
+CHIRPS v2.0,Penman-Monteith,abcd semidistribuido,La Virginia,26177030,calibración 1982–2005,287,0.819,0.899,102.864,-0.144,0.907
+CHIRPS v2.0,Penman-Monteith,abcd semidistribuido,La Virginia,26177030,validación 2006–2023,215,0.743,0.779,162.307,-10.412,0.885
+CHIRPS v2.0,Penman-Monteith,abcd semidistribuido,Irra,26167070,calibración 1982–2005,284,0.8,0.884,136.005,1.372,0.897
+CHIRPS v2.0,Penman-Monteith,abcd semidistribuido,Irra,26167070,validación 2006–2023,192,0.732,0.851,186.836,-6.754,0.872
+CHIRPS v2.0,Penman-Monteith,abcd semidistribuido,La Pintada,26187110,calibración 1982–2005,288,0.792,0.881,138.713,7.786,0.91
+CHIRPS v2.0,Penman-Monteith,abcd semidistribuido,La Pintada,26187110,validación 2006–2023,211,0.754,0.807,204.588,-2.274,0.87
+CHIRPS v2.0,Penman-Monteith,abcd semidistribuido,Puente Iglesias,26207030,calibración 1982–2005,276,0.804,0.89,139.221,4.86,0.906
+CHIRPS v2.0,Penman-Monteith,abcd semidistribuido,Puente Iglesias,26207030,validación 2006–2023,185,0.768,0.801,206.95,-0.597,0.877
+CHIRPS v2.0,Penman-Monteith,abcd semidistribuido,Bolombolo,26207080,calibración 1982–2005,288,0.809,0.882,158.782,0.406,0.9
+CHIRPS v2.0,Penman-Monteith,abcd semidistribuido,Bolombolo,26207080,validación 2006–2023,211,0.737,0.787,235.481,3.071,0.861
+CHIRPS v2.0,Penman-Monteith,abcd semidistribuido,Cañafisto,26217050,calibración 1982–2005,284,0.775,0.866,181.951,0.325,0.882
+CHIRPS v2.0,Penman-Monteith,abcd semidistribuido,Cañafisto,26217050,validación 2006–2023,75,0.812,0.836,216.997,-5.265,0.909
+CHIRPS v2.0,Penman-Monteith,abcd semidistribuido,Presa,PRESA,calibración 1982–2005,257,0.741,0.871,191.873,0.04,0.871
+CHIRPS v2.0,Penman-Monteith,abcd semidistribuido,Presa,PRESA,validación 2006–2023,137,0.807,0.82,231.274,8.492,0.915
+CHIRPS v2.0,Penman-Monteith,abcd agregado,Presa,PRESA,calibración 1982–2005,257,0.791,0.895,172.524,0.285,0.895
+CHIRPS v2.0,Penman-Monteith,abcd agregado,Presa,PRESA,validación 2006–2023,137,0.879,0.881,182.736,5.048,0.944
+CHIRPS v3.0,Penman-Monteith,abcd semidistribuido,La Balsa,26027010,calibración 1982–2005,244,0.357,0.702,64.482,22.438,0.804
+CHIRPS v3.0,Penman-Monteith,abcd semidistribuido,La Balsa,26027010,validación 2006–2023,117,0.299,0.681,64.911,19.02,0.799
+CHIRPS v3.0,Penman-Monteith,abcd semidistribuido,Juanchito,26067010,calibración 1982–2005,248,0.652,0.81,71.54,10.944,0.85
+CHIRPS v3.0,Penman-Monteith,abcd semidistribuido,Juanchito,26067010,validación 2006–2023,116,0.546,0.735,101.976,-16.011,0.839
+CHIRPS v3.0,Penman-Monteith,abcd semidistribuido,La Victoria,26107070,calibración 1982–2005,263,0.662,0.806,106.093,10.734,0.847
+CHIRPS v3.0,Penman-Monteith,abcd semidistribuido,La Victoria,26107070,validación 2006–2023,106,0.718,0.833,109.699,-1.505,0.851
+CHIRPS v3.0,Penman-Monteith,abcd semidistribuido,La Virginia,26177030,calibración 1982–2005,287,0.74,0.854,123.298,1.515,0.865
+CHIRPS v3.0,Penman-Monteith,abcd semidistribuido,La Virginia,26177030,validación 2006–2023,215,0.733,0.759,165.532,-11.926,0.888
+CHIRPS v3.0,Penman-Monteith,abcd semidistribuido,Irra,26167070,calibración 1982–2005,284,0.723,0.836,160.022,6.468,0.864
+CHIRPS v3.0,Penman-Monteith,abcd semidistribuido,Irra,26167070,validación 2006–2023,192,0.749,0.85,180.527,-4.14,0.872
+CHIRPS v3.0,Penman-Monteith,abcd semidistribuido,La Pintada,26187110,calibración 1982–2005,288,0.639,0.802,182.761,14.94,0.87
+CHIRPS v3.0,Penman-Monteith,abcd semidistribuido,La Pintada,26187110,validación 2006–2023,211,0.795,0.829,186.9,0.928,0.892
+CHIRPS v3.0,Penman-Monteith,abcd semidistribuido,Puente Iglesias,26207030,calibración 1982–2005,276,0.671,0.818,180.317,11.093,0.863
+CHIRPS v3.0,Penman-Monteith,abcd semidistribuido,Puente Iglesias,26207030,validación 2006–2023,185,0.786,0.798,198.739,2.85,0.89
+CHIRPS v3.0,Penman-Monteith,abcd semidistribuido,Bolombolo,26207080,calibración 1982–2005,288,0.702,0.82,198.427,7.785,0.859
+CHIRPS v3.0,Penman-Monteith,abcd semidistribuido,Bolombolo,26207080,validación 2006–2023,211,0.757,0.781,226.456,7.566,0.884
+CHIRPS v3.0,Penman-Monteith,abcd semidistribuido,Cañafisto,26217050,calibración 1982–2005,284,0.669,0.802,220.605,8.11,0.842
+CHIRPS v3.0,Penman-Monteith,abcd semidistribuido,Cañafisto,26217050,validación 2006–2023,75,0.823,0.803,210.561,-1.685,0.912
+CHIRPS v3.0,Penman-Monteith,abcd semidistribuido,Presa,PRESA,calibración 1982–2005,257,0.649,0.826,223.199,3.796,0.83
+CHIRPS v3.0,Penman-Monteith,abcd semidistribuido,Presa,PRESA,validación 2006–2023,137,0.833,0.836,215.096,7.256,0.925
+CHIRPS v3.0,Penman-Monteith,abcd agregado,Presa,PRESA,calibración 1982–2005,257,0.61,0.814,235.357,9.647,0.841
+CHIRPS v3.0,Penman-Monteith,abcd agregado,Presa,PRESA,validación 2006–2023,137,0.829,0.888,217.811,6.715,0.921
+ERA5-Land QM,Penman-Monteith,abcd semidistribuido,La Balsa,26027010,calibración 1982–2005,244,-0.078,0.556,83.49,27.722,0.653
+ERA5-Land QM,Penman-Monteith,abcd semidistribuido,La Balsa,26027010,validación 2006–2023,117,-0.694,0.304,100.923,6.931,0.35
+ERA5-Land QM,Penman-Monteith,abcd semidistribuido,Juanchito,26067010,calibración 1982–2005,248,0.495,0.749,86.149,11.374,0.777
+ERA5-Land QM,Penman-Monteith,abcd semidistribuido,Juanchito,26067010,validación 2006–2023,116,-0.412,0.352,179.749,-26.762,0.434
+ERA5-Land QM,Penman-Monteith,abcd semidistribuido,La Victoria,26107070,calibración 1982–2005,263,0.468,0.721,133.184,6.478,0.732
+ERA5-Land QM,Penman-Monteith,abcd semidistribuido,La Victoria,26107070,validación 2006–2023,106,-0.055,0.45,212.113,-15.71,0.48
+ERA5-Land QM,Penman-Monteith,abcd semidistribuido,La Virginia,26177030,calibración 1982–2005,287,0.525,0.748,166.609,0.62,0.752
+ERA5-Land QM,Penman-Monteith,abcd semidistribuido,La Virginia,26177030,validación 2006–2023,215,0.374,0.603,253.427,-15.103,0.686
+ERA5-Land QM,Penman-Monteith,abcd semidistribuido,Irra,26167070,calibración 1982–2005,284,0.497,0.715,215.794,4.23,0.732
+ERA5-Land QM,Penman-Monteith,abcd semidistribuido,Irra,26167070,validación 2006–2023,192,0.326,0.639,296.039,-11.468,0.668
+ERA5-Land QM,Penman-Monteith,abcd semidistribuido,La Pintada,26187110,calibración 1982–2005,288,0.446,0.726,226.295,11.797,0.753
+ERA5-Land QM,Penman-Monteith,abcd semidistribuido,La Pintada,26187110,validación 2006–2023,211,0.316,0.579,341.424,-6.166,0.616
+ERA5-Land QM,Penman-Monteith,abcd semidistribuido,Puente Iglesias,26207030,calibración 1982–2005,276,0.356,0.706,252.44,17.076,0.764
+ERA5-Land QM,Penman-Monteith,abcd semidistribuido,Puente Iglesias,26207030,validación 2006–2023,185,0.411,0.677,329.39,-5.507,0.691
+ERA5-Land QM,Penman-Monteith,abcd semidistribuido,Bolombolo,26207080,calibración 1982–2005,288,0.47,0.736,264.472,12.575,0.77
+ERA5-Land QM,Penman-Monteith,abcd semidistribuido,Bolombolo,26207080,validación 2006–2023,211,0.385,0.637,360.296,-1.117,0.658
+ERA5-Land QM,Penman-Monteith,abcd semidistribuido,Cañafisto,26217050,calibración 1982–2005,284,0.478,0.737,277.081,12.832,0.774
+ERA5-Land QM,Penman-Monteith,abcd semidistribuido,Cañafisto,26217050,validación 2006–2023,75,0.642,0.753,299.267,-4.742,0.809
+ERA5-Land QM,Penman-Monteith,abcd semidistribuido,Presa,PRESA,calibración 1982–2005,257,0.475,0.754,273.084,7.818,0.772
+ERA5-Land QM,Penman-Monteith,abcd semidistribuido,Presa,PRESA,validación 2006–2023,137,0.736,0.748,270.418,7.184,0.873
+ERA5-Land QM,Penman-Monteith,abcd agregado,Presa,PRESA,calibración 1982–2005,257,0.514,0.762,262.853,4.344,0.766
+ERA5-Land QM,Penman-Monteith,abcd agregado,Presa,PRESA,validación 2006–2023,137,0.748,0.739,264.504,2.252,0.871
+ERA5 QM,Penman-Monteith,abcd semidistribuido,La Balsa,26027010,calibración 1982–2005,244,-0.058,0.563,82.741,27.49,0.661
+ERA5 QM,Penman-Monteith,abcd semidistribuido,La Balsa,26027010,validación 2006–2023,117,-0.039,0.57,79.038,20.703,0.627
+ERA5 QM,Penman-Monteith,abcd semidistribuido,Juanchito,26067010,calibración 1982–2005,248,0.502,0.752,85.576,11.093,0.779
+ERA5 QM,Penman-Monteith,abcd semidistribuido,Juanchito,26067010,validación 2006–2023,116,0.261,0.55,130.017,-19.759,0.709
+ERA5 QM,Penman-Monteith,abcd semidistribuido,La Victoria,26107070,calibración 1982–2005,263,0.448,0.712,135.72,6.447,0.722
+ERA5 QM,Penman-Monteith,abcd semidistribuido,La Victoria,26107070,validación 2006–2023,106,0.482,0.628,148.536,-7.368,0.713
+ERA5 QM,Penman-Monteith,abcd semidistribuido,La Virginia,26177030,calibración 1982–2005,287,0.504,0.739,170.141,0.519,0.742
+ERA5 QM,Penman-Monteith,abcd semidistribuido,La Virginia,26177030,validación 2006–2023,215,0.572,0.635,209.469,-10.236,0.783
+ERA5 QM,Penman-Monteith,abcd semidistribuido,Irra,26167070,calibración 1982–2005,284,0.461,0.699,223.399,4.186,0.714
+ERA5 QM,Penman-Monteith,abcd semidistribuido,Irra,26167070,validación 2006–2023,192,0.555,0.664,240.499,-5.662,0.755
+ERA5 QM,Penman-Monteith,abcd semidistribuido,La Pintada,26187110,calibración 1982–2005,288,0.413,0.713,233.038,11.725,0.738
+ERA5 QM,Penman-Monteith,abcd semidistribuido,La Pintada,26187110,validación 2006–2023,211,0.528,0.612,283.746,0.183,0.726
+ERA5 QM,Penman-Monteith,abcd semidistribuido,Puente Iglesias,26207030,calibración 1982–2005,276,0.327,0.696,258.075,17.109,0.754
+ERA5 QM,Penman-Monteith,abcd semidistribuido,Puente Iglesias,26207030,validación 2006–2023,185,0.653,0.72,252.956,1.003,0.808
+ERA5 QM,Penman-Monteith,abcd semidistribuido,Bolombolo,26207080,calibración 1982–2005,288,0.446,0.729,270.313,12.526,0.761
+ERA5 QM,Penman-Monteith,abcd semidistribuido,Bolombolo,26207080,validación 2006–2023,211,0.62,0.666,283.315,5.574,0.797
+ERA5 QM,Penman-Monteith,abcd semidistribuido,Cañafisto,26217050,calibración 1982–2005,284,0.462,0.733,281.237,12.718,0.767
+ERA5 QM,Penman-Monteith,abcd semidistribuido,Cañafisto,26217050,validación 2006–2023,75,0.658,0.734,292.451,-3.733,0.815
+ERA5 QM,Penman-Monteith,abcd semidistribuido,Presa,PRESA,calibración 1982–2005,257,0.487,0.753,270.107,4.761,0.76
+ERA5 QM,Penman-Monteith,abcd semidistribuido,Presa,PRESA,validación 2006–2023,137,0.692,0.691,292.34,7.904,0.854
+ERA5 QM,Penman-Monteith,abcd agregado,Presa,PRESA,calibración 1982–2005,257,0.503,0.758,265.779,4.359,0.762
+ERA5 QM,Penman-Monteith,abcd agregado,Presa,PRESA,validación 2006–2023,137,0.729,0.71,274.046,3.516,0.865
+ERA5,Penman-Monteith,abcd semidistribuido,La Balsa,26027010,calibración 1982–2005,244,-17.142,-0.926,342.567,186.021,0.523
+ERA5,Penman-Monteith,abcd semidistribuido,La Balsa,26027010,validación 2006–2023,117,-17.257,-0.809,331.296,171.968,0.441
+ERA5,Penman-Monteith,abcd semidistribuido,Juanchito,26067010,calibración 1982–2005,248,-16.291,-0.926,504.074,179.658,0.31
+ERA5,Penman-Monteith,abcd semidistribuido,Juanchito,26067010,validación 2006–2023,116,-12.641,-0.595,558.696,144.877,0.579
+ERA5,Penman-Monteith,abcd semidistribuido,La Victoria,26107070,calibración 1982–2005,263,-40.87,-2.421,1181.535,305.169,0.027
+ERA5,Penman-Monteith,abcd semidistribuido,La Victoria,26107070,validación 2006–2023,106,-69.569,-3.228,1734.466,415.527,0.384
+ERA5,Penman-Monteith,abcd semidistribuido,La Virginia,26177030,calibración 1982–2005,287,-36.87,-2.118,1487.126,269.775,0.035
+ERA5,Penman-Monteith,abcd semidistribuido,La Virginia,26177030,validación 2006–2023,215,-47.055,-2.758,2220.789,364.419,0.319
+ERA5,Penman-Monteith,abcd semidistribuido,Irra,26167070,calibración 1982–2005,284,-46.16,-2.567,2089.007,303.413,-0.017
+ERA5,Penman-Monteith,abcd semidistribuido,Irra,26167070,validación 2006–2023,192,-76.963,-3.274,3184.588,415.817,0.14
+ERA5,Penman-Monteith,abcd semidistribuido,La Pintada,26187110,calibración 1982–2005,288,-52.346,-2.748,2221.068,315.192,0.039
+ERA5,Penman-Monteith,abcd semidistribuido,La Pintada,26187110,validación 2006–2023,211,-68.114,-3.631,3432.118,452.275,0.169
+ERA5,Penman-Monteith,abcd semidistribuido,Puente Iglesias,26207030,calibración 1982–2005,276,-51.074,-2.532,2269.522,287.803,0.025
+ERA5,Penman-Monteith,abcd semidistribuido,Puente Iglesias,26207030,validación 2006–2023,185,-65.811,-3.223,3509.036,409.434,0.114
+ERA5,Penman-Monteith,abcd semidistribuido,Bolombolo,26207080,calibración 1982–2005,288,-37.877,-2.039,2265.42,244.972,0.065
+ERA5,Penman-Monteith,abcd semidistribuido,Bolombolo,26207080,validación 2006–2023,211,-60.85,-3.159,3614.587,400.594,0.038
+ERA5,Penman-Monteith,abcd semidistribuido,Cañafisto,26217050,calibración 1982–2005,284,-34.061,-1.913,2270.793,234.744,0.059
+ERA5,Penman-Monteith,abcd semidistribuido,Cañafisto,26217050,validación 2006–2023,75,-44.088,-2.336,3358.918,311.515,-0.002
+ERA5,Penman-Monteith,abcd semidistribuido,Presa,PRESA,calibración 1982–2005,257,-35.089,-1.631,2264.645,200.498,0.179
+ERA5,Penman-Monteith,abcd semidistribuido,Presa,PRESA,validación 2006–2023,137,-48.582,-2.66,3706.55,351.072,0.19
+ERA5,Penman-Monteith,abcd agregado,Presa,PRESA,calibración 1982–2005,257,-28.468,-1.616,2046.375,169.721,0.105
+ERA5,Penman-Monteith,abcd agregado,Presa,PRESA,validación 2006–2023,137,-46.418,-2.691,3624.768,341.716,-0.264
+Cubo IDEAM,Hargreaves,abcd semidistribuido,La Balsa,26027010,calibración 1982–2005,244,0.583,0.789,51.954,13.028,0.835
+Cubo IDEAM,Hargreaves,abcd semidistribuido,La Balsa,26027010,validación 2006–2023,117,0.463,0.745,56.805,12.469,0.778
+Cubo IDEAM,Hargreaves,abcd semidistribuido,Juanchito,26067010,calibración 1982–2005,248,0.813,0.906,52.374,1.128,0.907
+Cubo IDEAM,Hargreaves,abcd semidistribuido,Juanchito,26067010,validación 2006–2023,116,0.359,0.644,121.157,-23.494,0.838
+Cubo IDEAM,Hargreaves,abcd semidistribuido,La Victoria,26107070,calibración 1982–2005,263,0.832,0.913,74.889,1.024,0.915
+Cubo IDEAM,Hargreaves,abcd semidistribuido,La Victoria,26107070,validación 2006–2023,106,0.777,0.804,97.553,-7.789,0.896
+Cubo IDEAM,Hargreaves,abcd semidistribuido,La Virginia,26177030,calibración 1982–2005,287,0.842,0.915,96.054,0.188,0.919
+Cubo IDEAM,Hargreaves,abcd semidistribuido,La Virginia,26177030,validación 2006–2023,215,0.828,0.8,132.758,-9.386,0.932
+Cubo IDEAM,Hargreaves,abcd semidistribuido,Irra,26167070,calibración 1982–2005,284,0.842,0.912,120.851,-0.177,0.919
+Cubo IDEAM,Hargreaves,abcd semidistribuido,Irra,26167070,validación 2006–2023,192,0.837,0.897,145.569,-4.894,0.921
+Cubo IDEAM,Hargreaves,abcd semidistribuido,La Pintada,26187110,calibración 1982–2005,288,0.842,0.917,120.729,2.699,0.922
+Cubo IDEAM,Hargreaves,abcd semidistribuido,La Pintada,26187110,validación 2006–2023,211,0.833,0.813,168.497,-2.806,0.918
+Cubo IDEAM,Hargreaves,abcd semidistribuido,Puente Iglesias,26207030,calibración 1982–2005,276,0.832,0.914,128.996,2.074,0.917
+Cubo IDEAM,Hargreaves,abcd semidistribuido,Puente Iglesias,26207030,validación 2006–2023,185,0.849,0.82,166.599,0.205,0.926
+Cubo IDEAM,Hargreaves,abcd semidistribuido,Bolombolo,26207080,calibración 1982–2005,288,0.846,0.91,142.528,-0.292,0.921
+Cubo IDEAM,Hargreaves,abcd semidistribuido,Bolombolo,26207080,validación 2006–2023,211,0.82,0.813,194.763,5.239,0.914
+Cubo IDEAM,Hargreaves,abcd semidistribuido,Cañafisto,26217050,calibración 1982–2005,284,0.83,0.897,158.036,0.53,0.912
+Cubo IDEAM,Hargreaves,abcd semidistribuido,Cañafisto,26217050,validación 2006–2023,75,0.847,0.876,195.465,2.719,0.922
+Cubo IDEAM,Hargreaves,abcd semidistribuido,Presa,PRESA,calibración 1982–2005,257,0.77,0.883,180.878,-0.143,0.89
+Cubo IDEAM,Hargreaves,abcd semidistribuido,Presa,PRESA,validación 2006–2023,137,0.826,0.856,219.85,11.93,0.939
+Cubo IDEAM,Penman-Monteith,empírico Q = α·W + β,Presa,PRESA,calibración 1982–2005,257,0.451,0.54,279.44,0.096,0.671
+Cubo IDEAM,Penman-Monteith,empírico Q = α·W + β,Presa,PRESA,validación 2006–2023,137,0.51,0.49,368.459,1.518,0.735
+Cubo IDEAM,Penman-Monteith,empírico con memoria Q = α·W + γ·Q(t−1) + β,Presa,PRESA,calibración 1982–2005,250,0.841,0.887,149.418,0.066,0.917
+Cubo IDEAM,Penman-Monteith,empírico con memoria Q = α·W + γ·Q(t−1) + β,Presa,PRESA,validación 2006–2023,134,0.844,0.848,209.483,1.827,0.92
+CHIRPS v2.0,Penman-Monteith,empírico Q = α·W + β,Presa,PRESA,calibración 1982–2005,257,0.393,0.477,293.595,0.084,0.627
+CHIRPS v2.0,Penman-Monteith,empírico Q = α·W + β,Presa,PRESA,validación 2006–2023,137,0.422,0.407,400.034,0.559,0.67
+CHIRPS v2.0,Penman-Monteith,empírico con memoria Q = α·W + γ·Q(t−1) + β,Presa,PRESA,calibración 1982–2005,250,0.833,0.88,153.07,0.053,0.913
+CHIRPS v2.0,Penman-Monteith,empírico con memoria Q = α·W + γ·Q(t−1) + β,Presa,PRESA,validación 2006–2023,134,0.824,0.828,221.848,1.207,0.91
+CHIRPS v3.0,Penman-Monteith,empírico Q = α·W + β,Presa,PRESA,calibración 1982–2005,257,0.338,0.415,306.678,0.107,0.582
+CHIRPS v3.0,Penman-Monteith,empírico Q = α·W + β,Presa,PRESA,validación 2006–2023,137,0.404,0.366,406.363,-1.528,0.671
+CHIRPS v3.0,Penman-Monteith,empírico con memoria Q = α·W + γ·Q(t−1) + β,Presa,PRESA,calibración 1982–2005,250,0.812,0.866,162.565,0.073,0.901
+CHIRPS v3.0,Penman-Monteith,empírico con memoria Q = α·W + γ·Q(t−1) + β,Presa,PRESA,validación 2006–2023,134,0.806,0.828,233.515,-0.626,0.898
+ERA5-Land QM,Penman-Monteith,empírico Q = α·W + β,Presa,PRESA,calibración 1982–2005,257,0.309,0.379,313.279,0.088,0.556
+ERA5-Land QM,Penman-Monteith,empírico Q = α·W + β,Presa,PRESA,validación 2006–2023,137,0.352,0.312,423.723,-2.147,0.632
+ERA5-Land QM,Penman-Monteith,empírico con memoria Q = α·W + γ·Q(t−1) + β,Presa,PRESA,calibración 1982–2005,250,0.757,0.82,184.696,0.053,0.87
+ERA5-Land QM,Penman-Monteith,empírico con memoria Q = α·W + γ·Q(t−1) + β,Presa,PRESA,validación 2006–2023,134,0.77,0.767,253.697,-1.146,0.882
+ERA5 QM,Penman-Monteith,empírico Q = α·W + β,Presa,PRESA,calibración 1982–2005,257,0.309,0.378,313.332,0.087,0.556
+ERA5 QM,Penman-Monteith,empírico Q = α·W + β,Presa,PRESA,validación 2006–2023,137,0.342,0.303,426.892,-1.919,0.621
+ERA5 QM,Penman-Monteith,empírico con memoria Q = α·W + γ·Q(t−1) + β,Presa,PRESA,calibración 1982–2005,250,0.754,0.817,186.16,0.052,0.868
+ERA5 QM,Penman-Monteith,empírico con memoria Q = α·W + γ·Q(t−1) + β,Presa,PRESA,validación 2006–2023,134,0.767,0.758,255.859,-0.949,0.88
+ERA5,Penman-Monteith,empírico Q = α·W + β,Presa,PRESA,calibración 1982–2005,257,0.147,0.132,348.21,0.052,0.383
+ERA5,Penman-Monteith,empírico Q = α·W + β,Presa,PRESA,validación 2006–2023,137,0.182,0.098,476.028,-1.372,0.478
+ERA5,Penman-Monteith,empírico con memoria Q = α·W + γ·Q(t−1) + β,Presa,PRESA,calibración 1982–2005,250,0.656,0.733,219.969,0.014,0.81
+ERA5,Penman-Monteith,empírico con memoria Q = α·W + γ·Q(t−1) + β,Presa,PRESA,validación 2006–2023,134,0.65,0.704,313.077,-0.265,0.807

@@ -1,0 +1,81 @@
+﻿producto,ETo,modelo,estación,codigo,periodo,n,NSE,KGE,RMSE,PBIAS,r
+Cubo IDEAM,Penman-Monteith,abcd semidistribuido regionalizado,La Balsa,26027010,calibración 1982–2005,244,0.188,0.636,72.491,27.682,0.826
+Cubo IDEAM,Penman-Monteith,abcd semidistribuido regionalizado,La Balsa,26027010,validación 2006–2023,117,-0.023,0.597,78.43,27.549,0.768
+Cubo IDEAM,Penman-Monteith,abcd semidistribuido regionalizado,Juanchito,26067010,calibración 1982–2005,248,0.586,0.73,77.961,18.284,0.907
+Cubo IDEAM,Penman-Monteith,abcd semidistribuido regionalizado,Juanchito,26067010,validación 2006–2023,116,0.609,0.784,94.57,-11.606,0.836
+Cubo IDEAM,Penman-Monteith,abcd semidistribuido regionalizado,La Victoria,26107070,calibración 1982–2005,263,0.779,0.866,85.796,9.655,0.91
+Cubo IDEAM,Penman-Monteith,abcd semidistribuido regionalizado,La Victoria,26107070,validación 2006–2023,106,0.798,0.843,92.809,-0.656,0.893
+Cubo IDEAM,Penman-Monteith,abcd semidistribuido regionalizado,La Virginia,26177030,calibración 1982–2005,287,0.832,0.9,99.087,-2.769,0.915
+Cubo IDEAM,Penman-Monteith,abcd semidistribuido regionalizado,La Virginia,26177030,validación 2006–2023,215,0.805,0.783,141.637,-11.09,0.926
+Cubo IDEAM,Penman-Monteith,abcd semidistribuido regionalizado,Irra,26167070,calibración 1982–2005,284,0.855,0.883,115.854,0.008,0.925
+Cubo IDEAM,Penman-Monteith,abcd semidistribuido regionalizado,Irra,26167070,validación 2006–2023,192,0.853,0.868,138.286,-3.699,0.927
+Cubo IDEAM,Penman-Monteith,abcd semidistribuido regionalizado,La Pintada,26187110,calibración 1982–2005,288,0.824,0.891,127.737,7.444,0.923
+Cubo IDEAM,Penman-Monteith,abcd semidistribuido regionalizado,La Pintada,26187110,validación 2006–2023,211,0.821,0.825,174.729,1.058,0.908
+Cubo IDEAM,Penman-Monteith,abcd semidistribuido regionalizado,Puente Iglesias,26207030,calibración 1982–2005,276,0.766,0.85,152.15,12.422,0.927
+Cubo IDEAM,Penman-Monteith,abcd semidistribuido regionalizado,Puente Iglesias,26207030,validación 2006–2023,185,0.849,0.861,166.999,6.222,0.93
+Cubo IDEAM,Penman-Monteith,abcd semidistribuido regionalizado,Bolombolo,26207080,calibración 1982–2005,288,0.83,0.89,149.786,8.299,0.932
+Cubo IDEAM,Penman-Monteith,abcd semidistribuido regionalizado,Bolombolo,26207080,validación 2006–2023,211,0.825,0.833,192.384,9.882,0.929
+Cubo IDEAM,Penman-Monteith,abcd semidistribuido regionalizado,Cañafisto,26217050,calibración 1982–2005,284,0.82,0.879,162.727,8.139,0.925
+Cubo IDEAM,Penman-Monteith,abcd semidistribuido regionalizado,Cañafisto,26217050,validación 2006–2023,75,0.871,0.856,179.564,8.147,0.951
+Cubo IDEAM,Penman-Monteith,abcd semidistribuido regionalizado,Presa,PRESA,calibración 1982–2005,257,0.778,0.879,177.486,3.006,0.901
+Cubo IDEAM,Penman-Monteith,abcd semidistribuido regionalizado,Presa,PRESA,validación 2006–2023,137,0.828,0.871,218.501,11.389,0.94
+Cubo IDEAM,Hargreaves,abcd semidistribuido regionalizado,La Balsa,26027010,calibración 1982–2005,244,0.511,0.746,56.219,15.777,0.845
+Cubo IDEAM,Hargreaves,abcd semidistribuido regionalizado,La Balsa,26027010,validación 2006–2023,117,0.36,0.708,62.04,15.185,0.78
+Cubo IDEAM,Hargreaves,abcd semidistribuido regionalizado,Juanchito,26067010,calibración 1982–2005,248,0.769,0.855,58.269,6.773,0.908
+Cubo IDEAM,Hargreaves,abcd semidistribuido regionalizado,Juanchito,26067010,validación 2006–2023,116,0.403,0.672,116.871,-21.695,0.833
+Cubo IDEAM,Hargreaves,abcd semidistribuido regionalizado,La Victoria,26107070,calibración 1982–2005,263,0.829,0.909,75.426,3.874,0.918
+Cubo IDEAM,Hargreaves,abcd semidistribuido regionalizado,La Victoria,26107070,validación 2006–2023,106,0.789,0.804,94.873,-7.42,0.902
+Cubo IDEAM,Hargreaves,abcd semidistribuido regionalizado,La Virginia,26177030,calibración 1982–2005,287,0.855,0.909,92.179,-4.273,0.929
+Cubo IDEAM,Hargreaves,abcd semidistribuido regionalizado,La Virginia,26177030,validación 2006–2023,215,0.801,0.765,142.745,-13.636,0.939
+Cubo IDEAM,Hargreaves,abcd semidistribuido regionalizado,Irra,26167070,calibración 1982–2005,284,0.87,0.893,109.84,-3.5,0.935
+Cubo IDEAM,Hargreaves,abcd semidistribuido regionalizado,Irra,26167070,validación 2006–2023,192,0.851,0.858,139.29,-7.965,0.938
+Cubo IDEAM,Hargreaves,abcd semidistribuido regionalizado,La Pintada,26187110,calibración 1982–2005,288,0.872,0.931,108.791,2.634,0.937
+Cubo IDEAM,Hargreaves,abcd semidistribuido regionalizado,La Pintada,26187110,validación 2006–2023,211,0.838,0.82,166.07,-4.372,0.922
+Cubo IDEAM,Hargreaves,abcd semidistribuido regionalizado,Puente Iglesias,26207030,calibración 1982–2005,276,0.845,0.895,123.75,6.558,0.939
+Cubo IDEAM,Hargreaves,abcd semidistribuido regionalizado,Puente Iglesias,26207030,validación 2006–2023,185,0.887,0.879,144.205,-0.139,0.943
+Cubo IDEAM,Hargreaves,abcd semidistribuido regionalizado,Bolombolo,26207080,calibración 1982–2005,288,0.888,0.939,121.39,2.324,0.945
+Cubo IDEAM,Hargreaves,abcd semidistribuido regionalizado,Bolombolo,26207080,validación 2006–2023,211,0.873,0.861,164.075,3.115,0.938
+Cubo IDEAM,Hargreaves,abcd semidistribuido regionalizado,Cañafisto,26217050,calibración 1982–2005,284,0.879,0.925,133.327,2.753,0.94
+Cubo IDEAM,Hargreaves,abcd semidistribuido regionalizado,Cañafisto,26217050,validación 2006–2023,75,0.914,0.9,147.12,2.176,0.958
+Cubo IDEAM,Hargreaves,abcd semidistribuido regionalizado,Presa,PRESA,calibración 1982–2005,257,0.802,0.885,167.888,-2.866,0.912
+Cubo IDEAM,Hargreaves,abcd semidistribuido regionalizado,Presa,PRESA,validación 2006–2023,137,0.883,0.924,179.723,5.408,0.947
+CHIRPS v2.0,Penman-Monteith,abcd semidistribuido regionalizado,La Balsa,26027010,calibración 1982–2005,244,0.68,0.84,45.507,-0.491,0.84
+CHIRPS v2.0,Penman-Monteith,abcd semidistribuido regionalizado,La Balsa,26027010,validación 2006–2023,117,0.512,0.758,54.144,-5.102,0.794
+CHIRPS v2.0,Penman-Monteith,abcd semidistribuido regionalizado,Juanchito,26067010,calibración 1982–2005,248,0.8,0.894,54.278,-3.696,0.907
+CHIRPS v2.0,Penman-Monteith,abcd semidistribuido regionalizado,Juanchito,26067010,validación 2006–2023,116,0.111,0.623,142.595,-30.565,0.83
+CHIRPS v2.0,Penman-Monteith,abcd semidistribuido regionalizado,La Victoria,26107070,calibración 1982–2005,263,0.828,0.914,75.829,0.496,0.915
+CHIRPS v2.0,Penman-Monteith,abcd semidistribuido regionalizado,La Victoria,26107070,validación 2006–2023,106,0.688,0.821,115.308,-9.988,0.859
+CHIRPS v2.0,Penman-Monteith,abcd semidistribuido regionalizado,La Virginia,26177030,calibración 1982–2005,287,0.814,0.883,104.203,-7.501,0.917
+CHIRPS v2.0,Penman-Monteith,abcd semidistribuido regionalizado,La Virginia,26177030,validación 2006–2023,215,0.709,0.747,172.756,-16.58,0.9
+CHIRPS v2.0,Penman-Monteith,abcd semidistribuido regionalizado,Irra,26167070,calibración 1982–2005,284,0.835,0.88,123.43,-3.681,0.917
+CHIRPS v2.0,Penman-Monteith,abcd semidistribuido regionalizado,Irra,26167070,validación 2006–2023,192,0.747,0.832,181.328,-10.785,0.894
+CHIRPS v2.0,Penman-Monteith,abcd semidistribuido regionalizado,La Pintada,26187110,calibración 1982–2005,288,0.846,0.917,119.309,3.203,0.924
+CHIRPS v2.0,Penman-Monteith,abcd semidistribuido regionalizado,La Pintada,26187110,validación 2006–2023,211,0.768,0.796,198.867,-6.099,0.884
+CHIRPS v2.0,Penman-Monteith,abcd semidistribuido regionalizado,Puente Iglesias,26207030,calibración 1982–2005,276,0.815,0.888,135.251,7.53,0.926
+CHIRPS v2.0,Penman-Monteith,abcd semidistribuido regionalizado,Puente Iglesias,26207030,validación 2006–2023,185,0.819,0.863,182.666,-1.903,0.906
+CHIRPS v2.0,Penman-Monteith,abcd semidistribuido regionalizado,Bolombolo,26207080,calibración 1982–2005,288,0.857,0.917,137.469,3.205,0.93
+CHIRPS v2.0,Penman-Monteith,abcd semidistribuido regionalizado,Bolombolo,26207080,validación 2006–2023,211,0.799,0.838,206.118,1.764,0.895
+CHIRPS v2.0,Penman-Monteith,abcd semidistribuido regionalizado,Cañafisto,26217050,calibración 1982–2005,284,0.841,0.901,152.918,3.112,0.92
+CHIRPS v2.0,Penman-Monteith,abcd semidistribuido regionalizado,Cañafisto,26217050,validación 2006–2023,75,0.885,0.868,169.478,-5.708,0.95
+CHIRPS v2.0,Penman-Monteith,abcd semidistribuido regionalizado,Presa,PRESA,calibración 1982–2005,257,0.799,0.899,169.146,-1.58,0.902
+CHIRPS v2.0,Penman-Monteith,abcd semidistribuido regionalizado,Presa,PRESA,validación 2006–2023,137,0.883,0.873,180.072,3.72,0.944
+CHIRPS v2.0,Hargreaves,abcd semidistribuido regionalizado,La Balsa,26027010,calibración 1982–2005,244,0.652,0.813,47.446,-8.332,0.838
+CHIRPS v2.0,Hargreaves,abcd semidistribuido regionalizado,La Balsa,26027010,validación 2006–2023,117,0.462,0.749,56.895,-12.958,0.792
+CHIRPS v2.0,Hargreaves,abcd semidistribuido regionalizado,Juanchito,26067010,calibración 1982–2005,248,0.773,0.872,57.756,-7.412,0.905
+CHIRPS v2.0,Hargreaves,abcd semidistribuido regionalizado,Juanchito,26067010,validación 2006–2023,116,-0.011,0.594,152.118,-33.558,0.828
+CHIRPS v2.0,Hargreaves,abcd semidistribuido regionalizado,La Victoria,26107070,calibración 1982–2005,263,0.811,0.905,79.353,-0.254,0.908
+CHIRPS v2.0,Hargreaves,abcd semidistribuido regionalizado,La Victoria,26107070,validación 2006–2023,106,0.675,0.812,117.792,-10.759,0.855
+CHIRPS v2.0,Hargreaves,abcd semidistribuido regionalizado,La Virginia,26177030,calibración 1982–2005,287,0.814,0.894,104.352,-4.427,0.909
+CHIRPS v2.0,Hargreaves,abcd semidistribuido regionalizado,La Virginia,26177030,validación 2006–2023,215,0.718,0.752,170.074,-14.454,0.892
+CHIRPS v2.0,Hargreaves,abcd semidistribuido regionalizado,Irra,26167070,calibración 1982–2005,284,0.825,0.874,127.222,-2.961,0.91
+CHIRPS v2.0,Hargreaves,abcd semidistribuido regionalizado,Irra,26167070,validación 2006–2023,192,0.742,0.822,183.346,-10.79,0.891
+CHIRPS v2.0,Hargreaves,abcd semidistribuido regionalizado,La Pintada,26187110,calibración 1982–2005,288,0.838,0.912,122.409,2.974,0.92
+CHIRPS v2.0,Hargreaves,abcd semidistribuido regionalizado,La Pintada,26187110,validación 2006–2023,211,0.753,0.777,205.071,-6.784,0.878
+CHIRPS v2.0,Hargreaves,abcd semidistribuido regionalizado,Puente Iglesias,26207030,calibración 1982–2005,276,0.816,0.895,134.854,6.307,0.921
+CHIRPS v2.0,Hargreaves,abcd semidistribuido regionalizado,Puente Iglesias,26207030,validación 2006–2023,185,0.805,0.841,189.801,-3.566,0.9
+CHIRPS v2.0,Hargreaves,abcd semidistribuido regionalizado,Bolombolo,26207080,calibración 1982–2005,288,0.855,0.915,138.278,1.696,0.926
+CHIRPS v2.0,Hargreaves,abcd semidistribuido regionalizado,Bolombolo,26207080,validación 2006–2023,211,0.783,0.819,214.025,-0.015,0.885
+CHIRPS v2.0,Hargreaves,abcd semidistribuido regionalizado,Cañafisto,26217050,calibración 1982–2005,284,0.834,0.895,156.32,3.085,0.916
+CHIRPS v2.0,Hargreaves,abcd semidistribuido regionalizado,Cañafisto,26217050,validación 2006–2023,75,0.87,0.845,180.602,-6.599,0.946
+CHIRPS v2.0,Hargreaves,abcd semidistribuido regionalizado,Presa,PRESA,calibración 1982–2005,257,0.793,0.896,171.517,-2.45,0.9
+CHIRPS v2.0,Hargreaves,abcd semidistribuido regionalizado,Presa,PRESA,validación 2006–2023,137,0.869,0.851,190.181,3.019,0.937

@@ -1,0 +1,13 @@
+﻿producto,modelo,coeficientes
+Cubo IDEAM,empírico Q = α·W + β,"[0.3329, 43.1867]"
+Cubo IDEAM,empírico con memoria Q = α·W + γ·Q(t−1) + β,"[0.2884, 0.6218, 1.1457]"
+CHIRPS v2.0,empírico Q = α·W + β,"[0.3326, 46.148]"
+CHIRPS v2.0,empírico con memoria Q = α·W + γ·Q(t−1) + β,"[0.3032, 0.6574, -0.2627]"
+CHIRPS v3.0,empírico Q = α·W + β,"[0.2766, 47.0112]"
+CHIRPS v3.0,empírico con memoria Q = α·W + γ·Q(t−1) + β,"[0.262, 0.6792, -2.076]"
+ERA5-Land QM,empírico Q = α·W + β,"[0.2832, 47.3939]"
+ERA5-Land QM,empírico con memoria Q = α·W + γ·Q(t−1) + β,"[0.2541, 0.6565, 1.478]"
+ERA5 QM,empírico Q = α·W + β,"[0.2803, 47.6583]"
+ERA5 QM,empírico con memoria Q = α·W + γ·Q(t−1) + β,"[0.2497, 0.654, 2.0723]"
+ERA5,empírico Q = α·W + β,"[0.1128, 29.6991]"
+ERA5,empírico con memoria Q = α·W + γ·Q(t−1) + β,"[0.113, 0.7033, -22.6997]"

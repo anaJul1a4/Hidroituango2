@@ -1,0 +1,81 @@
+﻿estación,trimestre,fase,n,z Q observado,z Q simulado
+La Balsa,DEF,El Niño,14,-0.593,-0.912
+Juanchito,DEF,El Niño,14,-0.495,-0.904
+La Victoria,DEF,El Niño,14,-0.758,-0.914
+La Virginia,DEF,El Niño,14,-0.884,-0.893
+Irra,DEF,El Niño,14,-0.83,-0.897
+La Pintada,DEF,El Niño,14,-0.925,-0.902
+Puente Iglesias,DEF,El Niño,14,-0.755,-0.906
+Bolombolo,DEF,El Niño,14,-0.963,-0.909
+Cañafisto,DEF,El Niño,14,-0.847,-0.905
+Presa,DEF,El Niño,14,-1.385,-0.907
+La Balsa,DEF,La Niña,16,0.984,0.815
+Juanchito,DEF,La Niña,16,1.419,0.87
+La Victoria,DEF,La Niña,16,0.852,0.867
+La Virginia,DEF,La Niña,16,1.028,0.946
+Irra,DEF,La Niña,16,0.988,0.982
+La Pintada,DEF,La Niña,16,0.966,0.99
+Puente Iglesias,DEF,La Niña,16,1.055,0.977
+Bolombolo,DEF,La Niña,16,0.771,0.983
+Cañafisto,DEF,La Niña,16,1.035,0.979
+Presa,DEF,La Niña,16,0.886,0.975
+La Balsa,MAM,El Niño,7,-0.591,-1.0
+Juanchito,MAM,El Niño,7,-0.319,-0.924
+La Victoria,MAM,El Niño,7,-0.556,-0.962
+La Virginia,MAM,El Niño,7,-0.716,-0.924
+Irra,MAM,El Niño,7,-0.713,-0.947
+La Pintada,MAM,El Niño,7,-0.778,-0.945
+Puente Iglesias,MAM,El Niño,7,-0.82,-0.964
+Bolombolo,MAM,El Niño,7,-0.91,-0.973
+Cañafisto,MAM,El Niño,7,-0.821,-0.952
+Presa,MAM,El Niño,7,-1.167,-0.951
+La Balsa,MAM,La Niña,8,0.54,0.953
+Juanchito,MAM,La Niña,8,1.164,1.05
+La Victoria,MAM,La Niña,8,0.989,1.054
+La Virginia,MAM,La Niña,8,1.252,1.105
+Irra,MAM,La Niña,8,1.148,1.145
+La Pintada,MAM,La Niña,8,1.331,1.163
+Puente Iglesias,MAM,La Niña,8,1.088,1.158
+Bolombolo,MAM,La Niña,8,1.092,1.16
+Cañafisto,MAM,La Niña,8,0.622,1.14
+Presa,MAM,La Niña,8,0.953,1.126
+La Balsa,JJA,El Niño,8,0.001,-0.803
+Juanchito,JJA,El Niño,8,0.135,-0.659
+La Victoria,JJA,El Niño,8,-0.24,-0.722
+La Virginia,JJA,El Niño,8,-0.543,-0.707
+Irra,JJA,El Niño,8,-0.542,-0.704
+La Pintada,JJA,El Niño,8,-0.718,-0.705
+Puente Iglesias,JJA,El Niño,8,-0.616,-0.766
+Bolombolo,JJA,El Niño,8,-0.741,-0.782
+Cañafisto,JJA,El Niño,8,-0.654,-0.777
+Presa,JJA,El Niño,8,-0.854,-0.771
+La Balsa,JJA,La Niña,5,1.054,0.687
+Juanchito,JJA,La Niña,5,1.105,0.627
+La Victoria,JJA,La Niña,5,0.511,0.747
+La Virginia,JJA,La Niña,5,1.113,0.989
+Irra,JJA,La Niña,5,1.013,1.08
+La Pintada,JJA,La Niña,5,1.127,1.109
+Puente Iglesias,JJA,La Niña,5,1.164,1.079
+Bolombolo,JJA,La Niña,5,1.102,1.079
+Cañafisto,JJA,La Niña,5,0.679,1.087
+Presa,JJA,La Niña,5,0.662,1.05
+La Balsa,SON,El Niño,15,-0.215,-0.744
+Juanchito,SON,El Niño,15,-0.046,-0.717
+La Victoria,SON,El Niño,15,-0.273,-0.703
+La Virginia,SON,El Niño,15,-0.529,-0.664
+Irra,SON,El Niño,15,-0.495,-0.685
+La Pintada,SON,El Niño,15,-0.594,-0.705
+Puente Iglesias,SON,El Niño,15,-0.479,-0.758
+Bolombolo,SON,El Niño,15,-0.727,-0.781
+Cañafisto,SON,El Niño,15,-0.593,-0.793
+Presa,SON,El Niño,15,-0.814,-0.812
+La Balsa,SON,La Niña,13,1.026,0.7
+Juanchito,SON,La Niña,13,1.198,0.737
+La Victoria,SON,La Niña,13,0.809,0.712
+La Virginia,SON,La Niña,13,0.902,0.758
+Irra,SON,La Niña,13,0.848,0.79
+La Pintada,SON,La Niña,13,0.871,0.801
+Puente Iglesias,SON,La Niña,13,0.771,0.796
+Bolombolo,SON,La Niña,13,0.773,0.792
+Cañafisto,SON,La Niña,13,0.925,0.779
+Presa,SON,La Niña,13,0.929,0.774

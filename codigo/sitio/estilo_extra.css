@@ -1,0 +1,23 @@
+
+/* ───────── Trabajo 2: complementos del estilo de la presentación ───────── */
+.figimg{width:100%;height:auto;display:block;border-radius:10px;background:#fff}
+.tw{overflow-x:auto;margin:6px 0 10px}
+table.tb td:first-child{font-weight:500}
+.eq{font-family:var(--f-math);font-size:18px;margin:4px 0 10px;max-width:none}
+.cards3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:22px}
+@media (max-width:900px){.cards3{grid-template-columns:minmax(0,1fr)}}
+button.card{font:inherit;color:inherit;text-align:left;cursor:pointer}
+button.card h4{margin:0 0 4px;font-size:16px}
+button.card p{margin:0;font-size:14px;color:var(--muted)}
+button.card:hover{border-color:var(--accent)}
+.card h4{margin:0 0 6px}
+svg.esq{width:100%;height:auto}
+svg.esq .bx{fill:var(--well);stroke:var(--line);stroke-width:1.5}
+svg.esq .bx.q{fill:color-mix(in srgb,var(--accent) 14%,var(--well))}
+svg.esq .lb{fill:var(--fg);font-size:14px;font-family:var(--f-body);font-weight:500}
+svg.esq .mu{fill:var(--muted);font-size:12px;font-family:var(--f-mono)}
+svg.esq .ar{stroke:var(--accent);stroke-width:2}
+svg.esq .fl{fill:var(--accent)}
+.refs li{font-size:15px}
+.tshost .js-plotly-plot{width:100%}
+.panel .figimg{width:auto;max-width:100%;max-height:calc(100vh - 230px);margin:0 auto}

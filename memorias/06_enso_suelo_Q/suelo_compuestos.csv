@@ -1,0 +1,9 @@
+﻿trimestre,fase,n,z S cuenca,z P cuenca,% área con S por debajo de lo normal
+DEF,El Niño,14,-1.169,-0.899,100.0
+DEF,La Niña,16,0.777,0.749,1.683
+MAM,El Niño,7,-1.179,-0.389,99.658
+MAM,La Niña,8,0.828,0.385,3.136
+JJA,El Niño,8,-1.008,-0.892,99.204
+JJA,La Niña,5,0.961,1.295,2.398
+SON,El Niño,15,-0.985,-0.597,100.0
+SON,La Niña,13,0.663,0.506,4.665

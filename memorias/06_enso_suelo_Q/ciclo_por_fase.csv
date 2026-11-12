@@ -1,0 +1,109 @@
+﻿estación,fase,mes,Q observado,Q simulado
+La Virginia,El Niño,1,322.2,354.3
+La Virginia,El Niño,2,279.5,324.2
+La Virginia,El Niño,3,304.4,320.4
+La Virginia,El Niño,4,558.5,477.1
+La Virginia,El Niño,5,587.9,545.6
+La Virginia,El Niño,6,467.2,406.6
+La Virginia,El Niño,7,308.2,281.1
+La Virginia,El Niño,8,249.4,189.5
+La Virginia,El Niño,9,241.5,185.9
+La Virginia,El Niño,10,381.4,302.5
+La Virginia,El Niño,11,575.5,472.1
+La Virginia,El Niño,12,514.2,438.3
+La Virginia,Neutro,1,564.2,529.8
+La Virginia,Neutro,2,476.5,512.4
+La Virginia,Neutro,3,546.4,539.0
+La Virginia,Neutro,4,676.7,660.5
+La Virginia,Neutro,5,705.2,622.7
+La Virginia,Neutro,6,552.2,495.9
+La Virginia,Neutro,7,366.7,347.8
+La Virginia,Neutro,8,298.1,265.9
+La Virginia,Neutro,9,302.3,243.5
+La Virginia,Neutro,10,406.2,371.6
+La Virginia,Neutro,11,541.4,502.0
+La Virginia,Neutro,12,620.7,521.8
+La Virginia,La Niña,1,811.7,777.2
+La Virginia,La Niña,2,731.6,809.5
+La Virginia,La Niña,3,893.6,840.2
+La Virginia,La Niña,4,921.8,878.8
+La Virginia,La Niña,5,815.7,726.3
+La Virginia,La Niña,6,715.8,636.8
+La Virginia,La Niña,7,591.5,492.6
+La Virginia,La Niña,8,451.8,374.8
+La Virginia,La Niña,9,452.1,362.8
+La Virginia,La Niña,10,618.3,552.6
+La Virginia,La Niña,11,1004.3,824.8
+La Virginia,La Niña,12,1004.2,818.2
+Bolombolo,El Niño,1,471.7,570.9
+Bolombolo,El Niño,2,419.8,498.5
+Bolombolo,El Niño,3,431.7,477.8
+Bolombolo,El Niño,4,781.2,731.7
+Bolombolo,El Niño,5,913.1,911.7
+Bolombolo,El Niño,6,749.1,700.6
+Bolombolo,El Niño,7,491.9,530.9
+Bolombolo,El Niño,8,411.8,383.6
+Bolombolo,El Niño,9,432.8,405.7
+Bolombolo,El Niño,10,659.4,633.8
+Bolombolo,El Niño,11,928.0,857.0
+Bolombolo,El Niño,12,747.5,735.0
+Bolombolo,Neutro,1,769.3,846.8
+Bolombolo,Neutro,2,650.7,799.1
+Bolombolo,Neutro,3,763.1,830.5
+Bolombolo,Neutro,4,994.3,1057.5
+Bolombolo,Neutro,5,1188.0,1117.8
+Bolombolo,Neutro,6,912.3,933.0
+Bolombolo,Neutro,7,642.4,703.6
+Bolombolo,Neutro,8,526.6,577.4
+Bolombolo,Neutro,9,580.6,582.5
+Bolombolo,Neutro,10,772.4,825.7
+Bolombolo,Neutro,11,933.2,974.6
+Bolombolo,Neutro,12,956.7,908.0
+Bolombolo,La Niña,1,1142.7,1217.5
+Bolombolo,La Niña,2,1015.9,1212.0
+Bolombolo,La Niña,3,1309.6,1308.3
+Bolombolo,La Niña,4,1293.1,1303.6
+Bolombolo,La Niña,5,1292.7,1274.8
+Bolombolo,La Niña,6,1251.9,1227.6
+Bolombolo,La Niña,7,1061.8,1032.9
+Bolombolo,La Niña,8,850.2,892.2
+Bolombolo,La Niña,9,884.0,908.9
+Bolombolo,La Niña,10,1101.4,1150.0
+Bolombolo,La Niña,11,1505.3,1439.7
+Bolombolo,La Niña,12,1469.2,1398.3
+Presa,El Niño,1,545.4,682.4
+Presa,El Niño,2,475.8,564.2
+Presa,El Niño,3,471.1,490.4
+Presa,El Niño,4,798.5,722.5
+Presa,El Niño,5,1016.0,968.4
+Presa,El Niño,6,856.7,758.0
+Presa,El Niño,7,637.9,636.2
+Presa,El Niño,8,590.6,459.9
+Presa,El Niño,9,624.5,493.6
+Presa,El Niño,10,884.7,762.2
+Presa,El Niño,11,1095.4,971.2
+Presa,El Niño,12,880.5,833.7
+Presa,Neutro,1,866.1,946.6
+Presa,Neutro,2,770.5,892.7
+Presa,Neutro,3,846.2,929.0
+Presa,Neutro,4,1103.6,1200.7
+Presa,Neutro,5,1374.2,1282.1
+Presa,Neutro,6,1113.0,1089.2
+Presa,Neutro,7,870.0,831.4
+Presa,Neutro,8,722.0,679.7
+Presa,Neutro,9,819.5,741.8
+Presa,Neutro,10,985.2,982.0
+Presa,Neutro,11,1119.9,1113.8
+Presa,Neutro,12,1101.5,1029.1
+Presa,La Niña,1,1231.4,1441.1
+Presa,La Niña,2,1138.9,1405.1
+Presa,La Niña,3,1353.4,1426.0
+Presa,La Niña,4,1455.9,1542.1
+Presa,La Niña,5,1475.4,1427.1
+Presa,La Niña,6,1339.1,1349.0
+Presa,La Niña,7,1206.0,1145.7
+Presa,La Niña,8,1073.6,1089.1
+Presa,La Niña,9,1117.6,1178.5
+Presa,La Niña,10,1363.9,1414.8
+Presa,La Niña,11,1819.2,1763.2
+Presa,La Niña,12,1697.1,1636.6
