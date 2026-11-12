@@ -69,7 +69,7 @@ for ax, k in zip(axs.flat, PRODS):
 axs.flat[-1].axis("off")
 escalas.barra(fig, im, escalas.P, *[v[wc > 0] for v in vals], ax=axs.flat[-1], fraction=0.5, label="P media anual 1981–2010 (mm/año)")
 fig.suptitle("Precipitación media anual 1981–2010 por producto (grilla del Cubo de datos IDEAM, 0,1°)", fontsize=12)
-fig.savefig(OUT / "mapas_P_productos.png", dpi=200)
+fig.savefig(OUT / "mapas_P_productos.png", dpi=300)
 plt.close(fig)
 
 # 2. ciclo anual de la cuenca ----------------------------------------------------------------------------------------

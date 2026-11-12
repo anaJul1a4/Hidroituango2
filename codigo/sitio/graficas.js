@@ -9,9 +9,14 @@ $("#themeTg").addEventListener("click", () => {
   const d = document.documentElement, dark = (d.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")) === "dark";
   d.dataset.theme = dark ? "light" : "dark";
   try { localStorage.setItem("theme", d.dataset.theme); } catch (e) {}
-  redibujar();
+  etiquetaTema(); redibujar();
 });
-matchMedia("(prefers-color-scheme: dark)").addEventListener("change", redibujar);
+function etiquetaTema() {
+  const d = document.documentElement, dark = (d.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")) === "dark";
+  $("#themeTg .tlbl").textContent = dark ? "Modo claro" : "Modo oscuro";
+}
+etiquetaTema();
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { etiquetaTema(); redibujar(); });
 
 const slides = $$(".slide"), dots = $("#dots"), main = $("#main");
 let cur = 0;
@@ -41,7 +46,6 @@ function fitSlide() {
   const sl = slides[cur]; sl.style.zoom = "";
   if (window.innerWidth < 900) return;
   const avail = main.clientHeight, need = sl.offsetHeight;
-  if (need > avail + 4) sl.style.zoom = Math.max(0.7, (avail - 4) / need).toFixed(3);
 }
 $("#prev").onclick = () => go(cur - 1); $("#next").onclick = () => go(cur + 1);
 document.addEventListener("click", e => {
@@ -75,8 +79,8 @@ $$(".chips").forEach(g => {
 
 /* ───────── gráficas: estáticas (sin zoom ni arrastre), valores al pasar el cursor ───────── */
 const CFG = { responsive: true, displayModeBar: false, scrollZoom: false, doubleClick: false, staticPlot: false };
-const COL = { "Cubo IDEAM": () => css("--fg"), "IDEAM normales (kriging, Trabajo 1)": () => "#9aa3b2", "CHIRPS v2.0": () => "#1d4ed8",
-  "CHIRPS v3.0": () => "#60a5fa", "ERA5-Land": () => "#ea580c", "ERA5": () => "#b91c1c", "ERA5-Land QM": () => "#ea580c", "ERA5 QM": () => "#b91c1c" };
+const COL = { "Cubo IDEAM": () => css("--fg"), "IDEAM normales (kriging, Trabajo 1)": () => "#b07a0c", "CHIRPS v2.0": () => "#1d4ed8",
+  "CHIRPS v3.0": () => "#9aa3b2", "ERA5-Land": () => "#ea580c", "ERA5": () => "#b91c1c", "ERA5-Land QM": () => "#ea580c", "ERA5 QM": () => "#b91c1c" };
 function ax(t, extra) {
   return Object.assign({ title: { text: t, font: { size: 12, color: css("--muted") } }, gridcolor: css("--line"), linecolor: css("--line"),
     zeroline: false, tickfont: { size: 11, color: css("--muted"), family: css("--f-mono") }, fixedrange: true, automargin: true }, extra || {});
@@ -105,9 +109,7 @@ const G = {
       { type: "scatter", mode: "lines", name: "Cubo limpio", x: q.t, y: q.sl, line: { color: css("--fg"), width: 1.4 }, hovertemplate: "Cubo limpio: %{y:.0f} mm<extra></extra>" },
       { type: "scatter", mode: "lines", name: "CHIRPS v2.0", x: q.t, y: q.sc, line: { color: "#1d4ed8", width: 1.2 }, hovertemplate: "CHIRPS v2.0: %{y:.0f} mm<extra></extra>" }],
       { xaxis: ax("", { type: "date" }), yaxis: ax("Precipitación mensual de la cuenca (mm)", { rangemode: "tozero" }), hovermode: "x unified" });
-    if (v === "marc") plot("qcFig", [{ type: "bar", x: MESES, y: q.marc, marker: { color: "#b07a0c" }, name: "celdas-día",
-      hovertemplate: "%{x}: %{y:,.0f} celdas-día corregidas (1981–2023)<extra></extra>" }],
-      { showlegend: false, xaxis: ax(""), yaxis: ax("Celdas-día corregidas en el recuadro de la cuenca") });
+    $("#qcFig").hidden = v === "marc"; $("#qcImg").hidden = v !== "marc";
   },
   "d-ciclo"() {
     const g = { obs: ["IDEAM normales (kriging, Trabajo 1)", "Cubo IDEAM", "CHIRPS v2.0", "CHIRPS v3.0"], rea: ["Cubo IDEAM", "ERA5-Land", "ERA5"],
@@ -124,15 +126,7 @@ const G = {
       linea("ETo Hargreaves", MESES, D.eto.hg, "#b91c1c", { line: { color: "#b91c1c", width: 2, dash: "dash" }, hovertemplate: "ETo Hargreaves · %{x}: %{y:.0f} mm<extra></extra>" })],
       { xaxis: ax(""), yaxis: ax("Media de la cuenca, 1981–2010 (mm/mes)", { rangemode: "tozero" }) });
   },
-  "m-desemp"() {
-    const k = D.kge;
-    plot("kgeFig", [
-      { type: "bar", name: "Calibración 1982–2005", x: k.est, y: k.cal, marker: { color: "#93c5fd" }, hovertemplate: "%{x} · calibración: KGE %{y:.2f}<extra></extra>" },
-      { type: "bar", name: "Validación 2006–2023", x: k.est, y: k.val, marker: { color: "#1d4ed8" }, customdata: k.pb_val,
-        hovertemplate: "%{x} · validación: KGE %{y:.2f} (sesgo %{customdata:+.0f} %)<extra></extra>" }],
-      { barmode: "group", xaxis: ax("", { tickangle: -30 }), yaxis: ax("KGE (caudal mensual)", { range: [0, 1] }),
-        shapes: [{ type: "line", xref: "paper", x0: 0, x1: 1, y0: 0.75, y1: 0.75, line: { color: css("--muted"), width: 1, dash: "dot" } }] });
-  },
+
   "m-serie"() {
     const e = ESTADO.serieEst, s = D.serie;
     plot("serieFig", [
@@ -141,31 +135,13 @@ const G = {
       { hovermode: "x unified", xaxis: ax("", { type: "date" }), yaxis: ax(`Caudal medio mensual en ${e} (m³/s)`, { rangemode: "tozero" }),
         shapes: [{ type: "rect", xref: "x", yref: "paper", x0: "1982-01", x1: "2005-12", y0: 0, y1: 1, fillcolor: css("--line"), opacity: .35, line: { width: 0 }, layer: "below" }] });
   },
-  "m-emp"() {
-    const n = ["Empírico (diapositivas)", "Empírico + Q(t−1)", "abcd agregado", "abcd semidistribuido"];
-    plot("empFig", [{ type: "bar", x: n.slice(0, D.emp.kge.length), y: D.emp.kge, marker: { color: ["#9aa3b2", "#60a5fa", "#93c5fd", "#1d4ed8"] },
-      hovertemplate: "%{x}: KGE %{y:.2f}<extra></extra>", name: "" }],
-      { showlegend: false, xaxis: ax(""), yaxis: ax("KGE en la presa, validación", { range: [0, 1] }) });
-  },
+
   "p-mapas"() {
     const n = ESTADO.pMapa === "nino";
     $("#pMapaHost").hidden = !n; $("#pMapaHost2").hidden = n;
   },
-  "p-cuenca"() {
-    const fa = ESTADO.pFase, d = D.enso_p[fa];
-    plot("pFig", ["Cubo IDEAM", "CHIRPS v2.0", "CHIRPS v3.0", "ERA5-Land", "ERA5"].map(p => ({ type: "bar", name: p, x: TR, y: d[p],
-      marker: { color: COL[p]() }, hovertemplate: `${p} · %{x}: z = %{y:+.2f}<extra></extra>` })),
-      { barmode: "group", xaxis: ax(""), yaxis: ax(`z medio de la cuenca en ${fa}`, { zeroline: true, zerolinecolor: css("--muted") }) });
-  },
-  "s-mapas"() {
-    const t = [];
-    ["El Niño", "La Niña"].forEach(fa => {
-      const c = fa === "El Niño" ? "#b91c1c" : "#1d4ed8";
-      t.push({ type: "bar", name: `Lluvia · ${fa}`, x: TR, y: D.suelo[fa].P, marker: { color: c, opacity: .35 }, hovertemplate: `Lluvia · ${fa} · %{x}: z = %{y:+.2f}<extra></extra>` });
-      t.push({ type: "bar", name: `Suelo · ${fa}`, x: TR, y: D.suelo[fa].S, marker: { color: c }, hovertemplate: `Suelo · ${fa} · %{x}: z = %{y:+.2f}<extra></extra>` });
-    });
-    plot("sFig", t, { barmode: "group", xaxis: ax(""), yaxis: ax("z medio de la cuenca", { zeroline: true, zerolinecolor: css("--muted") }) });
-  },
+
+
   "s-memoria"() {
     const a = D.anom;
     plot("anomFig", [
@@ -176,15 +152,7 @@ const G = {
       { hovermode: "x unified", xaxis: ax("", { type: "date" }), yaxis: ax("Anomalía estandarizada"),
         yaxis2: ax("ONI (°C)", { overlaying: "y", side: "right", showgrid: false, autorange: "reversed" }), margin: { l: 56, r: 56, t: 34, b: 40 } });
   },
-  "q-comp"() {
-    const e = ESTADO.qEst, d = D.enso_q[e], t = [];
-    ["El Niño", "La Niña"].forEach(fa => {
-      const c = fa === "El Niño" ? "#b91c1c" : "#1d4ed8";
-      t.push({ type: "bar", name: `Observado · ${fa}`, x: TR, y: d[fa].obs, marker: { color: c, opacity: .75 }, offsetgroup: fa, hovertemplate: `Observado · ${fa} · %{x}: z = %{y:+.2f}<extra></extra>` });
-      t.push({ type: "scatter", mode: "markers", name: `Simulado · ${fa}`, x: TR, y: d[fa].sim, marker: { color: css("--fg"), size: 10, symbol: fa === "El Niño" ? "diamond" : "circle" }, hovertemplate: `Simulado · ${fa} · %{x}: z = %{y:+.2f}<extra></extra>` });
-    });
-    plot("qFig", t, { barmode: "group", xaxis: ax(""), yaxis: ax(`z del caudal en ${e}`, { zeroline: true, zerolinecolor: css("--muted") }) });
-  },
+
   "q-ciclo"() {
     const e = ESTADO.cEst, d = D.cpf[e], t = [];
     const col = { "El Niño": "#b91c1c", "Neutro": "#9aa3b2", "La Niña": "#1d4ed8" };

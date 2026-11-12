@@ -20,4 +20,16 @@ svg.esq .ar{stroke:var(--accent);stroke-width:2}
 svg.esq .fl{fill:var(--accent)}
 .refs li{font-size:15px}
 .tshost .js-plotly-plot{width:100%}
-.panel .figimg{width:auto;max-width:100%;max-height:calc(100vh - 230px);margin:0 auto}
+
+/* prioridad al tamaño de las figuras: diapositiva más ancha y columna de figura dominante; la página se desplaza si hace falta */
+.slide{max-width:min(1720px,100%)}
+.two.fig{grid-template-columns:minmax(0,0.78fr) minmax(0,2fr);gap:26px}
+.two.even{gap:26px}
+@media (max-width:900px){.two.fig{grid-template-columns:minmax(0,1fr)}}
+.panel .figimg{width:100%;max-width:100%;margin:0 auto}
+/* botón de tema con texto */
+button.theme-tg{width:auto;padding:0 12px;gap:7px;grid-auto-flow:column;font:500 13px var(--f-body);white-space:nowrap}
+@media (max-width:640px){button.theme-tg .tlbl{display:none} button.theme-tg{width:34px;padding:0}}
+.full .cols2txt{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 28px;margin-bottom:12px}
+.full .cols2txt p,.full .cols2txt ul{max-width:none}
+@media (max-width:900px){.full .cols2txt{grid-template-columns:minmax(0,1fr)}}

@@ -36,7 +36,7 @@ def f(v, d=0):
     return s.replace("-", "−")
 
 
-def fig(src, nombre, alt, ancho=2400):
+def fig(src, nombre, alt, ancho=3200):
     im = Image.open(src).convert("RGB")
     if im.width > ancho:
         im = im.resize((ancho, round(im.height * ancho / im.width)), Image.LANCZOS)
@@ -219,7 +219,7 @@ limpio y ERA5 corregido.</p></button>
 # ---- 1. datos
 slide("d-cubo", "1 · Datos de entrada", "1a · Cubo de datos del IDEAM · control de calidad",
       "El Cubo del IDEAM traía días de hasta 4700 mm en la cuenca: hubo que limpiarlo antes de usarlo", f"""
-<div class='two'><div>
+<div class='two fig'><div>
 <p>El Cubo de datos es la grilla diaria de 0,1° que el IDEAM generó con el software CDT a partir de 1567 estaciones (lluvia,
 temperaturas y humedad, 1981–2023). En la cuenca, el archivo diario trae <b>valores imposibles, de 1945 a 4702 mm en un día</b>,
 sobre todo en diciembre–febrero, y el archivo mensual es la suma de esos días.</p>
@@ -230,11 +230,12 @@ día (un «ojo de buey» aislado), o que supera 500 mm; se reemplaza por esa med
 correlación con CHIRPS pasa a {f(r_l, 2)}.</p>
 {chips('qcVista', [('ciclo', 'Ciclo anual'), ('serie', 'Serie mensual'), ('marc', 'Celdas marcadas por mes')])}
 <p class='tryit'>pasa a la serie mensual y busca enero de 1995 y enero de 1998, en plena sequía de El Niño.</p>
-</div><div class='panel'><div class='tshost' id='qcFig' style='height:380px'></div></div></div>""")
+</div><div class='panel'><div class='tshost' id='qcFig' style='height:480px'></div>
+<div id='qcImg' hidden>{fig(R2 / '07_figuras' / 'fig_celdas_marcadas.png', 'celdas_marcadas', 'Celdas-día corregidas por mes')}</div></div></div>""")
 
 slide("d-mapas", "1 · Datos de entrada", "1a · productos de precipitación · media 1981–2010",
       "Con el Cubo limpio, los productos con estaciones coinciden; ERA5 y ERA5-Land triplican la lluvia y la corrección la devuelve", f"""
-<div class='two'><div>
+<div class='two fig'><div>
 <p>Los siete campos están en la grilla del Cubo (0,1°): CHIRPS v2.0 y v3.0 interpolados desde 0,05°, ERA5-Land en su retícula y ERA5
 interpolado desde 0,25°. La escala de color es la del Trabajo 1: el mismo valor tiene el mismo color en todos los mapas.</p>
 <ul class='pts'><li><b>Cubo, CHIRPS v2.0 y CHIRPS v3.0</b>: 2000–2200 mm/año, con el mismo patrón (correlación espacial 0,82–0,85).</li>
@@ -245,13 +246,13 @@ interpolado desde 0,25°. La escala de color es la del Trabajo 1: el mismo valor
 
 slide("d-ciclo", "1 · Datos de entrada", "1a–b · ciclo anual y métricas frente al Cubo",
       "Todos los productos con estaciones repiten el ciclo bimodal; ERA5 sin corregir lo aplana y lo multiplica por tres", f"""
-<div class='two'><div>
+<div class='two fig'><div>
 {chips('ciclo', [('obs', 'Con estaciones'), ('rea', 'Reanálisis sin corregir'), ('qm', 'Reanálisis corregidos')])}
 <p class='tryit'>compara los reanálisis corregidos con el Cubo: la media coincide por construcción, pero mira la tabla para 2011–2023.</p>
 {tabla(tab_met, {"P anual 1981–2010 (mm)": 0, "sesgo (%)": 1})}
 <p class='note'>Serie mensual promedio de la cuenca. KGE: eficiencia de Kling–Gupta (1 = perfecto). «r anomalías»: correlación sin el ciclo
 anual. 2011–2023 no se usó para ajustar la corrección: es la verificación independiente.</p>
-</div><div class='panel'><div class='tshost' id='cicloFig' style='height:380px'></div></div></div>""")
+</div><div class='panel'><div class='tshost' id='cicloFig' style='height:480px'></div></div></div>""")
 
 slide("d-qm", "1 · Datos de entrada", "1b · corrección de sesgo · mapeo de cuantiles",
       "ERA5 ya estaba corregido en el Trabajo 1 con CHIRPS; aquí se corrige con el Cubo, la referencia que entonces no había", f"""
@@ -277,7 +278,7 @@ D["eto"] = {"pm": cic["ETo Penman-Monteith"].round(1).tolist(), "hg": cic["ETo H
             "p": cic["Cubo IDEAM"].round(1).tolist()}
 slide("d-eto", "1 · Datos de entrada", "1a · evapotranspiración de referencia",
       f"FAO Penman-Monteith, el método del IDEAM, da {f(eto_pm)} mm/año; Hargreaves, el del Trabajo 1, un 15 % más", f"""
-<div class='two'><div>
+<div class='two fig'><div>
 <p>El IDEAM y la UPRA adoptaron <b>FAO Penman-Monteith</b> como método oficial de la ETo en Colombia (Nota técnica IDEAM-METEO/003-2021).
 Necesita radiación, humedad y viento; el Cubo trae temperaturas y humedad relativa pero no brillo solar, así que se usa el procedimiento de
 FAO-56 para datos faltantes:</p>
@@ -286,12 +287,12 @@ FAO-56 para datos faltantes:</p>
 <li>Viento de 2 m/s y presión atmosférica según la elevación media de cada celda (DEM de 90 m del Trabajo 1).</li></ul>
 <p><b>Hargreaves</b> ({f(eto_hg)} mm/año) sólo usa temperatura y radiación extraterrestre. Ambas ETo se prueban en el modelo; la diferencia
 pesa poco en una cuenca húmeda, donde la ETR está limitada por energía.</p>
-</div><div class='panel'><div class='tshost' id='etoFig' style='height:340px'></div></div></div>""")
+</div><div class='panel'><div class='tshost' id='etoFig' style='height:460px'></div></div></div>""")
 
 # ---- 2. modelo
 slide("m-como", "2 · Modelo abcd", "1c · modelo lluvia–escorrentía mensual abcd (Thomas, 1981)",
       "Cuatro parámetros, dos depósitos: el suelo decide cuánto se evapora y el acuífero cuánto tarda en salir", f"""
-<div class='two'><div>
+<div class='two fig'><div>
 <p class='eq'>W = P + S<sub>t−1</sub> &nbsp;·&nbsp; Y = (W + b)/(2a) − √[((W + b)/(2a))² − W·b/a]</p>
 <p class='eq'>S = Y·e<sup>−ETo/b</sup> &nbsp;·&nbsp; ETR = Y − S</p>
 <p class='eq'>Q = (1 − c)(W − Y) + d·G &nbsp;·&nbsp; G = [G<sub>t−1</sub> + c(W − Y)] / (1 + d)</p>
@@ -335,33 +336,33 @@ rango: las unidades pequeñas absorben el error de las de arriba.</li>
 diez estaciones. Es el modelo final: mejor validación y parámetros con sentido físico (tres unidades conservan b en el límite de 3000 mm, señal de que allí la lluvia del Cubo sobra frente al caudal observado).</li></ul>
 {pr_txt}
 <p class='note'>Modelo final: {html.escape(modelo_final)}, P del {html.escape(final['producto'])}, ETo de {html.escape(final['eto'])}.</p>
-</div><div class='panel'>{fig(R2 / '07_figuras' / 'mapa_unidades.png', 'unidades', 'Unidades del modelo y estaciones', 900)}</div></div>""")
+</div><div class='panel'>{fig(R2 / '07_figuras' / 'mapa_unidades.png', 'unidades', 'Unidades del modelo y estaciones')}</div></div>""")
 
 slide("m-desemp", "2 · Modelo abcd", "1c · desempeño por estación",
       f"El modelo reproduce los caudales mensuales en las diez estaciones: KGE medio de {f(kv_med, 2)} en la validación", f"""
-<div class='two'><div>
+<div class='two fig'><div>
 <p>El desempeño se sostiene fuera del periodo de calibración en casi todas las estaciones. Las dos más débiles son las de aguas arriba:</p>
 <ul class='pts'><li><b>La Balsa</b>: está aguas abajo del embalse de Salvajina (desde 1985), que regula el caudal mes a mes, y el modelo no
 lo representa.</li><li><b>Juanchito</b>: recibe esa misma regulación y la menor cobertura de datos de validación.</li></ul>
 <p>Desde La Virginia hacia abajo el KGE de validación está entre 0,76 y 0,92, y en la presa llega a 0,92: es la parte de la cuenca que más aporta.</p>
 <p class='note'>KGE ≥ 0,75 suele considerarse bueno para caudales mensuales. La validación usa sólo los meses con dato observado.</p>
-</div><div class='panel'><div class='tshost' id='kgeFig' style='height:380px'></div></div></div>""")
+</div><div class='panel'>{fig(R2 / '07_figuras' / 'fig_kge_estaciones.png', 'kge_estaciones', 'KGE por estación')}</div></div>""")
 
 slide("m-serie", "2 · Modelo abcd", "1c · caudales observados y simulados",
       "Las sequías de El Niño (1992, 1998, 2010, 2015–16) y las crecientes de La Niña (1999, 2008, 2010–11) quedan en su lugar", f"""
 {chips('serieEst', [(e, e) for e in ['La Virginia', 'La Pintada', 'Bolombolo', 'Cañafisto', 'Presa', 'La Balsa']])}
-<div class='panel'><div class='tshost' id='serieFig' style='height:360px'></div></div>
+<div class='panel'><div class='tshost' id='serieFig' style='height:520px'></div></div>
 <p class='note'>Caudal medio mensual (m³/s). La banda gris es la calibración (1982–2005). En la presa el observado termina en 2017.</p>""")
 
 slide("m-emp", "2 · Modelo abcd", "1c · ¿qué combinación sirve para un sistema operativo?",
       "La ecuación empírica sin memoria explica poco; con el caudal del mes anterior se acerca al abcd, que además da el estado del suelo", f"""
-<div class='two'><div>
+<div class='two fig'><div>
 <p>La ecuación de las diapositivas, Q = α·(P − ETR) + β con ETR de Budyko mensual, sólo usa la lluvia del mes y alcanza un KGE de validación
 de {f(D['emp']['kge'][0], 2)} en la presa. Agregar el caudal del mes anterior, Q(t−1), la lleva a {f(D['emp']['kge'][1], 2)}: la memoria de la
 cuenca es lo que le faltaba. El abcd tiene esa memoria de forma física (suelo y acuífero) y no necesita conocer el caudal observado para
 simular, así que puede correrse con escenarios de lluvia o de clima futuro.</p>
 {tabla(tab_mod, {c: 2 for c in tab_mod.columns})}
-</div><div class='panel'><div class='tshost' id='empFig' style='height:300px'></div>
+</div><div class='panel'>{fig(R2 / '07_figuras' / 'fig_kge_modelos_presa.png', 'kge_modelos', 'KGE de los modelos en la presa')}
 <div class='callout teal'><b>Respuesta.</b> Para un sistema operativo mensual: modelo abcd semidistribuido con la lluvia del Cubo del IDEAM
 (o CHIRPS v2.0, casi igual de bueno y disponible en tiempo casi real), ETo de Hargreaves y calibración multisitio regionalizada. ERA5 sólo sirve corregido, y aun
 así queda por debajo de los productos con estaciones.</div></div></div>""")
@@ -369,21 +370,20 @@ así queda por debajo de los productos con estaciones.</div></div></div>""")
 # ---- 3. ENSO y lluvia
 slide("p-mapas", "3 · ENSO y lluvia", "2 · anomalías estandarizadas de la precipitación · compuestos 1981–2023",
       "El Niño seca casi toda la cuenca en diciembre–febrero y junio–agosto; marzo–mayo es la temporada menos sensible", f"""
-<div class='two'><div>
+<div class='two fig'><div>
 {chips('pMapa', [('nino', 'El Niño'), ('nina', 'La Niña')])}
 <p>z = (P del trimestre − media) / desviación estándar, por celda y trimestre (base 1981–2010). Cada mapa es el promedio de z en los
 trimestres de la fase, según la definición del CPC: ONI ≥ +0,5 °C (El Niño) o ≤ −0,5 °C (La Niña) durante al menos cinco trimestres
 seguidos.</p>
 <p class='tryit'>compara las filas del Cubo y CHIRPS con las de ERA5: el promedio de la cuenca se parece, el dibujo no.</p>
 <p class='note'>Rojo = más seco que lo normal; azul = más húmedo. z̄ es el promedio de la cuenca.</p>
-</div><div class='panel'><div id='pMapaHost'>{fig(R2 / '05_enso_P' / 'mapas_compuesto_nino.png', 'enso_P_nino', 'Compuestos El Niño', 1100)}</div>
-<div id='pMapaHost2' hidden>{fig(R2 / '05_enso_P' / 'mapas_compuesto_nina.png', 'enso_P_nina', 'Compuestos La Niña', 1100)}</div></div></div>""")
+</div><div class='panel'><div id='pMapaHost'>{fig(R2 / '05_enso_P' / 'mapas_compuesto_nino.png', 'enso_P_nino', 'Compuestos El Niño')}</div>
+<div id='pMapaHost2' hidden>{fig(R2 / '05_enso_P' / 'mapas_compuesto_nina.png', 'enso_P_nina', 'Compuestos La Niña')}</div></div></div>""")
 
 slide("p-cuenca", "3 · ENSO y lluvia", "2 · consistencia entre productos",
       "Todos los productos coinciden en el signo y el tamaño de la anomalía de la cuenca; sólo los de estaciones coinciden en dónde ocurre", f"""
-<div class='two'><div>
-{chips('pFase', [('El Niño', 'El Niño'), ('La Niña', 'La Niña')])}
-<div class='panel'><div class='tshost' id='pFig' style='height:300px'></div></div>
+<div class='two fig'><div>
+<div class='panel'>{fig(R2 / '07_figuras' / 'fig_enso_P_productos.png', 'enso_P_productos', 'z de la cuenca por producto')}</div>
 <h3>Correlación entre el ONI y z de la cuenca, por trimestre</h3>
 {tabla(tab_oni, {c: 2 for c in TR})}
 </div><div>
@@ -400,23 +400,23 @@ s_def = ts[(ts.trimestre == "DEF") & (ts.fase == "El Niño")].iloc[0]
 s_mam = ts[(ts.trimestre == "MAM") & (ts.fase == "El Niño")].iloc[0]
 slide("s-mapas", "4 · Humedad del suelo", "3 · humedad del suelo simulada (S del abcd)",
       "Durante El Niño el suelo se seca en toda la cuenca, y más que la lluvia: en marzo–mayo sigue seco aunque ya llueva casi normal", f"""
-<div class='two'><div>
-<div class='panel'><div class='tshost' id='sFig' style='height:280px'></div></div>
+<div class='two fig'><div>
+<div class='panel'>{fig(R2 / '07_figuras' / 'fig_suelo_lluvia_enso.png', 'suelo_lluvia', 'Suelo frente a lluvia en El Niño y La Niña')}</div>
 <ul class='pts'><li><b>Magnitud</b>: en DEF de El Niño, z de la lluvia = {f(s_def['z P cuenca'], 2)} y z del suelo = {f(s_def['z S cuenca'], 2)}.
 El suelo amplifica la anomalía porque acumula varios meses de déficit.</li>
 <li><b>Persistencia</b>: en MAM la lluvia ya casi no tiene señal (z = {f(s_mam['z P cuenca'], 2)}) pero el suelo sigue en
 {f(s_mam['z S cuenca'], 2)}: arrastra la sequía de diciembre–febrero.</li>
 <li><b>Extensión</b>: en todos los trimestres de El Niño más del 96 % del área queda con el suelo por debajo de lo normal. La Niña da la
 imagen opuesta, con anomalías algo menores.</li></ul>
-</div><div class='panel'>{fig(R2 / '06_enso_suelo_Q' / 'mapas_suelo_enso.png', 'suelo_enso', 'Humedad del suelo en El Niño y La Niña', 1100)}</div></div>""")
+</div><div class='panel'>{fig(R2 / '06_enso_suelo_Q' / 'mapas_suelo_enso.png', 'suelo_enso', 'Humedad del suelo en El Niño y La Niña')}</div></div>""")
 
 slide("s-memoria", "4 · Humedad del suelo", "3 · memoria del suelo",
       "El suelo recuerda la lluvia de los meses anteriores: por eso responde al ENSO con más fuerza y durante más tiempo que la lluvia", f"""
-<div class='two'><div>
-<div class='panel'><div class='tshost' id='anomFig' style='height:330px'></div></div>
+<div class='two fig'><div>
+<div class='panel'><div class='tshost' id='anomFig' style='height:460px'></div></div>
 <p class='note'>Anomalías mensuales estandarizadas de la cuenca (P y Q, media móvil de 3 meses) y ONI. Q es el observado en la presa.</p>
 </div><div>
-{fig(R2 / '06_enso_suelo_Q' / 'mapas_memoria_suelo.png', 'memoria_suelo', 'Memoria y rezago del suelo', 900)}
+{fig(R2 / '06_enso_suelo_Q' / 'mapas_memoria_suelo.png', 'memoria_suelo', 'Memoria y rezago del suelo')}
 <p>La autocorrelación de un mes de las anomalías del suelo es {f(rz.loc['S', 'memoria r1'], 2)} (la de la lluvia, {f(rz.loc['P', 'memoria r1'], 2)}):
 un mes seco deja el suelo seco el mes siguiente. La correlación del ONI con el suelo es máxima con 2–3 meses de rezago
 ({f(min(D['rez']['S']), 2)}), mientras que con la lluvia es máxima en el mismo mes.</p></div></div>""")
@@ -424,29 +424,28 @@ un mes seco deja el suelo seco el mes siguiente. La correlación del ONI con el 
 # ---- 5. caudales
 slide("q-comp", "5 · Caudales", "4 · anomalías estandarizadas de los caudales, observados y simulados",
       "Los caudales caen en todos los trimestres de El Niño, y la mayor reducción en la presa llega en diciembre–febrero", f"""
-<div class='two'><div>
-{chips('qEst', [(e, e) for e in ['Presa', 'Bolombolo', 'La Virginia']])}
+<div class='full'><div class='cols2txt'>
 <p>Barras: z del caudal observado; puntos: z del simulado por el modelo abcd con la lluvia del Cubo. Mismas fases y trimestres del numeral 2.</p>
 <ul class='pts'><li>En la presa, El Niño baja el caudal en DEF (z = {f(D['enso_q']['Presa']['El Niño']['obs'][0], 2)}) y en MAM
 ({f(D['enso_q']['Presa']['El Niño']['obs'][1], 2)}), aunque la lluvia de MAM casi no cambie: es el suelo seco y el acuífero vacío.</li>
 <li>El modelo reproduce el signo y el orden de magnitud en todas las combinaciones de fase y trimestre; subestima el extremo de El Niño en la
 presa en DEF.</li></ul>
-<p class='tryit'>cambia a La Virginia: la señal es más pareja entre trimestres que en la presa.</p>
-</div><div class='panel'><div class='tshost' id='qFig' style='height:380px'></div></div></div>""")
+<p class='note'>En La Virginia la señal es más pareja entre trimestres que en la presa.</p>
+</div><div class='panel'>{fig(R2 / '07_figuras' / 'fig_caudales_enso.png', 'caudales_enso', 'Caudales observados y simulados en El Niño y La Niña')}</div></div>""")
 
 slide("q-ciclo", "5 · Caudales", "4 · ciclo anual en años El Niño, neutros y La Niña",
       "El Niño no cambia la forma del ciclo bimodal: lo baja entero, y más en la temporada seca de comienzo de año", f"""
-<div class='two'><div>
+<div class='two fig'><div>
 {chips('cEst', [(e, e) for e in ['Presa', 'Bolombolo', 'La Virginia']])}
 <p>Caudal medio de cada mes en los meses de cada fase (la fase de cada mes según el ONI del trimestre centrado en él). Líneas continuas:
 observado; punteadas: simulado. El modelo reproduce el ciclo en las tres fases, lo que valida su respuesta al ENSO en el ciclo anual,
 como pide el numeral 4.</p>
-</div><div class='panel'><div class='tshost' id='cFig' style='height:360px'></div></div></div>""")
+</div><div class='panel'><div class='tshost' id='cFig' style='height:500px'></div></div></div>""")
 
 slide("q-rez", "5 · Caudales", "4 · lluvia, suelo y caudal: almacenamiento y memoria",
       "La señal del Pacífico llega a la lluvia de inmediato y a los caudales con 1–2 meses de rezago, a través del suelo", f"""
-<div class='two'><div>
-<div class='panel'><div class='tshost' id='rezFig' style='height:320px'></div></div>
+<div class='two fig'><div>
+<div class='panel'><div class='tshost' id='rezFig' style='height:460px'></div></div>
 </div><div>
 <ul class='pts'><li><b>ONI → lluvia</b>: correlación máxima en el mismo mes ({f(D['rez']['P'][0], 2)}) y decae en pocos meses.</li>
 <li><b>ONI → suelo y caudal</b>: correlación más fuerte ({f(min(D['rez']['S']), 2)} y {f(min(D['rez']['Q obs presa']), 2)}) y máxima con
@@ -521,7 +520,7 @@ pagina = f"""<!doctype html>
 <div class="deck">
 <header class="top"><a class="back" href="{T1_URL}">← Trabajo 1</a>
 <nav class="series" aria-label="Secciones">{nav}</nav><div class="sec" id="secLabel"><b></b></div>
-<button class="theme-tg" id="themeTg" type="button" aria-label="Cambiar entre modo claro y oscuro"><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+<button class="theme-tg" id="themeTg" type="button" aria-label="Cambiar entre modo claro y oscuro"><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><span class="tlbl"></span></button>
 </header>
 <main id="main">
 {''.join(sl)}

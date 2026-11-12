@@ -156,7 +156,7 @@ for fa, arch in [("El Niño", "mapas_compuesto_nino.png"), ("La Niña", "mapas_c
                  label="Anomalía estandarizada de la precipitación (z): rojo = más seco, azul = más húmedo")
     fig.suptitle(f"Precipitación en trimestres {fa} (1981–2023; n = " + ", ".join(f"{k} {v}" for k, v in n.items()) + ")",
                  fontsize=11)
-    fig.savefig(OUT / arch, dpi=200)
+    fig.savefig(OUT / arch, dpi=300)
     plt.close(fig)
 
 pd.set_option("display.width", 220)

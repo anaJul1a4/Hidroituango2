@@ -40,4 +40,4 @@ ax.set_xlabel("Longitud (°)"); ax.set_ylabel("Latitud (°)"); ax.set_aspect("eq
 ax.legend(loc="lower right", fontsize=8)
 ax.set_title("Unidades del modelo abcd semidistribuido\n(áreas incrementales entre estaciones; grilla del Cubo de 0,1°)", fontsize=10)
 fig.tight_layout()
-fig.savefig(OUT / "mapa_unidades.png", dpi=200)
+fig.savefig(OUT / "mapa_unidades.png", dpi=300)

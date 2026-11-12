@@ -187,7 +187,7 @@ for i, fa in enumerate(FASES):
 fig.colorbar(im, ax=axs, orientation="horizontal", fraction=0.04, pad=0.02, ticks=CL,
              label="Anomalía estandarizada de la humedad del suelo S (abcd): rojo = más seco, azul = más húmedo")
 fig.suptitle(f"Humedad del suelo simulada en trimestres El Niño y La Niña (1981–2023; P: {mejor}, ETo: {fin['eto']})", fontsize=11)
-fig.savefig(OUT / "mapas_suelo_enso.png", dpi=200)
+fig.savefig(OUT / "mapas_suelo_enso.png", dpi=300)
 plt.close(fig)
 
 fig, axs = plt.subplots(1, 2, figsize=(7.5, 6), constrained_layout=True)
@@ -202,7 +202,7 @@ for ax, (v, t, cm, cl) in zip(axs, [(mem.values, "Memoria: autocorrelación de 1
     cb = fig.colorbar(im, ax=ax, shrink=0.6)
     if cm == "Oranges":
         cb.set_ticks([0, 1, 2, 3])
-fig.savefig(OUT / "mapas_memoria_suelo.png", dpi=200)
+fig.savefig(OUT / "mapas_memoria_suelo.png", dpi=300)
 plt.close(fig)
 
 pd.set_option("display.width", 220)

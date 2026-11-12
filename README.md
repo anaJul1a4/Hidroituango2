@@ -3,7 +3,7 @@
 Trabajo 2 de Hidrometeorología (Universidad Nacional de Colombia, sede Medellín). Continúa el
 [Trabajo 1: balance hídrico de largo plazo](https://anajul1a4.github.io/balance-hidrico-hidroituango/).
 
-**Sitio (presentación interactiva):** https://anajul1a4.github.io/modelacion-hidrologica-hidroituango/
+**Sitio (presentación interactiva):** https://anajul1a4.github.io/hidroituango2/
 
 ## Qué hay
 
@@ -35,9 +35,9 @@ Trabajo 2 de Hidrometeorología (Universidad Nacional de Colombia, sede Medellí
 | Carpeta | Contenido |
 |---|---|
 | `docs/` | Sitio publicado en GitHub Pages (`index.html`, figuras en `img/`, Plotly en `assets/`). |
-| `codigo/` | Scripts en orden: `00_limpieza_cubo.py`, `01_entradas.py`, `02_comparacion_productos.py`, `03_caudales_mensuales.py`, `04_modelo_abcd.py`, `04b_abcd_regionalizado.py`, `05_enso_precipitacion.py`, `06_enso_suelo_caudales.py`, `07_mapa_unidades.py`. |
+| `codigo/` | Scripts en orden: `00_limpieza_cubo.py`, `01_entradas.py`, `02_comparacion_productos.py`, `03_caudales_mensuales.py`, `04_modelo_abcd.py`, `04b_abcd_regionalizado.py`, `05_enso_precipitacion.py`, `06_enso_suelo_caudales.py`, `07_mapa_unidades.py`, `08_figuras_no_series.py`. |
 | `codigo/sitio/` | Generador del sitio (`construir.py`), estilos y gráficas. El estilo de presentación es el de la presentación PAE Orinoquía–Amazonía. |
-| `memorias/` | Resultados: tablas CSV, figuras, parámetros, métricas y estados del modelo final (S, G, ETR y Q por celda). |
+| `memorias/` | Resultados: tablas CSV, figuras en PNG de 300 dpi (mapas y gráficas que no son series, listas para el informe), parámetros, métricas y estados del modelo final (S, G, ETR y Q por celda). |
 | `datos/` | Precipitación mensual del Cubo de datos IDEAM en la cuenca, tras el control de calidad. |
 
 ## Cómo reproducir
@@ -51,7 +51,7 @@ Los scripts esperan la estructura de carpetas del proyecto original:
 El Cubo de datos se descarga de https://bart.ideam.gov.co/meteorologia/DATOS/CUBO%20DE%20DATOS/. Se usan `prcp_dia_*.nc` (recortados
 a la cuenca) y `tmax_`, `tmin_`, `tmed_` y `humd_mes_prom_1981_2023.nc`.
 
-Python 3.13 con numpy, pandas, xarray, geopandas, rasterio, scipy, numba y matplotlib. Orden: 00 → 07 y luego
+Python 3.13 con numpy, pandas, xarray, geopandas, rasterio, scipy, numba y matplotlib. Orden: 00 → 08 y luego
 `python codigo/sitio/construir.py`.
 
 ## Fuentes de datos

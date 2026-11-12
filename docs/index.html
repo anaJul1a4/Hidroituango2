@@ -361,14 +361,26 @@ svg.esq .ar{stroke:var(--accent);stroke-width:2}
 svg.esq .fl{fill:var(--accent)}
 .refs li{font-size:15px}
 .tshost .js-plotly-plot{width:100%}
-.panel .figimg{width:auto;max-width:100%;max-height:calc(100vh - 230px);margin:0 auto}
+
+/* prioridad al tamaño de las figuras: diapositiva más ancha y columna de figura dominante; la página se desplaza si hace falta */
+.slide{max-width:min(1720px,100%)}
+.two.fig{grid-template-columns:minmax(0,0.78fr) minmax(0,2fr);gap:26px}
+.two.even{gap:26px}
+@media (max-width:900px){.two.fig{grid-template-columns:minmax(0,1fr)}}
+.panel .figimg{width:100%;max-width:100%;margin:0 auto}
+/* botón de tema con texto */
+button.theme-tg{width:auto;padding:0 12px;gap:7px;grid-auto-flow:column;font:500 13px var(--f-body);white-space:nowrap}
+@media (max-width:640px){button.theme-tg .tlbl{display:none} button.theme-tg{width:34px;padding:0}}
+.full .cols2txt{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 28px;margin-bottom:12px}
+.full .cols2txt p,.full .cols2txt ul{max-width:none}
+@media (max-width:900px){.full .cols2txt{grid-template-columns:minmax(0,1fr)}}
 </style>
 <script src="assets/plotly-2.35.2.min.js"></script>
 </head><body>
 <div class="deck">
 <header class="top"><a class="back" href="https://anajul1a4.github.io/balance-hidrico-hidroituango/">← Trabajo 1</a>
 <nav class="series" aria-label="Secciones"><button type='button' class='mod' data-go='d-cubo'><span>1</span> Datos</button><button type='button' class='mod' data-go='m-como'><span>2</span> Modelo abcd</button><button type='button' class='mod' data-go='p-mapas'><span>3</span> ENSO y lluvia</button><button type='button' class='mod' data-go='s-mapas'><span>4</span> Suelo</button><button type='button' class='mod' data-go='q-comp'><span>5</span> Caudales</button><button type='button' class='mod' data-go='cierre'><span>6</span> Cierre</button></nav><div class="sec" id="secLabel"><b></b></div>
-<button class="theme-tg" id="themeTg" type="button" aria-label="Cambiar entre modo claro y oscuro"><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+<button class="theme-tg" id="themeTg" type="button" aria-label="Cambiar entre modo claro y oscuro"><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><span class="tlbl"></span></button>
 </header>
 <main id="main">
 <section class='slide portada' id='portada' data-g='' data-sec='Trabajo 2 · Hidrometeorología'>
@@ -386,7 +398,7 @@ limpio y ERA5 corregido.</p></button>
 <button class='card lift pick' type='button' data-go='q-comp'><h4>5 · Caudales</h4><p>Observados y simulados en El Niño y La Niña.</p></button>
 <button class='card lift pick' type='button' data-go='cierre'><h4>6 · Respuestas</h4><p>Qué combinación sirve para operar y qué sigue.</p></button>
 </div></section><section class='slide' id='d-cubo' data-g='d' data-sec='1 · Datos de entrada'><p class='kicker k-data'>1a · Cubo de datos del IDEAM · control de calidad</p><h2>El Cubo del IDEAM traía días de hasta 4700 mm en la cuenca: hubo que limpiarlo antes de usarlo</h2>
-<div class='two'><div>
+<div class='two fig'><div>
 <p>El Cubo de datos es la grilla diaria de 0,1° que el IDEAM generó con el software CDT a partir de 1567 estaciones (lluvia,
 temperaturas y humedad, 1981–2023). En la cuenca, el archivo diario trae <b>valores imposibles, de 1945 a 4702 mm en un día</b>,
 sobre todo en diciembre–febrero, y el archivo mensual es la suma de esos días.</p>
@@ -397,22 +409,23 @@ día (un «ojo de buey» aislado), o que supera 500 mm; se reemplaza por esa med
 correlación con CHIRPS pasa a 0,96.</p>
 <div class='chips' id='qcVista'><button class='chip' type='button' data-v='ciclo' aria-pressed="true">Ciclo anual</button><button class='chip' type='button' data-v='serie'>Serie mensual</button><button class='chip' type='button' data-v='marc'>Celdas marcadas por mes</button></div>
 <p class='tryit'>pasa a la serie mensual y busca enero de 1995 y enero de 1998, en plena sequía de El Niño.</p>
-</div><div class='panel'><div class='tshost' id='qcFig' style='height:380px'></div></div></div></section><section class='slide' id='d-mapas' data-g='d' data-sec='1 · Datos de entrada'><p class='kicker k-data'>1a · productos de precipitación · media 1981–2010</p><h2>Con el Cubo limpio, los productos con estaciones coinciden; ERA5 y ERA5-Land triplican la lluvia y la corrección la devuelve</h2>
-<div class='two'><div>
+</div><div class='panel'><div class='tshost' id='qcFig' style='height:480px'></div>
+<div id='qcImg' hidden><a href='img/celdas_marcadas.webp?v=7168a589' target='_blank' rel='noopener' title='Abrir en tamaño completo'><img class='figimg' src='img/celdas_marcadas.webp?v=7168a589' width='2103' height='1068' alt='Celdas-día corregidas por mes' loading='lazy'></a></div></div></div></section><section class='slide' id='d-mapas' data-g='d' data-sec='1 · Datos de entrada'><p class='kicker k-data'>1a · productos de precipitación · media 1981–2010</p><h2>Con el Cubo limpio, los productos con estaciones coinciden; ERA5 y ERA5-Land triplican la lluvia y la corrección la devuelve</h2>
+<div class='two fig'><div>
 <p>Los siete campos están en la grilla del Cubo (0,1°): CHIRPS v2.0 y v3.0 interpolados desde 0,05°, ERA5-Land en su retícula y ERA5
 interpolado desde 0,25°. La escala de color es la del Trabajo 1: el mismo valor tiene el mismo color en todos los mapas.</p>
 <ul class='pts'><li><b>Cubo, CHIRPS v2.0 y CHIRPS v3.0</b>: 2000–2200 mm/año, con el mismo patrón (correlación espacial 0,82–0,85).</li>
 <li><b>ERA5 y ERA5-Land</b>: cerca de 6000 mm/año y sin relación con el patrón observado (correlación espacial ≈ 0).</li>
 <li><b>ERA5 y ERA5-Land corregidos</b> por mapeo de cuantiles con el Cubo: recuperan la media y el patrón.</li></ul>
 <p class='note'>Producto que se usa para cada celda en el modelo: su propio valor mensual; los mapas sólo resumen el promedio.</p>
-</div><div class='panel'><a href='img/mapas_P.webp?v=f4a3a3bd' target='_blank' rel='noopener' title='Abrir en tamaño completo'><img class='figimg' src='img/mapas_P.webp?v=f4a3a3bd' width='2400' height='1698' alt='Mapas de precipitación media anual por producto' loading='lazy'></a></div></div></section><section class='slide' id='d-ciclo' data-g='d' data-sec='1 · Datos de entrada'><p class='kicker k-data'>1a–b · ciclo anual y métricas frente al Cubo</p><h2>Todos los productos con estaciones repiten el ciclo bimodal; ERA5 sin corregir lo aplana y lo multiplica por tres</h2>
-<div class='two'><div>
+</div><div class='panel'><a href='img/mapas_P.webp?v=0eb5b191' target='_blank' rel='noopener' title='Abrir en tamaño completo'><img class='figimg' src='img/mapas_P.webp?v=0eb5b191' width='3200' height='2265' alt='Mapas de precipitación media anual por producto' loading='lazy'></a></div></div></section><section class='slide' id='d-ciclo' data-g='d' data-sec='1 · Datos de entrada'><p class='kicker k-data'>1a–b · ciclo anual y métricas frente al Cubo</p><h2>Todos los productos con estaciones repiten el ciclo bimodal; ERA5 sin corregir lo aplana y lo multiplica por tres</h2>
+<div class='two fig'><div>
 <div class='chips' id='ciclo'><button class='chip' type='button' data-v='obs' aria-pressed="true">Con estaciones</button><button class='chip' type='button' data-v='rea'>Reanálisis sin corregir</button><button class='chip' type='button' data-v='qm'>Reanálisis corregidos</button></div>
 <p class='tryit'>compara los reanálisis corregidos con el Cubo: la media coincide por construcción, pero mira la tabla para 2011–2023.</p>
 <div class='tw'><table class='tb'><thead><tr><th></th><th>P anual 1981–2010 (mm)</th><th>sesgo (%)</th><th>r mensual</th><th>r anomalías</th><th>r espacial</th><th>KGE 1981–2010</th><th>KGE 2011–2023</th></tr></thead><tbody><tr><td>Cubo IDEAM</td><td class='n'>2 158</td><td class='n'>0,0</td><td class='n'>1,00</td><td class='n'>1,00</td><td class='n'>1,00</td><td class='n'>1,00</td><td class='n'>1,00</td></tr><tr><td>CHIRPS v2.0</td><td class='n'>2 023</td><td class='n'>−6,3</td><td class='n'>0,97</td><td class='n'>0,97</td><td class='n'>0,85</td><td class='n'>0,91</td><td class='n'>0,92</td></tr><tr><td>CHIRPS v3.0</td><td class='n'>2 211</td><td class='n'>2,4</td><td class='n'>0,96</td><td class='n'>0,93</td><td class='n'>0,82</td><td class='n'>0,95</td><td class='n'>0,93</td></tr><tr><td>ERA5-Land</td><td class='n'>5 961</td><td class='n'>176,2</td><td class='n'>0,66</td><td class='n'>0,68</td><td class='n'>−0,00</td><td class='n'>−0,88</td><td class='n'>−0,91</td></tr><tr><td>ERA5</td><td class='n'>5 956</td><td class='n'>176,0</td><td class='n'>0,62</td><td class='n'>0,67</td><td class='n'>0,03</td><td class='n'>−0,87</td><td class='n'>−0,89</td></tr><tr><td>ERA5-Land QM</td><td class='n'>2 157</td><td class='n'>−0,0</td><td class='n'>0,87</td><td class='n'>0,76</td><td class='n'>1,00</td><td class='n'>0,86</td><td class='n'>0,72</td></tr><tr><td>ERA5 QM</td><td class='n'>2 157</td><td class='n'>−0,0</td><td class='n'>0,86</td><td class='n'>0,75</td><td class='n'>1,00</td><td class='n'>0,86</td><td class='n'>0,82</td></tr></tbody></table></div>
 <p class='note'>Serie mensual promedio de la cuenca. KGE: eficiencia de Kling–Gupta (1 = perfecto). «r anomalías»: correlación sin el ciclo
 anual. 2011–2023 no se usó para ajustar la corrección: es la verificación independiente.</p>
-</div><div class='panel'><div class='tshost' id='cicloFig' style='height:380px'></div></div></div></section><section class='slide' id='d-qm' data-g='d' data-sec='1 · Datos de entrada'><p class='kicker k-data'>1b · corrección de sesgo · mapeo de cuantiles</p><h2>ERA5 ya estaba corregido en el Trabajo 1 con CHIRPS; aquí se corrige con el Cubo, la referencia que entonces no había</h2>
+</div><div class='panel'><div class='tshost' id='cicloFig' style='height:480px'></div></div></div></section><section class='slide' id='d-qm' data-g='d' data-sec='1 · Datos de entrada'><p class='kicker k-data'>1b · corrección de sesgo · mapeo de cuantiles</p><h2>ERA5 ya estaba corregido en el Trabajo 1 con CHIRPS; aquí se corrige con el Cubo, la referencia que entonces no había</h2>
 <div class='two even'><div>
 <div class='callout blue'><b>Trabajo 1.</b> ERA5 y ERA5-Land se corrigieron por mapeo de cuantiles empírico, por celda y por mes
 calendario, con CHIRPS v2.0 como referencia (1981–2010), porque del IDEAM sólo había normales. El sesgo de +190 % desapareció y el
@@ -429,7 +442,7 @@ sigue en 0,75, frente a 0,97 de CHIRPS.</li></ul>
 <div class='tw'><table class='tb'><thead><tr><th></th><th>P (mm/año)</th><th>error cierre, ETo PM (%)</th><th>error cierre, ETo Hargreaves (%)</th><th>error medio 9 estaciones, PM (%)</th><th>error medio 9 estaciones, Hargreaves (%)</th></tr></thead><tbody><tr><td>Cubo IDEAM</td><td class='n'>2 158</td><td class='n'>20,3</td><td class='n'>9,0</td><td class='n'>33,1</td><td class='n'>21,1</td></tr><tr><td>CHIRPS v2.0</td><td class='n'>2 023</td><td class='n'>7,3</td><td class='n'>−3,6</td><td class='n'>14,3</td><td class='n'>4,7</td></tr><tr><td>CHIRPS v3.0</td><td class='n'>2 210</td><td class='n'>25,2</td><td class='n'>13,6</td><td class='n'>35,8</td><td class='n'>23,6</td></tr><tr><td>ERA5-Land</td><td class='n'>5 961</td><td class='n'>405,7</td><td class='n'>388,6</td><td class='n'>469,4</td><td class='n'>450,8</td></tr><tr><td>ERA5</td><td class='n'>5 956</td><td class='n'>405,0</td><td class='n'>387,8</td><td class='n'>466,8</td><td class='n'>448,1</td></tr><tr><td>ERA5-Land QM</td><td class='n'>2 157</td><td class='n'>20,2</td><td class='n'>8,9</td><td class='n'>33,0</td><td class='n'>21,0</td></tr><tr><td>ERA5 QM</td><td class='n'>2 157</td><td class='n'>20,2</td><td class='n'>8,9</td><td class='n'>33,0</td><td class='n'>21,0</td></tr></tbody></table></div>
 <p class='note'>Error = Q estimado / Q observado − 1. Cierre: presa (Puerto Valdivia transferido por áreas). Mismo método del punto 12 del
 Trabajo 1, ahora en la grilla del Cubo.</p></div></div></section><section class='slide' id='d-eto' data-g='d' data-sec='1 · Datos de entrada'><p class='kicker k-data'>1a · evapotranspiración de referencia</p><h2>FAO Penman-Monteith, el método del IDEAM, da 1 240 mm/año; Hargreaves, el del Trabajo 1, un 15 % más</h2>
-<div class='two'><div>
+<div class='two fig'><div>
 <p>El IDEAM y la UPRA adoptaron <b>FAO Penman-Monteith</b> como método oficial de la ETo en Colombia (Nota técnica IDEAM-METEO/003-2021).
 Necesita radiación, humedad y viento; el Cubo trae temperaturas y humedad relativa pero no brillo solar, así que se usa el procedimiento de
 FAO-56 para datos faltantes:</p>
@@ -438,8 +451,8 @@ FAO-56 para datos faltantes:</p>
 <li>Viento de 2 m/s y presión atmosférica según la elevación media de cada celda (DEM de 90 m del Trabajo 1).</li></ul>
 <p><b>Hargreaves</b> (1 432 mm/año) sólo usa temperatura y radiación extraterrestre. Ambas ETo se prueban en el modelo; la diferencia
 pesa poco en una cuenca húmeda, donde la ETR está limitada por energía.</p>
-</div><div class='panel'><div class='tshost' id='etoFig' style='height:340px'></div></div></div></section><section class='slide' id='m-como' data-g='d' data-sec='2 · Modelo abcd'><p class='kicker k-data'>1c · modelo lluvia–escorrentía mensual abcd (Thomas, 1981)</p><h2>Cuatro parámetros, dos depósitos: el suelo decide cuánto se evapora y el acuífero cuánto tarda en salir</h2>
-<div class='two'><div>
+</div><div class='panel'><div class='tshost' id='etoFig' style='height:460px'></div></div></div></section><section class='slide' id='m-como' data-g='d' data-sec='2 · Modelo abcd'><p class='kicker k-data'>1c · modelo lluvia–escorrentía mensual abcd (Thomas, 1981)</p><h2>Cuatro parámetros, dos depósitos: el suelo decide cuánto se evapora y el acuífero cuánto tarda en salir</h2>
+<div class='two fig'><div>
 <p class='eq'>W = P + S<sub>t−1</sub> &nbsp;·&nbsp; Y = (W + b)/(2a) − √[((W + b)/(2a))² − W·b/a]</p>
 <p class='eq'>S = Y·e<sup>−ETo/b</sup> &nbsp;·&nbsp; ETR = Y − S</p>
 <p class='eq'>Q = (1 − c)(W − Y) + d·G &nbsp;·&nbsp; G = [G<sub>t−1</sub> + c(W − Y)] / (1 + d)</p>
@@ -475,39 +488,38 @@ rango: las unidades pequeñas absorben el error de las de arriba.</li>
 diez estaciones. Es el modelo final: mejor validación y parámetros con sentido físico (tres unidades conservan b en el límite de 3000 mm, señal de que allí la lluvia del Cubo sobra frente al caudal observado).</li></ul>
 <p>Parámetros comunes calibrados: a = 1,000, c = 0,91, d = 0,731/mes; b entre 307 y 3 000 mm según la unidad.</p>
 <p class='note'>Modelo final: abcd semidistribuido regionalizado, P del Cubo IDEAM, ETo de Hargreaves.</p>
-</div><div class='panel'><a href='img/unidades.webp?v=722a729c' target='_blank' rel='noopener' title='Abrir en tamaño completo'><img class='figimg' src='img/unidades.webp?v=722a729c' width='900' height='1558' alt='Unidades del modelo y estaciones' loading='lazy'></a></div></div></section><section class='slide' id='m-desemp' data-g='d' data-sec='2 · Modelo abcd'><p class='kicker k-data'>1c · desempeño por estación</p><h2>El modelo reproduce los caudales mensuales en las diez estaciones: KGE medio de 0,82 en la validación</h2>
-<div class='two'><div>
+</div><div class='panel'><a href='img/unidades.webp?v=94c92166' target='_blank' rel='noopener' title='Abrir en tamaño completo'><img class='figimg' src='img/unidades.webp?v=94c92166' width='1560' height='2700' alt='Unidades del modelo y estaciones' loading='lazy'></a></div></div></section><section class='slide' id='m-desemp' data-g='d' data-sec='2 · Modelo abcd'><p class='kicker k-data'>1c · desempeño por estación</p><h2>El modelo reproduce los caudales mensuales en las diez estaciones: KGE medio de 0,82 en la validación</h2>
+<div class='two fig'><div>
 <p>El desempeño se sostiene fuera del periodo de calibración en casi todas las estaciones. Las dos más débiles son las de aguas arriba:</p>
 <ul class='pts'><li><b>La Balsa</b>: está aguas abajo del embalse de Salvajina (desde 1985), que regula el caudal mes a mes, y el modelo no
 lo representa.</li><li><b>Juanchito</b>: recibe esa misma regulación y la menor cobertura de datos de validación.</li></ul>
 <p>Desde La Virginia hacia abajo el KGE de validación está entre 0,76 y 0,92, y en la presa llega a 0,92: es la parte de la cuenca que más aporta.</p>
 <p class='note'>KGE ≥ 0,75 suele considerarse bueno para caudales mensuales. La validación usa sólo los meses con dato observado.</p>
-</div><div class='panel'><div class='tshost' id='kgeFig' style='height:380px'></div></div></div></section><section class='slide' id='m-serie' data-g='d' data-sec='2 · Modelo abcd'><p class='kicker k-data'>1c · caudales observados y simulados</p><h2>Las sequías de El Niño (1992, 1998, 2010, 2015–16) y las crecientes de La Niña (1999, 2008, 2010–11) quedan en su lugar</h2>
+</div><div class='panel'><a href='img/kge_estaciones.webp?v=a751895f' target='_blank' rel='noopener' title='Abrir en tamaño completo'><img class='figimg' src='img/kge_estaciones.webp?v=a751895f' width='2918' height='1337' alt='KGE por estación' loading='lazy'></a></div></div></section><section class='slide' id='m-serie' data-g='d' data-sec='2 · Modelo abcd'><p class='kicker k-data'>1c · caudales observados y simulados</p><h2>Las sequías de El Niño (1992, 1998, 2010, 2015–16) y las crecientes de La Niña (1999, 2008, 2010–11) quedan en su lugar</h2>
 <div class='chips' id='serieEst'><button class='chip' type='button' data-v='La Virginia' aria-pressed="true">La Virginia</button><button class='chip' type='button' data-v='La Pintada'>La Pintada</button><button class='chip' type='button' data-v='Bolombolo'>Bolombolo</button><button class='chip' type='button' data-v='Cañafisto'>Cañafisto</button><button class='chip' type='button' data-v='Presa'>Presa</button><button class='chip' type='button' data-v='La Balsa'>La Balsa</button></div>
-<div class='panel'><div class='tshost' id='serieFig' style='height:360px'></div></div>
+<div class='panel'><div class='tshost' id='serieFig' style='height:520px'></div></div>
 <p class='note'>Caudal medio mensual (m³/s). La banda gris es la calibración (1982–2005). En la presa el observado termina en 2017.</p></section><section class='slide' id='m-emp' data-g='d' data-sec='2 · Modelo abcd'><p class='kicker k-data'>1c · ¿qué combinación sirve para un sistema operativo?</p><h2>La ecuación empírica sin memoria explica poco; con el caudal del mes anterior se acerca al abcd, que además da el estado del suelo</h2>
-<div class='two'><div>
+<div class='two fig'><div>
 <p>La ecuación de las diapositivas, Q = α·(P − ETR) + β con ETR de Budyko mensual, sólo usa la lluvia del mes y alcanza un KGE de validación
 de 0,49 en la presa. Agregar el caudal del mes anterior, Q(t−1), la lleva a 0,85: la memoria de la
 cuenca es lo que le faltaba. El abcd tiene esa memoria de forma física (suelo y acuífero) y no necesita conocer el caudal observado para
 simular, así que puede correrse con escenarios de lluvia o de clima futuro.</p>
 <div class='tw'><table class='tb'><thead><tr><th></th><th>KGE medio estaciones (cal)</th><th>KGE medio estaciones (val)</th><th>KGE presa (cal)</th><th>KGE presa (val)</th></tr></thead><tbody><tr><td>abcd semidistribuido regionalizado · Cubo IDEAM · ETo Hargreaves</td><td class='n'>0,89</td><td class='n'>0,82</td><td class='n'>0,89</td><td class='n'>0,92</td></tr><tr><td>abcd semidistribuido regionalizado · CHIRPS v2.0 · ETo PM</td><td class='n'>0,89</td><td class='n'>0,80</td><td class='n'>0,90</td><td class='n'>0,87</td></tr><tr><td>abcd semidistribuido regionalizado · Cubo IDEAM · ETo PM</td><td class='n'>0,84</td><td class='n'>0,81</td><td class='n'>0,88</td><td class='n'>0,87</td></tr><tr><td>abcd semidistribuido regionalizado · CHIRPS v2.0 · ETo Hargreaves</td><td class='n'>0,89</td><td class='n'>0,79</td><td class='n'>0,90</td><td class='n'>0,85</td></tr><tr><td>abcd semidistribuido · Cubo IDEAM · ETo Hargreaves</td><td class='n'>0,90</td><td class='n'>0,81</td><td class='n'>0,88</td><td class='n'>0,86</td></tr><tr><td>abcd semidistribuido · CHIRPS v3.0 · ETo PM</td><td class='n'>0,81</td><td class='n'>0,79</td><td class='n'>0,83</td><td class='n'>0,84</td></tr><tr><td>abcd semidistribuido · Cubo IDEAM · ETo PM</td><td class='n'>0,87</td><td class='n'>0,79</td><td class='n'>0,88</td><td class='n'>0,84</td></tr><tr><td>abcd semidistribuido · CHIRPS v2.0 · ETo PM</td><td class='n'>0,88</td><td class='n'>0,79</td><td class='n'>0,87</td><td class='n'>0,82</td></tr><tr><td>abcd semidistribuido · ERA5-Land QM · ETo PM</td><td class='n'>0,71</td><td class='n'>0,57</td><td class='n'>0,75</td><td class='n'>0,75</td></tr><tr><td>abcd semidistribuido · ERA5 QM · ETo PM</td><td class='n'>0,71</td><td class='n'>0,65</td><td class='n'>0,75</td><td class='n'>0,69</td></tr><tr><td>abcd semidistribuido · ERA5 · ETo PM</td><td class='n'>−1,98</td><td class='n'>−2,57</td><td class='n'>−1,63</td><td class='n'>−2,66</td></tr><tr><td>abcd agregado · CHIRPS v3.0 · ETo PM</td><td class='n'>—</td><td class='n'>—</td><td class='n'>0,81</td><td class='n'>0,89</td></tr><tr><td>abcd agregado · CHIRPS v2.0 · ETo PM</td><td class='n'>—</td><td class='n'>—</td><td class='n'>0,90</td><td class='n'>0,88</td></tr><tr><td>abcd agregado · Cubo IDEAM · ETo PM</td><td class='n'>—</td><td class='n'>—</td><td class='n'>0,88</td><td class='n'>0,87</td></tr><tr><td>abcd agregado · ERA5-Land QM · ETo PM</td><td class='n'>—</td><td class='n'>—</td><td class='n'>0,76</td><td class='n'>0,74</td></tr><tr><td>abcd agregado · ERA5 QM · ETo PM</td><td class='n'>—</td><td class='n'>—</td><td class='n'>0,76</td><td class='n'>0,71</td></tr><tr><td>abcd agregado · ERA5 · ETo PM</td><td class='n'>—</td><td class='n'>—</td><td class='n'>−1,62</td><td class='n'>−2,69</td></tr><tr><td>empírico con memoria Q = α·W + γ·Q(t−1) + β · Cubo IDEAM · ETo PM</td><td class='n'>—</td><td class='n'>—</td><td class='n'>0,89</td><td class='n'>0,85</td></tr><tr><td>empírico con memoria Q = α·W + γ·Q(t−1) + β · CHIRPS v2.0 · ETo PM</td><td class='n'>—</td><td class='n'>—</td><td class='n'>0,88</td><td class='n'>0,83</td></tr><tr><td>empírico con memoria Q = α·W + γ·Q(t−1) + β · CHIRPS v3.0 · ETo PM</td><td class='n'>—</td><td class='n'>—</td><td class='n'>0,87</td><td class='n'>0,83</td></tr><tr><td>empírico con memoria Q = α·W + γ·Q(t−1) + β · ERA5-Land QM · ETo PM</td><td class='n'>—</td><td class='n'>—</td><td class='n'>0,82</td><td class='n'>0,77</td></tr><tr><td>empírico con memoria Q = α·W + γ·Q(t−1) + β · ERA5 QM · ETo PM</td><td class='n'>—</td><td class='n'>—</td><td class='n'>0,82</td><td class='n'>0,76</td></tr><tr><td>empírico Q = α·W + β · Cubo IDEAM · ETo PM</td><td class='n'>—</td><td class='n'>—</td><td class='n'>0,54</td><td class='n'>0,49</td></tr><tr><td>empírico Q = α·W + β · CHIRPS v2.0 · ETo PM</td><td class='n'>—</td><td class='n'>—</td><td class='n'>0,48</td><td class='n'>0,41</td></tr><tr><td>empírico Q = α·W + β · CHIRPS v3.0 · ETo PM</td><td class='n'>—</td><td class='n'>—</td><td class='n'>0,41</td><td class='n'>0,37</td></tr><tr><td>empírico Q = α·W + β · ERA5-Land QM · ETo PM</td><td class='n'>—</td><td class='n'>—</td><td class='n'>0,38</td><td class='n'>0,31</td></tr><tr><td>empírico Q = α·W + β · ERA5 QM · ETo PM</td><td class='n'>—</td><td class='n'>—</td><td class='n'>0,38</td><td class='n'>0,30</td></tr></tbody></table></div>
-</div><div class='panel'><div class='tshost' id='empFig' style='height:300px'></div>
+</div><div class='panel'><a href='img/kge_modelos.webp?v=4b13c2a0' target='_blank' rel='noopener' title='Abrir en tamaño completo'><img class='figimg' src='img/kge_modelos.webp?v=4b13c2a0' width='1960' height='1205' alt='KGE de los modelos en la presa' loading='lazy'></a>
 <div class='callout teal'><b>Respuesta.</b> Para un sistema operativo mensual: modelo abcd semidistribuido con la lluvia del Cubo del IDEAM
 (o CHIRPS v2.0, casi igual de bueno y disponible en tiempo casi real), ETo de Hargreaves y calibración multisitio regionalizada. ERA5 sólo sirve corregido, y aun
 así queda por debajo de los productos con estaciones.</div></div></div></section><section class='slide' id='p-mapas' data-g='d' data-sec='3 · ENSO y lluvia'><p class='kicker k-data'>2 · anomalías estandarizadas de la precipitación · compuestos 1981–2023</p><h2>El Niño seca casi toda la cuenca en diciembre–febrero y junio–agosto; marzo–mayo es la temporada menos sensible</h2>
-<div class='two'><div>
+<div class='two fig'><div>
 <div class='chips' id='pMapa'><button class='chip' type='button' data-v='nino' aria-pressed="true">El Niño</button><button class='chip' type='button' data-v='nina'>La Niña</button></div>
 <p>z = (P del trimestre − media) / desviación estándar, por celda y trimestre (base 1981–2010). Cada mapa es el promedio de z en los
 trimestres de la fase, según la definición del CPC: ONI ≥ +0,5 °C (El Niño) o ≤ −0,5 °C (La Niña) durante al menos cinco trimestres
 seguidos.</p>
 <p class='tryit'>compara las filas del Cubo y CHIRPS con las de ERA5: el promedio de la cuenca se parece, el dibujo no.</p>
 <p class='note'>Rojo = más seco que lo normal; azul = más húmedo. z̄ es el promedio de la cuenca.</p>
-</div><div class='panel'><div id='pMapaHost'><a href='img/enso_P_nino.webp?v=8efa2f34' target='_blank' rel='noopener' title='Abrir en tamaño completo'><img class='figimg' src='img/enso_P_nino.webp?v=8efa2f34' width='1100' height='1737' alt='Compuestos El Niño' loading='lazy'></a></div>
-<div id='pMapaHost2' hidden><a href='img/enso_P_nina.webp?v=9878754e' target='_blank' rel='noopener' title='Abrir en tamaño completo'><img class='figimg' src='img/enso_P_nina.webp?v=9878754e' width='1100' height='1737' alt='Compuestos La Niña' loading='lazy'></a></div></div></div></section><section class='slide' id='p-cuenca' data-g='d' data-sec='3 · ENSO y lluvia'><p class='kicker k-data'>2 · consistencia entre productos</p><h2>Todos los productos coinciden en el signo y el tamaño de la anomalía de la cuenca; sólo los de estaciones coinciden en dónde ocurre</h2>
-<div class='two'><div>
-<div class='chips' id='pFase'><button class='chip' type='button' data-v='El Niño' aria-pressed="true">El Niño</button><button class='chip' type='button' data-v='La Niña'>La Niña</button></div>
-<div class='panel'><div class='tshost' id='pFig' style='height:300px'></div></div>
+</div><div class='panel'><div id='pMapaHost'><a href='img/enso_P_nino.webp?v=8772136f' target='_blank' rel='noopener' title='Abrir en tamaño completo'><img class='figimg' src='img/enso_P_nino.webp?v=8772136f' width='2850' height='4500' alt='Compuestos El Niño' loading='lazy'></a></div>
+<div id='pMapaHost2' hidden><a href='img/enso_P_nina.webp?v=6ed2a762' target='_blank' rel='noopener' title='Abrir en tamaño completo'><img class='figimg' src='img/enso_P_nina.webp?v=6ed2a762' width='2850' height='4500' alt='Compuestos La Niña' loading='lazy'></a></div></div></div></section><section class='slide' id='p-cuenca' data-g='d' data-sec='3 · ENSO y lluvia'><p class='kicker k-data'>2 · consistencia entre productos</p><h2>Todos los productos coinciden en el signo y el tamaño de la anomalía de la cuenca; sólo los de estaciones coinciden en dónde ocurre</h2>
+<div class='two fig'><div>
+<div class='panel'><a href='img/enso_P_productos.webp?v=f51d7e18' target='_blank' rel='noopener' title='Abrir en tamaño completo'><img class='figimg' src='img/enso_P_productos.webp?v=f51d7e18' width='3200' height='1290' alt='z de la cuenca por producto' loading='lazy'></a></div>
 <h3>Correlación entre el ONI y z de la cuenca, por trimestre</h3>
 <div class='tw'><table class='tb'><thead><tr><th></th><th>DEF</th><th>MAM</th><th>JJA</th><th>SON</th></tr></thead><tbody><tr><td>Cubo IDEAM</td><td class='n'>−0,81</td><td class='n'>−0,26</td><td class='n'>−0,74</td><td class='n'>−0,53</td></tr><tr><td>CHIRPS v2.0</td><td class='n'>−0,76</td><td class='n'>−0,14</td><td class='n'>−0,68</td><td class='n'>−0,43</td></tr><tr><td>CHIRPS v3.0</td><td class='n'>−0,75</td><td class='n'>−0,12</td><td class='n'>−0,61</td><td class='n'>−0,45</td></tr><tr><td>ERA5-Land</td><td class='n'>−0,62</td><td class='n'>−0,02</td><td class='n'>−0,71</td><td class='n'>−0,32</td></tr><tr><td>ERA5</td><td class='n'>−0,75</td><td class='n'>0,01</td><td class='n'>−0,69</td><td class='n'>−0,42</td></tr><tr><td>ERA5-Land QM</td><td class='n'>−0,66</td><td class='n'>−0,02</td><td class='n'>−0,72</td><td class='n'>−0,34</td></tr><tr><td>ERA5 QM</td><td class='n'>−0,75</td><td class='n'>0,02</td><td class='n'>−0,69</td><td class='n'>−0,42</td></tr></tbody></table></div>
 </div><div>
@@ -518,40 +530,39 @@ En JJA La Niña es la anomalía más grande (z ≈ +1,1).</li>
 <li><b>Patrón espacial</b>: CHIRPS se parece al Cubo (r de 0,2 a 0,6); ERA5 y ERA5-Land no (r cercano a 0 o negativo). El mapeo de cuantiles
 corrige la media de cada celda, no la respuesta espacial al ENSO.</li>
 <li><b>MAM</b>: es el único trimestre en que los reanálisis no ven señal de El Niño.</li></ul></div></div></section><section class='slide' id='s-mapas' data-g='d' data-sec='4 · Humedad del suelo'><p class='kicker k-data'>3 · humedad del suelo simulada (S del abcd)</p><h2>Durante El Niño el suelo se seca en toda la cuenca, y más que la lluvia: en marzo–mayo sigue seco aunque ya llueva casi normal</h2>
-<div class='two'><div>
-<div class='panel'><div class='tshost' id='sFig' style='height:280px'></div></div>
+<div class='two fig'><div>
+<div class='panel'><a href='img/suelo_lluvia.webp?v=91f00c02' target='_blank' rel='noopener' title='Abrir en tamaño completo'><img class='figimg' src='img/suelo_lluvia.webp?v=91f00c02' width='2226' height='1294' alt='Suelo frente a lluvia en El Niño y La Niña' loading='lazy'></a></div>
 <ul class='pts'><li><b>Magnitud</b>: en DEF de El Niño, z de la lluvia = −0,90 y z del suelo = −1,17.
 El suelo amplifica la anomalía porque acumula varios meses de déficit.</li>
 <li><b>Persistencia</b>: en MAM la lluvia ya casi no tiene señal (z = −0,39) pero el suelo sigue en
 −1,18: arrastra la sequía de diciembre–febrero.</li>
 <li><b>Extensión</b>: en todos los trimestres de El Niño más del 96 % del área queda con el suelo por debajo de lo normal. La Niña da la
 imagen opuesta, con anomalías algo menores.</li></ul>
-</div><div class='panel'><a href='img/suelo_enso.webp?v=c043385e' target='_blank' rel='noopener' title='Abrir en tamaño completo'><img class='figimg' src='img/suelo_enso.webp?v=c043385e' width='1100' height='880' alt='Humedad del suelo en El Niño y La Niña' loading='lazy'></a></div></div></section><section class='slide' id='s-memoria' data-g='d' data-sec='4 · Humedad del suelo'><p class='kicker k-data'>3 · memoria del suelo</p><h2>El suelo recuerda la lluvia de los meses anteriores: por eso responde al ENSO con más fuerza y durante más tiempo que la lluvia</h2>
-<div class='two'><div>
-<div class='panel'><div class='tshost' id='anomFig' style='height:330px'></div></div>
+</div><div class='panel'><a href='img/suelo_enso.webp?v=d81c39dd' target='_blank' rel='noopener' title='Abrir en tamaño completo'><img class='figimg' src='img/suelo_enso.webp?v=d81c39dd' width='2850' height='2280' alt='Humedad del suelo en El Niño y La Niña' loading='lazy'></a></div></div></section><section class='slide' id='s-memoria' data-g='d' data-sec='4 · Humedad del suelo'><p class='kicker k-data'>3 · memoria del suelo</p><h2>El suelo recuerda la lluvia de los meses anteriores: por eso responde al ENSO con más fuerza y durante más tiempo que la lluvia</h2>
+<div class='two fig'><div>
+<div class='panel'><div class='tshost' id='anomFig' style='height:460px'></div></div>
 <p class='note'>Anomalías mensuales estandarizadas de la cuenca (P y Q, media móvil de 3 meses) y ONI. Q es el observado en la presa.</p>
 </div><div>
-<a href='img/memoria_suelo.webp?v=0fbfcf13' target='_blank' rel='noopener' title='Abrir en tamaño completo'><img class='figimg' src='img/memoria_suelo.webp?v=0fbfcf13' width='900' height='720' alt='Memoria y rezago del suelo' loading='lazy'></a>
+<a href='img/memoria_suelo.webp?v=399c9e5d' target='_blank' rel='noopener' title='Abrir en tamaño completo'><img class='figimg' src='img/memoria_suelo.webp?v=399c9e5d' width='2250' height='1800' alt='Memoria y rezago del suelo' loading='lazy'></a>
 <p>La autocorrelación de un mes de las anomalías del suelo es 0,83 (la de la lluvia, 0,25):
 un mes seco deja el suelo seco el mes siguiente. La correlación del ONI con el suelo es máxima con 2–3 meses de rezago
 (−0,69), mientras que con la lluvia es máxima en el mismo mes.</p></div></div></section><section class='slide' id='q-comp' data-g='d' data-sec='5 · Caudales'><p class='kicker k-data'>4 · anomalías estandarizadas de los caudales, observados y simulados</p><h2>Los caudales caen en todos los trimestres de El Niño, y la mayor reducción en la presa llega en diciembre–febrero</h2>
-<div class='two'><div>
-<div class='chips' id='qEst'><button class='chip' type='button' data-v='Presa' aria-pressed="true">Presa</button><button class='chip' type='button' data-v='Bolombolo'>Bolombolo</button><button class='chip' type='button' data-v='La Virginia'>La Virginia</button></div>
+<div class='full'><div class='cols2txt'>
 <p>Barras: z del caudal observado; puntos: z del simulado por el modelo abcd con la lluvia del Cubo. Mismas fases y trimestres del numeral 2.</p>
 <ul class='pts'><li>En la presa, El Niño baja el caudal en DEF (z = −1,39) y en MAM
 (−1,17), aunque la lluvia de MAM casi no cambie: es el suelo seco y el acuífero vacío.</li>
 <li>El modelo reproduce el signo y el orden de magnitud en todas las combinaciones de fase y trimestre; subestima el extremo de El Niño en la
 presa en DEF.</li></ul>
-<p class='tryit'>cambia a La Virginia: la señal es más pareja entre trimestres que en la presa.</p>
-</div><div class='panel'><div class='tshost' id='qFig' style='height:380px'></div></div></div></section><section class='slide' id='q-ciclo' data-g='d' data-sec='5 · Caudales'><p class='kicker k-data'>4 · ciclo anual en años El Niño, neutros y La Niña</p><h2>El Niño no cambia la forma del ciclo bimodal: lo baja entero, y más en la temporada seca de comienzo de año</h2>
-<div class='two'><div>
+<p class='note'>En La Virginia la señal es más pareja entre trimestres que en la presa.</p>
+</div><div class='panel'><a href='img/caudales_enso.webp?v=2f9dc2a4' target='_blank' rel='noopener' title='Abrir en tamaño completo'><img class='figimg' src='img/caudales_enso.webp?v=2f9dc2a4' width='3200' height='1169' alt='Caudales observados y simulados en El Niño y La Niña' loading='lazy'></a></div></div></section><section class='slide' id='q-ciclo' data-g='d' data-sec='5 · Caudales'><p class='kicker k-data'>4 · ciclo anual en años El Niño, neutros y La Niña</p><h2>El Niño no cambia la forma del ciclo bimodal: lo baja entero, y más en la temporada seca de comienzo de año</h2>
+<div class='two fig'><div>
 <div class='chips' id='cEst'><button class='chip' type='button' data-v='Presa' aria-pressed="true">Presa</button><button class='chip' type='button' data-v='Bolombolo'>Bolombolo</button><button class='chip' type='button' data-v='La Virginia'>La Virginia</button></div>
 <p>Caudal medio de cada mes en los meses de cada fase (la fase de cada mes según el ONI del trimestre centrado en él). Líneas continuas:
 observado; punteadas: simulado. El modelo reproduce el ciclo en las tres fases, lo que valida su respuesta al ENSO en el ciclo anual,
 como pide el numeral 4.</p>
-</div><div class='panel'><div class='tshost' id='cFig' style='height:360px'></div></div></div></section><section class='slide' id='q-rez' data-g='d' data-sec='5 · Caudales'><p class='kicker k-data'>4 · lluvia, suelo y caudal: almacenamiento y memoria</p><h2>La señal del Pacífico llega a la lluvia de inmediato y a los caudales con 1–2 meses de rezago, a través del suelo</h2>
-<div class='two'><div>
-<div class='panel'><div class='tshost' id='rezFig' style='height:320px'></div></div>
+</div><div class='panel'><div class='tshost' id='cFig' style='height:500px'></div></div></div></section><section class='slide' id='q-rez' data-g='d' data-sec='5 · Caudales'><p class='kicker k-data'>4 · lluvia, suelo y caudal: almacenamiento y memoria</p><h2>La señal del Pacífico llega a la lluvia de inmediato y a los caudales con 1–2 meses de rezago, a través del suelo</h2>
+<div class='two fig'><div>
+<div class='panel'><div class='tshost' id='rezFig' style='height:460px'></div></div>
 </div><div>
 <ul class='pts'><li><b>ONI → lluvia</b>: correlación máxima en el mismo mes (−0,45) y decae en pocos meses.</li>
 <li><b>ONI → suelo y caudal</b>: correlación más fuerte (−0,69 y −0,63) y máxima con
@@ -606,9 +617,14 @@ $("#themeTg").addEventListener("click", () => {
   const d = document.documentElement, dark = (d.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")) === "dark";
   d.dataset.theme = dark ? "light" : "dark";
   try { localStorage.setItem("theme", d.dataset.theme); } catch (e) {}
-  redibujar();
+  etiquetaTema(); redibujar();
 });
-matchMedia("(prefers-color-scheme: dark)").addEventListener("change", redibujar);
+function etiquetaTema() {
+  const d = document.documentElement, dark = (d.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")) === "dark";
+  $("#themeTg .tlbl").textContent = dark ? "Modo claro" : "Modo oscuro";
+}
+etiquetaTema();
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { etiquetaTema(); redibujar(); });
 
 const slides = $$(".slide"), dots = $("#dots"), main = $("#main");
 let cur = 0;
@@ -638,7 +654,6 @@ function fitSlide() {
   const sl = slides[cur]; sl.style.zoom = "";
   if (window.innerWidth < 900) return;
   const avail = main.clientHeight, need = sl.offsetHeight;
-  if (need > avail + 4) sl.style.zoom = Math.max(0.7, (avail - 4) / need).toFixed(3);
 }
 $("#prev").onclick = () => go(cur - 1); $("#next").onclick = () => go(cur + 1);
 document.addEventListener("click", e => {
@@ -672,8 +687,8 @@ $$(".chips").forEach(g => {
 
 /* ───────── gráficas: estáticas (sin zoom ni arrastre), valores al pasar el cursor ───────── */
 const CFG = { responsive: true, displayModeBar: false, scrollZoom: false, doubleClick: false, staticPlot: false };
-const COL = { "Cubo IDEAM": () => css("--fg"), "IDEAM normales (kriging, Trabajo 1)": () => "#9aa3b2", "CHIRPS v2.0": () => "#1d4ed8",
-  "CHIRPS v3.0": () => "#60a5fa", "ERA5-Land": () => "#ea580c", "ERA5": () => "#b91c1c", "ERA5-Land QM": () => "#ea580c", "ERA5 QM": () => "#b91c1c" };
+const COL = { "Cubo IDEAM": () => css("--fg"), "IDEAM normales (kriging, Trabajo 1)": () => "#b07a0c", "CHIRPS v2.0": () => "#1d4ed8",
+  "CHIRPS v3.0": () => "#9aa3b2", "ERA5-Land": () => "#ea580c", "ERA5": () => "#b91c1c", "ERA5-Land QM": () => "#ea580c", "ERA5 QM": () => "#b91c1c" };
 function ax(t, extra) {
   return Object.assign({ title: { text: t, font: { size: 12, color: css("--muted") } }, gridcolor: css("--line"), linecolor: css("--line"),
     zeroline: false, tickfont: { size: 11, color: css("--muted"), family: css("--f-mono") }, fixedrange: true, automargin: true }, extra || {});
@@ -702,9 +717,7 @@ const G = {
       { type: "scatter", mode: "lines", name: "Cubo limpio", x: q.t, y: q.sl, line: { color: css("--fg"), width: 1.4 }, hovertemplate: "Cubo limpio: %{y:.0f} mm<extra></extra>" },
       { type: "scatter", mode: "lines", name: "CHIRPS v2.0", x: q.t, y: q.sc, line: { color: "#1d4ed8", width: 1.2 }, hovertemplate: "CHIRPS v2.0: %{y:.0f} mm<extra></extra>" }],
       { xaxis: ax("", { type: "date" }), yaxis: ax("Precipitación mensual de la cuenca (mm)", { rangemode: "tozero" }), hovermode: "x unified" });
-    if (v === "marc") plot("qcFig", [{ type: "bar", x: MESES, y: q.marc, marker: { color: "#b07a0c" }, name: "celdas-día",
-      hovertemplate: "%{x}: %{y:,.0f} celdas-día corregidas (1981–2023)<extra></extra>" }],
-      { showlegend: false, xaxis: ax(""), yaxis: ax("Celdas-día corregidas en el recuadro de la cuenca") });
+    $("#qcFig").hidden = v === "marc"; $("#qcImg").hidden = v !== "marc";
   },
   "d-ciclo"() {
     const g = { obs: ["IDEAM normales (kriging, Trabajo 1)", "Cubo IDEAM", "CHIRPS v2.0", "CHIRPS v3.0"], rea: ["Cubo IDEAM", "ERA5-Land", "ERA5"],
@@ -721,15 +734,7 @@ const G = {
       linea("ETo Hargreaves", MESES, D.eto.hg, "#b91c1c", { line: { color: "#b91c1c", width: 2, dash: "dash" }, hovertemplate: "ETo Hargreaves · %{x}: %{y:.0f} mm<extra></extra>" })],
       { xaxis: ax(""), yaxis: ax("Media de la cuenca, 1981–2010 (mm/mes)", { rangemode: "tozero" }) });
   },
-  "m-desemp"() {
-    const k = D.kge;
-    plot("kgeFig", [
-      { type: "bar", name: "Calibración 1982–2005", x: k.est, y: k.cal, marker: { color: "#93c5fd" }, hovertemplate: "%{x} · calibración: KGE %{y:.2f}<extra></extra>" },
-      { type: "bar", name: "Validación 2006–2023", x: k.est, y: k.val, marker: { color: "#1d4ed8" }, customdata: k.pb_val,
-        hovertemplate: "%{x} · validación: KGE %{y:.2f} (sesgo %{customdata:+.0f} %)<extra></extra>" }],
-      { barmode: "group", xaxis: ax("", { tickangle: -30 }), yaxis: ax("KGE (caudal mensual)", { range: [0, 1] }),
-        shapes: [{ type: "line", xref: "paper", x0: 0, x1: 1, y0: 0.75, y1: 0.75, line: { color: css("--muted"), width: 1, dash: "dot" } }] });
-  },
+
   "m-serie"() {
     const e = ESTADO.serieEst, s = D.serie;
     plot("serieFig", [
@@ -738,31 +743,13 @@ const G = {
       { hovermode: "x unified", xaxis: ax("", { type: "date" }), yaxis: ax(`Caudal medio mensual en ${e} (m³/s)`, { rangemode: "tozero" }),
         shapes: [{ type: "rect", xref: "x", yref: "paper", x0: "1982-01", x1: "2005-12", y0: 0, y1: 1, fillcolor: css("--line"), opacity: .35, line: { width: 0 }, layer: "below" }] });
   },
-  "m-emp"() {
-    const n = ["Empírico (diapositivas)", "Empírico + Q(t−1)", "abcd agregado", "abcd semidistribuido"];
-    plot("empFig", [{ type: "bar", x: n.slice(0, D.emp.kge.length), y: D.emp.kge, marker: { color: ["#9aa3b2", "#60a5fa", "#93c5fd", "#1d4ed8"] },
-      hovertemplate: "%{x}: KGE %{y:.2f}<extra></extra>", name: "" }],
-      { showlegend: false, xaxis: ax(""), yaxis: ax("KGE en la presa, validación", { range: [0, 1] }) });
-  },
+
   "p-mapas"() {
     const n = ESTADO.pMapa === "nino";
     $("#pMapaHost").hidden = !n; $("#pMapaHost2").hidden = n;
   },
-  "p-cuenca"() {
-    const fa = ESTADO.pFase, d = D.enso_p[fa];
-    plot("pFig", ["Cubo IDEAM", "CHIRPS v2.0", "CHIRPS v3.0", "ERA5-Land", "ERA5"].map(p => ({ type: "bar", name: p, x: TR, y: d[p],
-      marker: { color: COL[p]() }, hovertemplate: `${p} · %{x}: z = %{y:+.2f}<extra></extra>` })),
-      { barmode: "group", xaxis: ax(""), yaxis: ax(`z medio de la cuenca en ${fa}`, { zeroline: true, zerolinecolor: css("--muted") }) });
-  },
-  "s-mapas"() {
-    const t = [];
-    ["El Niño", "La Niña"].forEach(fa => {
-      const c = fa === "El Niño" ? "#b91c1c" : "#1d4ed8";
-      t.push({ type: "bar", name: `Lluvia · ${fa}`, x: TR, y: D.suelo[fa].P, marker: { color: c, opacity: .35 }, hovertemplate: `Lluvia · ${fa} · %{x}: z = %{y:+.2f}<extra></extra>` });
-      t.push({ type: "bar", name: `Suelo · ${fa}`, x: TR, y: D.suelo[fa].S, marker: { color: c }, hovertemplate: `Suelo · ${fa} · %{x}: z = %{y:+.2f}<extra></extra>` });
-    });
-    plot("sFig", t, { barmode: "group", xaxis: ax(""), yaxis: ax("z medio de la cuenca", { zeroline: true, zerolinecolor: css("--muted") }) });
-  },
+
+
   "s-memoria"() {
     const a = D.anom;
     plot("anomFig", [
@@ -773,15 +760,7 @@ const G = {
       { hovermode: "x unified", xaxis: ax("", { type: "date" }), yaxis: ax("Anomalía estandarizada"),
         yaxis2: ax("ONI (°C)", { overlaying: "y", side: "right", showgrid: false, autorange: "reversed" }), margin: { l: 56, r: 56, t: 34, b: 40 } });
   },
-  "q-comp"() {
-    const e = ESTADO.qEst, d = D.enso_q[e], t = [];
-    ["El Niño", "La Niña"].forEach(fa => {
-      const c = fa === "El Niño" ? "#b91c1c" : "#1d4ed8";
-      t.push({ type: "bar", name: `Observado · ${fa}`, x: TR, y: d[fa].obs, marker: { color: c, opacity: .75 }, offsetgroup: fa, hovertemplate: `Observado · ${fa} · %{x}: z = %{y:+.2f}<extra></extra>` });
-      t.push({ type: "scatter", mode: "markers", name: `Simulado · ${fa}`, x: TR, y: d[fa].sim, marker: { color: css("--fg"), size: 10, symbol: fa === "El Niño" ? "diamond" : "circle" }, hovertemplate: `Simulado · ${fa} · %{x}: z = %{y:+.2f}<extra></extra>` });
-    });
-    plot("qFig", t, { barmode: "group", xaxis: ax(""), yaxis: ax(`z del caudal en ${e}`, { zeroline: true, zerolinecolor: css("--muted") }) });
-  },
+
   "q-ciclo"() {
     const e = ESTADO.cEst, d = D.cpf[e], t = [];
     const col = { "El Niño": "#b91c1c", "Neutro": "#9aa3b2", "La Niña": "#1d4ed8" };
