@@ -129,6 +129,37 @@ D["kge"] = {"est": EST, "cal": [float(mf[(mf["estación"] == e) & (mf.per == "ca
 D["serie"] = {"t": qsim.index.strftime("%Y-%m").tolist(),
               "obs": {e: qobs[COD[e]].reindex(qsim.index).round(1).where(lambda s: s.notna(), None).tolist() for e in EST},
               "sim": {e: qsim[e].round(1).tolist() for e in EST}}
+
+# ---- GR2M (comparación con el abcd)
+GRD, CMP = R2 / "04_gr2m", R2 / "04_comparacion"
+gfin = json.loads((CMP / "modelo_principal.json").read_text(encoding="utf-8"))
+gp = gfin["GR2M"]
+qg = pd.read_csv(GRD / f"Q_simulado_{gp['producto'].replace(' ', '_')}_{'HG' if gp['eto'] == 'Hargreaves' else 'PM'}.csv", index_col=0, parse_dates=True)
+D["serie"]["simg"] = {e: qg[e].reindex(qsim.index).round(1).tolist() for e in EST}
+gpar = pd.read_csv(GRD / "parametros.csv")
+gp0 = gpar[(gpar.producto == gp["producto"]) & (gpar.ETo == gp["eto"]) & gpar["X1 Presa"].notna()].iloc[0]
+gx1 = [gp0[f"X1 {e}"] for e in EST]
+rmod = pd.read_csv(CMP / "resumen_modelos.csv")
+mm = pd.read_csv(CMP / "metricas_modelos.csv")
+mm["per"] = mm.periodo.str[:3]
+def _sel(mod, prod, eto):
+    return mm[(mm.modelo == mod) & (mm.producto == prod) & (mm.ETo == eto) & (mm.per == "val")].set_index("estación")
+MA, MG = "abcd distribuido multisitio (14 parámetros)", "GR2M distribuido multisitio (11 parámetros)"
+va_, vg_ = _sel(MA, gfin["abcd"]["producto"], gfin["abcd"]["eto"]), _sel(MG, gp["producto"], gp["eto"])
+t_cmp = rmod[rmod.modelo.isin([MA, MG, "abcd agregado (4 parámetros)", "GR2M agregado (2 parámetros)"])
+             & rmod.producto.isin(["Cubo IDEAM", "CHIRPS v2.0"])].copy()
+t_cmp.index = (t_cmp.modelo.str.replace(" distribuido multisitio", "").str.replace(" (14 parámetros)", " multisitio").str.replace(" (11 parámetros)", " multisitio")
+               .str.replace(" agregado (4 parámetros)", " agregado").str.replace(" agregado (2 parámetros)", " agregado")
+               + " · " + t_cmp.producto + " · " + t_cmp.ETo.str.replace("Penman-Monteith", "PM"))
+t_cmp = t_cmp[["KGE medio 10 estaciones (val)", "KGE presa (val)", "NSE presa (val)", "NSE log presa (val)", "PBIAS presa (val, %)"]]
+t_cmp.index.name = "modelo · P · ETo"
+ga = pd.read_csv(R2 / "06_enso_suelo_Q" / "rezagos_oni.csv").set_index("variable")
+gg = pd.read_csv(R2 / "06_enso_suelo_Q_gr2m" / "rezagos_oni.csv").set_index("variable")
+gra = pd.read_csv(R2 / "06_enso_suelo_Q" / "rezagos_P.csv", index_col=0)
+grg = pd.read_csv(R2 / "06_enso_suelo_Q_gr2m" / "rezagos_P.csv", index_col=0)
+sga = pd.read_csv(R2 / "06_enso_suelo_Q_gr2m" / "suelo_compuestos.csv").set_index(["fase", "trimestre"])
+qga = pd.read_csv(R2 / "06_enso_suelo_Q_gr2m" / "caudales_compuestos.csv")
+zqg = lambda e, t, fa: float(qga[(qga["estación"] == e) & (qga.trimestre == t) & (qga.fase == fa)]["z Q simulado"].iloc[0])  # noqa: E731
 res_m = M.groupby(["modelo", "producto", "ETo", "per"]).KGE.mean().unstack("per")
 pz = M[M.codigo == "PRESA"].pivot_table(index=["modelo", "producto", "ETo"], columns="per", values="KGE")
 tab_mod = pd.DataFrame({"KGE medio estaciones (cal)": res_m["cal"], "KGE medio estaciones (val)": res_m["val"],
@@ -187,7 +218,7 @@ D["anom"] = {"t": an.index.strftime("%Y-%m").tolist(), "P": roll(an.P).round(2).
              "oni": sc.ONI.round(2).where(lambda s: s.notna(), None).tolist()}
 
 # ============================================================================= diapositivas
-SEC = [("portada", "", "Inicio"), ("datos", "1", "Datos de entrada"), ("abcd", "2", "Modelo abcd"),
+SEC = [("portada", "", "Inicio"), ("datos", "1", "Datos de entrada"), ("abcd", "2", "Modelos abcd y GR2M"),
        ("enso-p", "3", "ENSO y lluvia"), ("suelo", "4", "Humedad del suelo"), ("caudal", "5", "Caudales"), ("cierre", "6", "Cierre")]
 sl = []
 
@@ -203,13 +234,13 @@ kv_med = mf[mf.per == "val"].KGE.mean()
 sl.append(f"""<section class='slide portada' id='portada' data-g='' data-sec='Trabajo 2 · Hidrometeorología'>
 <p class='kicker'>Trabajo 2 · Hidrometeorología · UNAL Medellín</p>
 <h1>¿Qué tan bien podemos simular mes a mes el agua que llega a <span class='hl'>Hidroituango</span>, y qué le hace El Niño?</h1>
-<p class='lead'>Modelo lluvia–escorrentía mensual abcd para la cuenca del río Cauca hasta la presa (35 992 km²), calibrado en diez
+<p class='lead'>Modelos lluvia–escorrentía mensuales abcd y GR2M para la cuenca del río Cauca hasta la presa (35 992 km²), calibrado en diez
 estaciones a la vez con el Cubo de datos del IDEAM, y la huella de El Niño y La Niña en la lluvia, la humedad del suelo y los
 caudales. Continúa el <a href='{T1_URL}'>Trabajo 1 (balance hídrico de largo plazo)</a>.</p>
 <div class='cards3'>
 <button class='card lift pick' type='button' data-go='d-cubo'><h4>1 · Datos de entrada</h4><p>Cinco productos de lluvia, el Cubo del IDEAM
 limpio y ERA5 corregido.</p></button>
-<button class='card lift pick' type='button' data-go='m-como'><h4>2 · Modelo abcd</h4><p>Cuatro parámetros, diez unidades, diez estaciones.</p></button>
+<button class='card lift pick' type='button' data-go='m-como'><h4>2 · Modelos abcd y GR2M</h4><p>Dos modelos, diez unidades, diez estaciones.</p></button>
 <button class='card lift pick' type='button' data-go='p-mapas'><h4>3 · ENSO y lluvia</h4><p>Anomalías por trimestre y producto.</p></button>
 <button class='card lift pick' type='button' data-go='s-mapas'><h4>4 · Humedad del suelo</h4><p>El suelo alarga la sequía de El Niño.</p></button>
 <button class='card lift pick' type='button' data-go='q-comp'><h4>5 · Caudales</h4><p>Observados y simulados en El Niño y La Niña.</p></button>
@@ -291,7 +322,7 @@ pesa poco en una cuenca húmeda, donde la ETR está limitada por energía.</p>
 </div><div class='panel'><div class='tshost' id='etoFig' style='height:460px'></div></div></div>""")
 
 # ---- 2. modelo
-slide("m-como", "2 · Modelo abcd", "1c · modelo lluvia–escorrentía mensual abcd (Thomas, 1981)",
+slide("m-como", "2 · Modelos abcd y GR2M", "1c · modelo lluvia–escorrentía mensual abcd (Thomas, 1981)",
       "Cuatro parámetros, dos depósitos: el suelo decide cuánto se evapora y el acuífero cuánto tarda en salir", f"""
 <div class='two fig'><div>
 <p class='eq'>W = P + S<sub>t−1</sub> &nbsp;·&nbsp; Y = (W + b)/(2a) − √[((W + b)/(2a))² − W·b/a]</p>
@@ -318,12 +349,42 @@ subterránea) da la memoria de los caudales del numeral 4. Una regresión empír
 <rect x='342' y='110' width='66' height='160' rx='10' class='bx q'/><text x='375' y='195' text-anchor='middle' class='lb'>Q</text>
 </svg></div></div>""")
 
+
+slide("m-gr2m", "2 · Modelos abcd y GR2M", "1c · modelo GR2M (Mouelhi et al., 2006; clase 6)",
+      "Dos parámetros: X1, la capacidad del suelo, decide cuánta lluvia se queda; X2 cuánta agua gana o pierde la cuenca", f"""
+<div class='two'><div>
+<p class='eq'>φ = tanh(P/X1) · S₁ = (S + X1·φ)/(1 + φ·S/X1) · P₁ = P + S − S₁</p>
+<p class='eq'>ψ = tanh(ETo/X1) · S₂ = S₁(1 − ψ)/[1 + ψ(1 − S₁/X1)] · ETR = S₁ − S₂</p>
+<p class='eq'>S = S₂/[1 + (S₂/X1)³]<sup>1/3</sup> · P₃ = P₁ + (S₂ − S)</p>
+<p class='eq'>R₂ = X2·(R + P₃) · Q = R₂²/(R₂ + 60) · R = R₂ − Q</p>
+<ul class='pts'><li><b>X1</b> (mm): capacidad del reservorio de producción, el suelo. Se calibró uno por unidad: de {f(min(gx1))} a {f(sorted(gx1)[-2])} mm, salvo la última unidad antes de la presa, que llega al límite de 10 000 mm (en el abcd esa unidad también dejó b en el límite: allí la lluvia del Cubo excede lo que mide el río).</li>
+<li><b>X2</b> (−): intercambio subterráneo; X2 &lt; 1 es pérdida de agua. Calibrado común: X2 = {f(gp0.X2, 2)}, la cuenca «pierde» un {f(100 * (1 - gp0.X2))} %
+del agua que llega al enrutamiento, lo que corrige el exceso de lluvia del Cubo que el abcd absorbía con b en el límite.</li>
+<li>El reservorio de enrutamiento tiene una capacidad fija de 60 mm: es la única memoria lenta del modelo.</li>
+<li>Condiciones iniciales S₀ = X1/2 y R₀ = 30 mm; el primer año se corre dos veces para calentar el modelo. Tiempo de viaje por el Cauca
+(855 km a 1 m/s) ≈ 10 días &lt; 1 mes: el caudal de cada celda se suma en la salida en el mismo mes.</li></ul>
+<p class='note'>Misma distribución (celdas del Cubo × 10 unidades) y calibración multisitio que el abcd: X1 por unidad y X2 común (11 parámetros),
+KGE medio de las 10 estaciones en 1982–2005. Es el equivalente, sin mapas de suelos, del método de factores de corrección de la clase.</p>
+</div><div class='panel'>
+<svg viewBox='0 0 420 330' class='esq' role='img' aria-label='Esquema del modelo GR2M'>
+<defs><marker id='fl2' viewBox='0 0 10 10' refX='9' refY='5' markerWidth='7' markerHeight='7' orient='auto'><path d='M0,0 L10,5 L0,10 z' class='fl'/></marker></defs>
+<text x='150' y='22' class='lb'>P (lluvia)</text><line x1='170' y1='28' x2='170' y2='70' class='ar' marker-end='url(#fl2)'/>
+<text x='255' y='52' class='lb'>ETR</text><line x1='230' y1='95' x2='265' y2='60' class='ar' marker-end='url(#fl2)'/>
+<rect x='100' y='72' width='140' height='80' rx='10' class='bx'/><text x='170' y='106' text-anchor='middle' class='lb'>Producción · S</text>
+<text x='170' y='127' text-anchor='middle' class='mu'>capacidad X1</text>
+<line x1='170' y1='152' x2='170' y2='205' class='ar' marker-end='url(#fl2)'/><text x='178' y='185' class='mu'>P₃ = P₁ + P₂</text>
+<rect x='100' y='207' width='140' height='80' rx='10' class='bx'/><text x='170' y='241' text-anchor='middle' class='lb'>Enrutamiento · R</text>
+<text x='170' y='262' text-anchor='middle' class='mu'>60 mm</text>
+<line x1='30' y1='247' x2='98' y2='247' class='ar' marker-end='url(#fl2)'/><text x='22' y='238' class='mu'>X2 (intercambio)</text>
+<line x1='240' y1='247' x2='340' y2='247' class='ar' marker-end='url(#fl2)'/><text x='250' y='240' class='mu'>Q = R₂²/(R₂+60)</text>
+<rect x='342' y='110' width='66' height='160' rx='10' class='bx q'/><text x='375' y='195' text-anchor='middle' class='lb'>Q</text>
+</svg></div></div>""")
 pr_txt = ""
 if final["tipo"] == "regionalizado":
     p0 = par[(par.producto == final["producto"]) & (par.ETo == final["eto"])].iloc[0]
     pr_txt = (f"<p>Parámetros comunes calibrados: a = {f(p0.a, 3)}, c = {f(p0.c, 2)}, d = {f(p0.d, 3)}/mes; b entre "
               f"{f(min(p0[c] for c in p0.index if c.startswith('b ')))} y {f(max(p0[c] for c in p0.index if c.startswith('b ')))} mm según la unidad.</p>")
-slide("m-unidades", "2 · Modelo abcd", "1c · semidistribución y calibración multisitio",
+slide("m-unidades", "2 · Modelos abcd y GR2M", "1c · semidistribución y calibración multisitio",
       "Diez unidades entre estaciones del cauce principal, cada celda de 0,1° con su propia lluvia y ETo", f"""
 <div class='two even'><div>
 <p>Las unidades son las <b>áreas incrementales</b> entre las estaciones del Cauca (las mismas áreas de drenaje del Trabajo 1). Cada celda
@@ -339,7 +400,7 @@ diez estaciones. Es el modelo final: mejor validación y parámetros con sentido
 <p class='note'>Modelo final: {html.escape(modelo_final)}, P del {html.escape(final['producto'])}, ETo de {html.escape(final['eto'])}.</p>
 </div><div class='panel'>{fig(R2 / '07_figuras' / 'mapa_unidades.png', 'unidades', 'Unidades del modelo y estaciones')}</div></div>""")
 
-slide("m-desemp", "2 · Modelo abcd", "1c · desempeño por estación",
+slide("m-desemp", "2 · Modelos abcd y GR2M", "1c · desempeño por estación",
       f"El modelo reproduce los caudales mensuales en las diez estaciones: KGE medio de {f(kv_med, 2)} en la validación", f"""
 <div class='two fig'><div>
 <p>El desempeño se sostiene fuera del periodo de calibración en casi todas las estaciones. Las dos más débiles son las de aguas arriba:</p>
@@ -349,13 +410,31 @@ lo representa.</li><li><b>Juanchito</b>: recibe esa misma regulación y la menor
 <p class='note'>KGE ≥ 0,75 suele considerarse bueno para caudales mensuales. La validación usa sólo los meses con dato observado.</p>
 </div><div class='panel'>{fig(R2 / '07_figuras' / 'fig_kge_estaciones.png', 'kge_estaciones', 'KGE por estación')}</div></div>""")
 
-slide("m-serie", "2 · Modelo abcd", "1c · caudales observados y simulados",
+
+slide("m-comp", "2 · Modelos abcd y GR2M", "1c · comparación abcd frente a GR2M",
+      f"Con la misma lluvia y la misma calibración multisitio, el abcd valida mejor (KGE medio {f(va_.KGE.mean(), 2)} frente a {f(vg_.KGE.mean(), 2)}) y es el modelo principal", f"""
+<div class='stackfig'><div class='txtcols'>
+<ul class='pts'><li><b>Desempeño</b>: el abcd supera al GR2M en 9 de las 10 estaciones (en Juanchito empatan) y en la presa (KGE {f(va_.loc['Presa', 'KGE'], 2)} frente a {f(vg_.loc['Presa', 'KGE'], 2)};
+NSE logarítmico, que mide los caudales bajos, {f(va_.loc['Presa', 'NSElog'], 2)} frente a {f(vg_.loc['Presa', 'NSElog'], 2)}). En la cabecera (La Balsa, Juanchito), regulada por
+Salvajina, los dos fallan igual.</li>
+<li><b>Por qué</b>: el GR2M sólo tiene un almacenamiento lento de 60 mm, y su caudal sigue a la lluvia del mismo mes más que el río
+(correlación {f(grg.loc['P → Q sim', 'rezago 0 meses'], 2)} frente a {f(gra.loc['P → Q obs', 'rezago 0 meses'], 2)} observada) y recuerda menos (autocorrelación de un mes
+{f(gg.loc['Q sim presa', 'memoria r1'], 2)}, observada {f(ga.loc['Q obs presa', 'memoria r1'], 2)}). El acuífero del abcd da a la cuenca la memoria que tiene
+(abcd: {f(ga.loc['Q sim presa', 'memoria r1'], 2)}).</li></ul>
+<ul class='pts'><li><b>A favor del GR2M</b>: 2 parámetros por celda en lugar de 4, sólo uno en el límite del rango (frente a tres del abcd), y un X2 que hace
+explícita la pérdida de agua que el abcd escondía en b = 3000 mm. Agregado, con sólo 2 parámetros, iguala al abcd agregado en la presa.</li>
+<li><b>Decisión</b>: el abcd se usa en las técnicas, el pronóstico, las proyecciones y la operación; el GR2M se compara en los numerales 3 y 4
+(diapositiva «Dos modelos ante el ENSO»).</li></ul></div>
+<div class='panel'>{fig(R2 / '07_figuras' / 'fig_modelos_kge.png', 'modelos_kge', 'KGE de validación de los dos modelos')}</div>
+{tabla(t_cmp, {c: 2 for c in t_cmp.columns} | {"PBIAS presa (val, %)": 1})}
+</div>""")
+slide("m-serie", "2 · Modelos abcd y GR2M", "1c · caudales observados y simulados",
       "Las sequías de El Niño (1992, 1998, 2010, 2015–16) y las crecientes de La Niña (1999, 2008, 2010–11) quedan en su lugar", f"""
 {chips('serieEst', [(e, e) for e in ['La Virginia', 'La Pintada', 'Bolombolo', 'Cañafisto', 'Presa', 'La Balsa']])}
 <div class='panel'><div class='tshost' id='serieFig' style='height:520px'></div></div>
 <p class='note'>Caudal medio mensual (m³/s). La banda gris es la calibración (1982–2005). En la presa el observado termina en 2017.</p>""")
 
-slide("m-emp", "2 · Modelo abcd", "1c · ¿qué combinación sirve para un sistema operativo?",
+slide("m-emp", "2 · Modelos abcd y GR2M", "1c · ¿qué combinación sirve para un sistema operativo?",
       "La ecuación empírica sin memoria explica poco; con el caudal del mes anterior se acerca al abcd, que además da el estado del suelo", f"""
 <div class='two fig'><div>
 <p>La ecuación de las diapositivas, Q = α·(P − ETR) + β con ETR de Budyko mensual, sólo usa la lluvia del mes y alcanza un KGE de validación
@@ -364,7 +443,7 @@ cuenca es lo que le faltaba. El abcd tiene esa memoria de forma física (suelo y
 simular, así que puede correrse con escenarios de lluvia o de clima futuro.</p>
 {tabla(tab_mod, {c: 2 for c in tab_mod.columns})}
 </div><div class='panel'>{fig(R2 / '07_figuras' / 'fig_kge_modelos_presa.png', 'kge_modelos', 'KGE de los modelos en la presa')}
-<div class='callout teal'><b>Respuesta.</b> Para un sistema operativo mensual: modelo abcd semidistribuido con la lluvia del Cubo del IDEAM
+<div class='callout teal'><b>Respuesta.</b> Para un sistema operativo mensual: modelo abcd distribuido (valida mejor que el GR2M) con la lluvia del Cubo del IDEAM
 (o CHIRPS v2.0, casi igual de bueno y disponible en tiempo casi real), ETo de Hargreaves y calibración multisitio regionalizada. ERA5 sólo sirve corregido, y aun
 así queda por debajo de los productos con estaciones.</div></div></div>""")
 
@@ -456,6 +535,22 @@ slide("q-rez", "5 · Caudales", "4 · lluvia, suelo y caudal: almacenamiento y m
 fuerza que la lluvia y con algunos meses de retraso. Ese rezago es aprovechable: el estado del ENSO y la humedad del suelo de hoy anticipan
 los caudales de los próximos meses.</li></ul></div></div>""")
 
+
+slide("q-modelos", "5 · Caudales", "3–4 · dos modelos ante el ENSO",
+      "Los dos modelos secan el suelo igual en El Niño; difieren en cuánto tarda esa sequía en llegar al río", f"""
+<div class='stackfig'><div class='txtcols'>
+<ul class='pts'><li><b>Suelo</b>: con el GR2M el suelo también se seca en más del 98 % del área en todos los trimestres de El Niño (z de
+{f(sga.xs('El Niño').loc[TR, 'z S cuenca'].max(), 2)} a {f(sga.xs('El Niño').loc[TR, 'z S cuenca'].min(), 2)}) y sigue seco en MAM (z = {f(sga.loc[('El Niño', 'MAM'), 'z S cuenca'], 2)}) aunque la
+lluvia ya sea casi normal: la persistencia de la sequía no depende del modelo.</li>
+<li><b>Caudal en la presa</b>: los dos subestiman el extremo de DEF de El Niño (observado {f(D['enso_q']['Presa']['El Niño']['obs'][0], 2)}; abcd
+{f(D['enso_q']['Presa']['El Niño']['sim'][0], 2)}; GR2M {f(zqg('Presa', 'DEF', 'El Niño'), 2)}); en JJA de La Niña el GR2M exagera la creciente
+({f(zqg('Presa', 'JJA', 'La Niña'), 2)} frente a {f(D['enso_q']['Presa']['La Niña']['obs'][2], 2)} observada).</li></ul>
+<ul class='pts'><li><b>Memoria</b>: el caudal observado sigue correlacionado con la lluvia de 2–3 meses atrás; el abcd lo reproduce, el GR2M lo
+pierde antes (panel c). Para pronosticar a varios meses, que es lo que usan el KNN y la regresión logística, esa memoria es la que importa.</li>
+<li>La concordancia entre los dos modelos en el suelo da confianza en las conclusiones del numeral 3; la diferencia en el caudal muestra que
+la estructura del almacenamiento lento es la principal incertidumbre de modelo.</li></ul></div>
+<div class='panel'>{fig(R2 / '07_figuras' / 'fig_modelos_enso.png', 'modelos_enso', 'Suelo, caudal y memoria según cada modelo')}</div>
+</div>""")
 # ---- 6. técnicas para decisiones de generación (numeral 5)
 PRN, EOFD, FOU = R2 / "08_pronostico", R2 / "09_eof", R2 / "10_fourier"
 pr_s = json.loads((PRN / "sitio.json").read_text(encoding="utf-8"))
@@ -766,7 +861,7 @@ slide("cierre", "8 · Cierre", "Respuestas", "Qué aprendimos y lo que sigue", f
 <div class='two even'><div class='stack'>
 <div class='card lift'><h4>Datos</h4><p>El Cubo del IDEAM es la mejor referencia de lluvia mensual una vez limpio; CHIRPS v2.0 casi lo iguala.
 ERA5 y ERA5-Land necesitan corrección y aun corregidos no capturan bien la variabilidad mes a mes.</p></div>
-<div class='card lift'><h4>Modelo</h4><p>El abcd semidistribuido reproduce los caudales de diez estaciones (KGE de validación ≈ {f(kv_med, 2)}); la
+<div class='card lift'><h4>Modelo</h4><p>El abcd distribuido reproduce los caudales de diez estaciones (KGE de validación ≈ {f(kv_med, 2)}) mejor que el GR2M ({f(vg_.KGE.mean(), 2)}), que pierde memoria; la
 ecuación empírica sin memoria no basta.</p></div>
 <div class='card lift'><h4>ENSO</h4><p>El Niño seca la lluvia en DEF y JJA, el suelo en todo el año y los caudales con 1–2 meses de rezago; el
 suelo prolonga la sequía hasta MAM.</p></div>
@@ -792,6 +887,8 @@ slide("refs", "8 · Cierre", "Referencias", "Referencias", """
 <li>Hargreaves, G. H. y Samani, Z. A. (1985). Reference crop evapotranspiration from temperature. <i>Applied Engineering in Agriculture</i>, 1(2), 96–99.</li>
 <li>Hersbach, H. et al. (2020). The ERA5 global reanalysis. <i>QJRMS</i>, 146, 1999–2049.</li>
 <li>IDEAM (2025). Cubo de datos: precipitación, temperatura y humedad relativa diarias y mensuales 1981–2023 (CDT).</li>
+<li>Mouelhi, S., Michel, C., Perrin, C. y Andréassian, V. (2006). Stepwise development of a two-parameter monthly water balance model. <i>Journal of Hydrology</i>, 318, 200–214.</li>
+<li>Rojo Hernández, J. D. (2026). <i>Modelación lluvia–escorrentía de escala mensual</i> (clase 6, Hidrometeorología). Universidad Nacional de Colombia, sede Medellín.</li>
 <li>Martinez, G. F. y Gupta, H. V. (2010). Toward improved identification of hydrological models: A diagnostic evaluation of the “abcd”
 monthly water balance model for the conterminous United States. <i>Water Resources Research</i>, 46, W08507.</li>
 <li>Muñoz-Sabater, J. et al. (2021). ERA5-Land. <i>Earth System Science Data</i>, 13, 4349–4383.</li>
@@ -819,14 +916,14 @@ def limpio(o):
 
 
 nav = "".join(f"<button type='button' class='mod' data-go='{g}'><span>{n}</span> {t}</button>" for g, n, t in
-              [("d-cubo", "1", "Datos"), ("m-como", "2", "Modelo abcd"), ("p-mapas", "3", "ENSO y lluvia"),
+              [("d-cubo", "1", "Datos"), ("m-como", "2", "Modelos"), ("p-mapas", "3", "ENSO y lluvia"),
                ("s-mapas", "4", "Suelo"), ("q-comp", "5", "Caudales"), ("g-intro", "6", "Decisiones"), ("c-tam", "7", "Proyecciones"), ("cierre", "8", "Cierre")])
 css = (SITIO / "estilo_deck.css").read_text(encoding="utf-8") + (SITIO / "estilo_extra.css").read_text(encoding="utf-8")
 js = (SITIO / "graficas.js").read_text(encoding="utf-8")
 pagina = f"""<!doctype html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Modelación hidrológica Hidroituango</title>
-<meta name="description" content="Trabajo 2 de Hidrometeorología: modelo lluvia–escorrentía mensual abcd semidistribuido de la cuenca del Cauca hasta Hidroituango y efectos de El Niño y La Niña sobre la lluvia, la humedad del suelo y los caudales.">
+<meta name="description" content="Trabajo 2 de Hidrometeorología: modelos lluvia–escorrentía mensuales abcd y GR2M distribuidos de la cuenca del Cauca hasta Hidroituango y efectos de El Niño y La Niña sobre la lluvia, la humedad del suelo y los caudales.">
 <script>(function(){{var d=document.documentElement,t;try{{t=localStorage.getItem('theme')}}catch(e){{}}if(t)d.dataset.theme=t;}})()</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;1,8..60,400&display=swap" rel="stylesheet">

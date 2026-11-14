@@ -1,5 +1,5 @@
 """
-Trabajo 2 · figura: unidades del modelo abcd semidistribuido (áreas incrementales), estaciones de calibración multisitio y grilla
+Trabajo 2 · figura: unidades de los modelos abcd y GR2M distribuidos (áreas incrementales), estaciones de calibración multisitio y grilla
 de 0,1° del Cubo de datos IDEAM.
 
 Salida: trabajo2/resultados/07_figuras/mapa_unidades.png
@@ -38,6 +38,6 @@ est.plot(ax=ax, color="#1d4ed8", markersize=28, edgecolor="white", zorder=5)
 ax.plot([], [], "o", color="#1d4ed8", label="estación de calibración")
 ax.set_xlabel("Longitud (°)"); ax.set_ylabel("Latitud (°)"); ax.set_aspect("equal")
 ax.legend(loc="lower right", fontsize=8)
-ax.set_title("Unidades del modelo abcd semidistribuido\n(áreas incrementales entre estaciones; grilla del Cubo de 0,1°)", fontsize=10)
+ax.set_title("Unidades de los modelos abcd y GR2M distribuidos\n(áreas incrementales entre estaciones; grilla del Cubo de 0,1°)", fontsize=10)
 fig.tight_layout()
 fig.savefig(OUT / "mapa_unidades.png", dpi=300)

@@ -1,0 +1,6 @@
+﻿variable,ONI → P rezago 0,ONI → P rezago 1,ONI → P rezago 2,ONI → P rezago 3,ONI → P rezago 4,ONI → P rezago 5,ONI → P rezago 6,memoria r1,memoria r3,ONI → S rezago 0,ONI → S rezago 1,ONI → S rezago 2,ONI → S rezago 3,ONI → S rezago 4,ONI → S rezago 5,ONI → S rezago 6,ONI → G rezago 0,ONI → G rezago 1,ONI → G rezago 2,ONI → G rezago 3,ONI → G rezago 4,ONI → G rezago 5,ONI → G rezago 6,ONI → Q sim presa rezago 0,ONI → Q sim presa rezago 1,ONI → Q sim presa rezago 2,ONI → Q sim presa rezago 3,ONI → Q sim presa rezago 4,ONI → Q sim presa rezago 5,ONI → Q sim presa rezago 6,ONI → Q obs presa rezago 0,ONI → Q obs presa rezago 1,ONI → Q obs presa rezago 2,ONI → Q obs presa rezago 3,ONI → Q obs presa rezago 4,ONI → Q obs presa rezago 5,ONI → Q obs presa rezago 6
+P,-0.451,-0.451,-0.432,-0.385,-0.329,-0.269,-0.212,0.248,0.24,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+S,,,,,,,,0.883,0.715,-0.666,-0.697,-0.712,-0.702,-0.671,-0.624,-0.565,,,,,,,,,,,,,,,,,,,,,
+G,,,,,,,,0.755,0.543,,,,,,,,-0.636,-0.653,-0.651,-0.62,-0.569,-0.503,-0.429,,,,,,,,,,,,,,
+Q sim presa,,,,,,,,0.686,0.513,,,,,,,,,,,,,,,-0.611,-0.628,-0.627,-0.599,-0.551,-0.489,-0.418,,,,,,,
+Q obs presa,,,,,,,,0.787,0.559,,,,,,,,,,,,,,,,,,,,,,-0.588,-0.615,-0.626,-0.613,-0.579,-0.531,-0.47

@@ -131,7 +131,8 @@ const G = {
     const e = ESTADO.serieEst, s = D.serie;
     plot("serieFig", [
       { type: "scatter", mode: "lines", name: "Observado", x: s.t, y: s.obs[e], line: { color: css("--fg"), width: 1.6 }, connectgaps: false, hovertemplate: "Observado: %{y:,.0f} m³/s<extra></extra>" },
-      { type: "scatter", mode: "lines", name: "Simulado (abcd)", x: s.t, y: s.sim[e], line: { color: "#ea580c", width: 1.6 }, hovertemplate: "Simulado: %{y:,.0f} m³/s<extra></extra>" }],
+      { type: "scatter", mode: "lines", name: "Simulado abcd", x: s.t, y: s.sim[e], line: { color: "#ea580c", width: 1.6 }, hovertemplate: "abcd: %{y:,.0f} m³/s<extra></extra>" },
+      { type: "scatter", mode: "lines", name: "Simulado GR2M", x: s.t, y: s.simg[e], line: { color: "#1d4ed8", width: 1.2, dash: "dot" }, hovertemplate: "GR2M: %{y:,.0f} m³/s<extra></extra>" }],
       { hovermode: "x unified", xaxis: ax("", { type: "date" }), yaxis: ax(`Caudal medio mensual en ${e} (m³/s)`, { rangemode: "tozero" }),
         shapes: [{ type: "rect", xref: "x", yref: "paper", x0: "1982-01", x1: "2005-12", y0: 0, y1: 1, fillcolor: css("--line"), opacity: .35, line: { width: 0 }, layer: "below" }] });
   },

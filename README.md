@@ -47,13 +47,18 @@ Trabajo 2 de Hidrometeorología (Universidad Nacional de Colombia, sede Medellí
    - KNN de años análogos y regresión logística: alerta roja de trimestre seco.
    - Operación del embalse con pywr (modelo del Trabajo 1): estado real del embalse, ENFICC y tres políticas; y energía bajo las
      proyecciones CMIP6 con la central completa.
+8. **Comparación abcd – GR2M**
+   - GR2M (Mouelhi et al., 2006; clase 6 del curso) distribuido en las mismas celdas y unidades, con calibración multisitio (X1 por
+     unidad y X2 común, 11 parámetros).
+   - Validación: KGE medio 0,78 (GR2M) frente a 0,82 (abcd); el reservorio de enrutamiento de 60 mm le quita memoria al caudal.
+     El abcd sigue como modelo principal; el GR2M se compara en los numerales 1c, 3 y 4.
 
 ## Estructura
 
 | Carpeta | Contenido |
 |---|---|
 | `docs/` | Sitio publicado en GitHub Pages (`index.html`, figuras en `img/`, Plotly en `assets/`). |
-| `codigo/` | Scripts en orden: `00_limpieza_cubo.py`, `01_entradas.py`, `02_comparacion_productos.py`, `03_caudales_mensuales.py`, `04_modelo_abcd.py`, `04b_abcd_regionalizado.py`, `05_enso_precipitacion.py`, `06_enso_suelo_caudales.py`, `07_mapa_unidades.py`, `08_figuras_no_series.py`, `09_pronostico_knn_logistica.py`, `10_eof.py`, `11_fourier.py`, `12_cmip6_descarga.py`, `13_cmip6_qdm_abcd.py`, `14_cmip6_analisis.py`, `15_figuras_informe.py`, `16_informe_word.py`, `17_pronostico_2026.py`, `18_pywr_pronostico_proyecciones.py`. |
+| `codigo/` | Scripts en orden: `00_limpieza_cubo.py`, `01_entradas.py`, `02_comparacion_productos.py`, `03_caudales_mensuales.py`, `04_modelo_abcd.py`, `04b_abcd_regionalizado.py`, `04_modelo_gr2m.py`, `04c_comparacion_modelos.py`, `05_enso_precipitacion.py`, `06_enso_suelo_caudales.py`, `06b_enso_suelo_caudales_gr2m.py`, `07_mapa_unidades.py`, `08_figuras_no_series.py`, `09_pronostico_knn_logistica.py`, `10_eof.py`, `11_fourier.py`, `12_cmip6_descarga.py`, `13_cmip6_qdm_abcd.py`, `14_cmip6_analisis.py`, `15_figuras_informe.py`, `16_informe_word.py`, `17_pronostico_2026.py`, `18_pywr_pronostico_proyecciones.py`. |
 | `codigo/sitio/` | Generador del sitio (`construir.py`), estilos y gráficas. El estilo de presentación es el de la presentación PAE Orinoquía–Amazonía. |
 | `memorias/` | Resultados: tablas CSV, figuras en PNG de 300 dpi (mapas y gráficas que no son series, listas para el informe), parámetros, métricas y estados del modelo final (S, G, ETR y Q por celda). |
 | `datos/` | Precipitación mensual del Cubo de datos IDEAM en la cuenca, tras el control de calidad. |

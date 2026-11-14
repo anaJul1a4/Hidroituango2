@@ -223,6 +223,22 @@ def kpre(modelo, prod, eto, per="val", col="KGE"):
 
 
 EP, ES = R2 / "05_enso_P", R2 / "06_enso_suelo_Q"
+
+CMP, GRD = R2 / "04_comparacion", R2 / "04_gr2m"
+gfin = json.loads((CMP / "modelo_principal.json").read_text(encoding="utf-8"))
+gp = gfin["GR2M"]
+gpar = pd.read_csv(GRD / "parametros.csv")
+gp0 = gpar[(gpar.producto == gp["producto"]) & (gpar.ETo == gp["eto"]) & gpar["X1 Presa"].notna()].iloc[0]
+gx1 = sorted(gp0[f"X1 {e}"] for e in EST)
+mmc = pd.read_csv(CMP / "metricas_modelos.csv"); mmc["per"] = mmc.periodo.str[:3]
+rmc = pd.read_csv(CMP / "resumen_modelos.csv")
+MA_, MG_ = "abcd distribuido multisitio (14 parámetros)", "GR2M distribuido multisitio (11 parámetros)"
+va_ = mmc[(mmc.modelo == MA_) & (mmc.producto == gfin["abcd"]["producto"]) & (mmc.ETo == gfin["abcd"]["eto"]) & (mmc.per == "val")].set_index("estación")
+vg_ = mmc[(mmc.modelo == MG_) & (mmc.producto == gp["producto"]) & (mmc.ETo == gp["eto"]) & (mmc.per == "val")].set_index("estación")
+EG_ = R2 / "06_enso_suelo_Q_gr2m"
+og_ = pd.read_csv(EG_ / "rezagos_oni.csv").set_index("variable"); rg_ = pd.read_csv(EG_ / "rezagos_P.csv", index_col=0)
+sg_ = pd.read_csv(EG_ / "suelo_compuestos.csv").set_index(["fase", "trimestre"]); qg_ = pd.read_csv(EG_ / "caudales_compuestos.csv")
+zqg = lambda e, t, fa: float(qg_[(qg_["estación"] == e) & (qg_.trimestre == t) & (qg_.fase == fa)]["z Q simulado"].iloc[0])  # noqa: E731
 comp = pd.read_csv(EP / "compuestos_cuenca.csv")
 cons = pd.read_csv(EP / "consistencia.csv")
 coni = pd.read_csv(EP / "correlacion_oni.csv")
@@ -305,8 +321,10 @@ par(f"La generación hidroeléctrica en Colombia depende de cuánta agua llega a
     f"caudales al ENSO. Se evaluaron cinco productos de precipitación: el Cubo de datos del IDEAM, CHIRPS v2.0, CHIRPS v3.0, ERA5-Land y "
     f"ERA5. El Cubo traía valores diarios de hasta 4702 mm que hubo que depurar; una vez corregido, coincide con CHIRPS (r mensual de "
     f"{n(r_l, 2)}). ERA5 y ERA5-Land, en cambio, casi triplican la lluvia y solo sirven después de corregirlos por mapeo de cuantiles. "
-    f"El modelo abcd, semidistribuido en diez unidades y calibrado a la vez con diez estaciones de caudal, reprodujo los caudales "
-    f"mensuales con un KGE de validación de {n(kv, 2)} en promedio y de {n(pres.loc['val', 'KGE'], 2)} en la presa. Durante El Niño la "
+    f"Se compararon dos modelos, el abcd y el GR2M, distribuidos en diez unidades y calibrados a la vez con diez estaciones de caudal. "
+    f"El abcd reprodujo los caudales "
+    f"mensuales con un KGE de validación de {n(kv, 2)} en promedio y de {n(pres.loc['val', 'KGE'], 2)} en la presa, y el GR2M, con menos "
+    f"parámetros pero menos memoria, con {n(vg_.KGE.mean(), 2)}. Durante El Niño la "
     f"lluvia de la cuenca baja sobre todo en diciembre-febrero y junio-agosto, el suelo se seca en más del 99 % del área y sigue seco en "
     f"marzo-mayo aunque la lluvia ya esté cerca de lo normal, y los caudales en la presa caen hasta {n(zq('Presa', 'DEF', 'El Niño', 'z Q observado'), 2)} "
     f"desviaciones estándar, con unos dos meses de rezago frente al ONI. Esa memoria del suelo y del acuífero es aprovechable: con el ONI "
@@ -336,7 +354,7 @@ par("El problema no es solo la variabilidad actual. Según el IPCC (2021), el ca
     "la oferta de agua de una cuenca como la del Cauca es parte de la planeación de largo plazo, y la herramienta para estimarlo es la "
     "misma: un modelo hidrológico calibrado que pueda alimentarse con escenarios climáticos.")
 par("En este trabajo se construye ese modelo y se usa para tres fines: (1) evaluar qué información climática es más adecuada para "
-    "simular los caudales mensuales de la cuenca; (2) describir los efectos de El Niño y La Niña sobre la lluvia, la humedad del suelo y "
+    "simular los caudales mensuales de la cuenca y qué estructura de modelo, abcd o GR2M, la representa mejor; (2) describir los efectos de El Niño y La Niña sobre la lluvia, la humedad del suelo y "
     "los caudales; (3) mostrar cómo la memoria del suelo y del acuífero permite anticipar los aportes de los meses siguientes, y (4) estimar "
     "con modelos climáticos CMIP6 cómo podría cambiar la oferta de agua de la cuenca en este siglo. El efecto sobre la operación del "
     "embalse y la energía generada se evalúa con el modelo de operación del Trabajo 1.")
@@ -446,8 +464,8 @@ par("Con la lluvia del Cubo el balance produce más agua de la observada: +20 % 
     "diferencia. Con base en estos resultados se llevaron al modelo los productos con estaciones (Cubo, CHIRPS v2.0 y v3.0) y los "
     "reanálisis corregidos; ERA5 sin corregir se incluyó solo como contraste.")
 
-titulo("1c. Modelo abcd: calibración y validación", 2)
-par("Se usó el modelo de balance hídrico mensual abcd (Thomas, 1981), en la notación de Martinez y Gupta (2010). Tiene dos depósitos, el "
+titulo("1c. Modelos abcd y GR2M: calibración y validación", 2)
+par("**Modelo abcd.** Se usó el modelo de balance hídrico mensual abcd (Thomas, 1981), en la notación de Martinez y Gupta (2010). Tiene dos depósitos, el "
     "suelo (S) y el agua subterránea (G), y cuatro parámetros. En cada mes el agua disponible W es la lluvia más el almacenamiento del mes "
     "anterior, y la oportunidad de evapotranspiración Y es la parte de W que puede quedarse en el suelo o evaporarse:")
 ecuacion("W~t~ = P~t~ + S~t−1~            Y~t~ = (W~t~ + b) / 2a − [((W~t~ + b) / 2a)^2^ − W~t~ · b / a]^0.5^")
@@ -457,6 +475,20 @@ par("El parámetro a (entre 0 y 1) controla qué tan pronto se genera escorrent�
     "almacenamiento del suelo más la evapotranspiración del mes; c es la fracción del excedente que recarga el acuífero, y d (1/mes) la "
     "rapidez con que el acuífero se vacía al río. S es la variable de humedad del suelo que se analiza en el numeral 3, y G da al caudal "
     "la memoria que se discute en el numeral 4.")
+par("**Modelo GR2M.** Como segundo modelo se usó el GR2M (Mouelhi et al., 2006), presentado en la clase de modelación mensual del curso "
+    "(Rojo Hernández, 2026). Tiene dos reservorios, uno de producción (el suelo, S, de capacidad X1) y uno de enrutamiento (R, de capacidad "
+    "fija de 60 mm), y solo dos parámetros. La lluvia del mes llena parcialmente el suelo y el excedente P~1~ pasa al enrutamiento; la "
+    "evapotranspiración vacía el suelo, que además libera una percolación P~2~:")
+ecuacion("φ = tanh(P/X1)            S~1~ = (S + X1 · φ) / (1 + φ · S/X1)            P~1~ = P + S − S~1~")
+ecuacion("ψ = tanh(ETo/X1)            S~2~ = S~1~ · (1 − ψ) / [1 + ψ · (1 − S~1~/X1)]            ETR = S~1~ − S~2~")
+ecuacion("S = S~2~ / [1 + (S~2~/X1)^3^]^1/3^            P~3~ = P~1~ + (S~2~ − S)")
+ecuacion("R~2~ = X2 · (R + P~3~)            Q = R~2~^2^ / (R~2~ + 60)            R = R~2~ − Q")
+par("X2 es un coeficiente de intercambio subterráneo: si es menor que 1 la cuenca pierde agua hacia fuera de su divisoria y si es mayor la "
+    "gana. Las condiciones iniciales fueron S~0~ = X1/2 y R~0~ = 30 mm, con el primer año corrido dos veces para calentar el modelo. El GR2M "
+    "se implementó con la misma distribución que el abcd y se calibró del mismo modo, con X1 propio de cada unidad y X2 común (11 parámetros), "
+    "para que la comparación dependa solo de la estructura del modelo. Esta calibración equivale, sin mapas de suelos, al método de factores "
+    "de corrección de la clase. Como verificación del paso mensual, el tiempo de viaje del agua por los 855 km del Cauca a 1 m/s es de unos "
+    "10 días, menor que un mes, de modo que el caudal de cada celda puede sumarse en la salida en el mismo mes.")
 par("**Versión distribuida y calibración multisitio.** El modelo se corrió en cada una de las 376 celdas del Cubo con su propia lluvia y "
     "su propia ETo, y el caudal en cada estación es la suma de lo que producen las celdas de las unidades aguas arriba. Con paso mensual, "
     "el tiempo de viaje del agua por el cauce (días) no se representa. La función objetivo fue el KGE (Gupta et al., 2009), que combina "
@@ -491,7 +523,7 @@ par("El desempeño se mantiene fuera del periodo de calibración en casi todas l
     "misma regulación y además las extracciones para riego y acueductos del valle, y en validación el modelo subestima su caudal en un 22 %. "
     "La Figura 6 muestra que el modelo ubica en su lugar las sequías de El Niño (1992, 1997-1998, 2009-2010, 2015-2016) y los caudales "
     "altos de La Niña (1999-2000, 2008, 2010-2011), aunque subestima algunos picos, como el de finales de 2010.")
-figura(FG / "fig_series_Q.png", "Caudal medio mensual observado y simulado por el modelo final en La Virginia, Bolombolo y la presa. La "
+figura(FG / "fig_series_Q.png", "Caudal medio mensual observado y simulado por los modelos abcd y GR2M en La Virginia, Bolombolo y la presa. La "
        "banda gris es el periodo de calibración.")
 
 par("**Comparación de configuraciones.** La Tabla 5 resume las variantes probadas. Se incluyó la ecuación empírica de las diapositivas "
@@ -521,11 +553,42 @@ par(f"Tres resultados responden a la pregunta del numeral. Primero, los producto
     f"el caudal del mes anterior sube a {n(kpre('empírico con memoria Q = α·W + γ·Q(t−1) + β', 'Cubo IDEAM', 'Penman-Monteith'), 2)}, cerca "
     f"del abcd, porque Q(t−1) le entrega la memoria que el abcd representa con el suelo y el acuífero. La diferencia es que el abcd no "
     f"necesita conocer el caudal observado para simular, así que puede correrse con pronósticos o escenarios de lluvia.")
+
+par("**Comparación entre el abcd y el GR2M.** La Tabla 6 compara los dos modelos con la misma lluvia y la misma calibración, y la Figura 7 "
+    "muestra el KGE de validación de cada estación. Se agregó el NSE logarítmico, que da más peso a los caudales bajos.")
+leyenda_tabla("Comparación de los modelos abcd y GR2M en validación (2006-2023; en la presa, 2006-2017).")
+t6 = rmc[rmc.modelo.isin([MA_, MG_, "abcd agregado (4 parámetros)", "GR2M agregado (2 parámetros)"]) & rmc.producto.isin(["Cubo IDEAM", "CHIRPS v2.0"])]
+fil = []
+for _, r_ in t6.iterrows():
+    nm = r_.modelo.split(" (")[0].replace(" distribuido multisitio", " distribuido")
+    fil.append([nm, r_.producto, "PM" if r_.ETo == "Penman-Monteith" else "Hargreaves",
+                "—" if pd.isna(r_["KGE medio 10 estaciones (val)"]) else n(r_["KGE medio 10 estaciones (val)"], 2), n(r_["KGE presa (val)"], 2),
+                n(r_["NSE presa (val)"], 2), "—" if pd.isna(r_["NSE log presa (val)"]) else n(r_["NSE log presa (val)"], 2), n(r_["PBIAS presa (val, %)"], 1, True)])
+tabla(["Modelo", "Lluvia", "ETo", "KGE medio 10 estaciones", "KGE presa", "NSE presa", "NSE log presa", "Sesgo presa (%)"], fil,
+      anchos=[3.0, 2.4, 2.0, 2.2, 1.6, 1.6, 1.8, 1.8], size=9)
+figura(FG / "fig_modelos_kge.png", "a) KGE de validación por estación de los modelos abcd y GR2M (lluvia del Cubo, ETo de Hargreaves); b) KGE, NSE "
+       "y NSE logarítmico en la presa.")
+par(f"Con la misma lluvia y la misma calibración, el abcd valida mejor que el GR2M: KGE medio de {n(va_.KGE.mean(), 2)} frente a "
+    f"{n(vg_.KGE.mean(), 2)}, y en la presa {n(va_.loc['Presa', 'KGE'], 2)} frente a {n(vg_.loc['Presa', 'KGE'], 2)}. La diferencia es mayor en "
+    f"los caudales bajos (NSE logarítmico de {n(va_.loc['Presa', 'NSElog'], 2)} frente a {n(vg_.loc['Presa', 'NSElog'], 2)}). En la cabecera, "
+    f"regulada por Salvajina, los dos modelos fallan igual. La razón está en el almacenamiento lento. El GR2M solo tiene el reservorio de "
+    f"enrutamiento de 60 mm, que se vacía rápido, y su caudal sigue a la lluvia del mismo mes más que el río: la correlación entre las "
+    f"anomalías de lluvia y de caudal en el mismo mes es de {n(rg_.loc['P → Q sim', 'rezago 0 meses'], 2)} con el GR2M y de "
+    f"{n(rp.loc['P → Q obs', 'rezago 0 meses'], 2)} en el caudal observado, y la autocorrelación de un mes del caudal es de "
+    f"{n(og_.loc['Q sim presa', 'memoria r1'], 2)}, frente a {n(rz.loc['Q obs presa', 'memoria r1'], 2)} observada y "
+    f"{n(rz.loc['Q sim presa', 'memoria r1'], 2)} del abcd. El acuífero del abcd representa mejor la memoria de una cuenca de este tamaño "
+    f"(Figura 6).")
+par(f"El GR2M tiene, sin embargo, ventajas que conviene reconocer. Con dos parámetros por celda en lugar de cuatro, solo uno quedó en el límite "
+    f"de su rango: el X1 de la última unidad antes de la presa, la misma en la que el abcd dejó b en 3000 mm. El X2 calibrado, "
+    f"{n(gp0.X2, 2)}, hace explícita una pérdida del {n(100 * (1 - gp0.X2))} % del agua que llega al enrutamiento, que es la forma en que el "
+    f"GR2M corrige el exceso de lluvia del Cubo encontrado en el balance de largo plazo (Tabla 3). Y en versión agregada, con solo dos "
+    f"parámetros, iguala al abcd agregado en la presa. Con estos resultados se eligió el abcd como modelo principal para los numerales 3 a 5 y "
+    f"para las proyecciones, y el GR2M se usó como comparación en los numerales 3 y 4.")
 par(f"El modelo agregado, con una sola unidad hasta la presa, alcanza en ella un KGE de {n(kpre('abcd agregado', 'Cubo IDEAM', 'Penman-Monteith'), 2)}, "
     "similar al distribuido. La ventaja de la versión distribuida no está en la presa sino en que entrega caudales en las diez estaciones "
     "y la humedad del suelo en cada celda, que se usan en los numerales 3 y 4.")
 par(f"**¿Qué combinación es más adecuada para un sistema operativo?** El modelo abcd distribuido, con calibración multisitio regionalizada "
-    f"y ETo de Hargreaves. Para calibrar y reconstruir el pasado, la mejor lluvia es la del Cubo corregido. Para operar, sin embargo, el "
+    f"y ETo de Hargreaves, que valida mejor que el GR2M y conserva mejor la memoria de la cuenca. Para calibrar y reconstruir el pasado, la mejor lluvia es la del Cubo corregido. Para operar, sin embargo, el "
     f"Cubo tiene una limitación: es un producto de reanálisis de estaciones que hoy llega hasta 2023 y no se actualiza en tiempo real. "
     f"CHIRPS v2.0 se publica con pocas semanas de rezago y con él el modelo pierde poco (KGE medio de validación de "
     f"{n(kmed(REG, 'CHIRPS v2.0', 'Penman-Monteith'), 2)}), así que es la lluvia adecuada para correr el sistema mes a mes. Los "
@@ -538,8 +601,8 @@ ecuacion("z = (P~trimestre~ − media) / desviación estándar")
 par(f"con la media y la desviación estándar de 1981-2010. Cada trimestre de 1981-2023 se clasificó como El Niño, La Niña o neutro con el "
     f"Índice Oceánico El Niño (ONI) de la NOAA y la regla del Centro de Predicción Climática (CPC): El Niño cuando el ONI es mayor o igual "
     f"a +0.5 °C durante al menos cinco trimestres móviles seguidos, y La Niña cuando es menor o igual a −0.5 °C en las mismas condiciones. "
-    f"El compuesto de cada fase es el promedio de z en sus trimestres (Figuras 7 y 8). Además se calculó la correlación de Pearson entre "
-    f"el ONI y el z medio de la cuenca para cada trimestre (Tabla 6).")
+    f"El compuesto de cada fase es el promedio de z en sus trimestres (Figuras 8 y 9). Además se calculó la correlación de Pearson entre "
+    f"el ONI y el z medio de la cuenca para cada trimestre (Tabla 7).")
 figura(EP / "mapas_compuesto_nino.png", ancho=Cm(13), texto="Anomalía estandarizada media de la precipitación en los trimestres El Niño, por producto (filas) y "
        "trimestre (columnas), 1981-2023. Rojo: más seco que lo normal; azul: más húmedo. z̄ es el promedio de la cuenca.")
 figura(EP / "mapas_compuesto_nina.png", ancho=Cm(13), texto="Anomalía estandarizada media de la precipitación en los trimestres La Niña, por producto y trimestre, "
@@ -567,12 +630,12 @@ fil = [[p_.replace(" QM", " corregido")] + [n(rcons(p_, t, fa), 2) for fa in ["E
 tabla(["Producto"] + [f"{fa[3:] if fa.startswith('El') else fa[3:]} {t}" for fa in ["El Niño", "La Niña"] for t in TR], fil,
       anchos=[2.9] + [1.6] * 8, size=9)
 par(f"**Consistencia entre productos.** En el promedio de la cuenca todos los productos coinciden en el signo y en el orden de magnitud de "
-    f"la anomalía de DEF y JJA (Figura 9). En DEF de El Niño z va de {n(min(zc(p_, 'DEF', 'El Niño') for p_ in PRODS5), 2)} a "
+    f"la anomalía de DEF y JJA (Figura 10). En DEF de El Niño z va de {n(min(zc(p_, 'DEF', 'El Niño') for p_ in PRODS5), 2)} a "
     f"{n(max(zc(p_, 'DEF', 'El Niño') for p_ in PRODS5), 2)} según el producto. Las diferencias aparecen en dos lugares. En MAM ERA5 y "
     f"ERA5-Land dan anomalías positivas (z ≈ +0.1) en El Niño, contrarias a las de los productos con estaciones; en SON exageran la "
     f"sequía (z de {n(zc('ERA5-Land', 'SON', 'El Niño'), 2)} en ERA5-Land frente a {n(zc('Cubo IDEAM', 'SON', 'El Niño'), 2)} en el Cubo). "
     f"Y en el espacio, solo CHIRPS se parece al Cubo, con correlaciones espaciales de {n(min(rcons(p_, t, fa) for p_ in ['CHIRPS v2.0'] for t in TR for fa in ['El Niño', 'La Niña']), 2)} "
-    f"a {n(max(rcons(p_, t, fa) for p_ in ['CHIRPS v2.0'] for t in TR for fa in ['El Niño', 'La Niña']), 2)} (Tabla 7). Los reanálisis tienen "
+    f"a {n(max(rcons(p_, t, fa) for p_ in ['CHIRPS v2.0'] for t in TR for fa in ['El Niño', 'La Niña']), 2)} (Tabla 8). Los reanálisis tienen "
     f"correlaciones cercanas a cero o negativas, y la corrección por mapeo de cuantiles no las mejora, porque corrige la distribución de "
     f"cada celda pero no la forma en que el reanálisis reparte la anomalía en el espacio. Se concluye que todos los productos representan "
     f"de forma consistente la señal del ENSO en el promedio de la cuenca y en los trimestres de mayor impacto, pero solo los productos con "
@@ -582,8 +645,8 @@ par(f"**Consistencia entre productos.** En el promedio de la cuenca todos los pr
 titulo("3. Impactos de El Niño sobre la humedad del suelo")
 par("Se usó el almacenamiento de agua en el suelo S del modelo final, mes a mes y en cada celda. Para cada trimestre se calculó la "
     "anomalía estandarizada de S con la media y la desviación estándar de 1981-2010, igual que para la lluvia, y se promedió en los "
-    "trimestres de cada fase (Figura 10). La Figura 11 compara la anomalía del suelo con la de la lluvia del Cubo calculada de la misma "
-    "forma, y la Tabla 8 resume los valores de la cuenca.")
+    "trimestres de cada fase (Figura 11). La Figura 12 compara la anomalía del suelo con la de la lluvia del Cubo calculada de la misma "
+    "forma, y la Tabla 9 resume los valores de la cuenca.")
 figura(ES / "mapas_suelo_enso.png", "Anomalía estandarizada media de la humedad del suelo simulada (S del modelo abcd) en los trimestres El "
        "Niño (arriba) y La Niña (abajo), 1981-2023. Rojo: más seco que lo normal; azul: más húmedo.")
 leyenda_tabla("Anomalía estandarizada media de la humedad del suelo y de la lluvia de la cuenca en los trimestres El Niño y La Niña.")
@@ -609,7 +672,7 @@ par(f"**Persistencia.** La diferencia más clara está en MAM. La lluvia de MAM 
     f"autocorrelación de un mes de las anomalías del suelo de la cuenca es de {n(rz.loc['S', 'memoria r1'], 2)}, frente a "
     f"{n(rz.loc['P', 'memoria r1'], 2)} de la lluvia, y su correlación con el ONI es máxima con {int(np.argmin([rz.loc['S', f'ONI → S rezago {k}'] for k in range(7)]))} "
     f"meses de rezago (r = {n(min(rz.loc['S', f'ONI → S rezago {k}'] for k in range(7)), 2)}).")
-par(f"**Distribución espacial.** La Figura 12 muestra que la memoria del suelo no es igual en toda la cuenca. La autocorrelación de un mes "
+par(f"**Distribución espacial.** La Figura 13 muestra que la memoria del suelo no es igual en toda la cuenca. La autocorrelación de un mes "
     f"va de {n(mem.memoria_r1.min(), 2)} a {n(mem.memoria_r1.max(), 2)} entre celdas. Es mayor en la cabecera y en las celdas de alta montaña, "
     f"donde el parámetro b de su unidad es grande y el suelo tarda más en vaciarse, y menor en el valle medio (La Virginia e Irra), donde "
     f"b es pequeño y el suelo responde casi solo a la lluvia del mes. En casi todas las celdas la respuesta del suelo a la lluvia es "
@@ -624,7 +687,7 @@ par("Estos resultados coinciden con los de Poveda et al. (2001), que encontraron
 # ============================================================================================ numeral 4
 titulo("4. Impactos de El Niño sobre los caudales")
 par("Se calcularon las anomalías estandarizadas trimestrales de los caudales observados y simulados en las diez estaciones, con el mismo "
-    "procedimiento de la lluvia y del suelo. En la presa se usaron los años 1981-2017. La Figura 13 y la Tabla 9 muestran los resultados "
+    "procedimiento de la lluvia y del suelo. En la presa se usaron los años 1981-2017. La Figura 14 y la Tabla 10 muestran los resultados "
     "en tres estaciones representativas: La Virginia, al final del valle; Bolombolo, en el cañón, y la presa.")
 figura(FG / "fig_caudales_enso.png", "Anomalía estandarizada media del caudal en los trimestres El Niño y La Niña: observada (barras) y "
        "simulada por el modelo abcd (puntos).")
@@ -648,7 +711,7 @@ par(f"**¿Reproduce el modelo la respuesta al ENSO?** El modelo acierta el signo
     f"mayor error está en la presa en DEF de El Niño, donde simula {n(zq('Presa', 'DEF', 'El Niño', 'z Q simulado'), 2)} frente a "
     f"{n(zq('Presa', 'DEF', 'El Niño', 'z Q observado'), 2)} observado. Una posible causa es que la lluvia del Cubo en el cañón, con pocas "
     f"estaciones de alta montaña, no capta toda la sequía de esos eventos.")
-par("El ciclo anual por fase confirma esta evaluación (Figura 14). El Niño no cambia la forma bimodal del ciclo; lo desplaza hacia abajo. En "
+par("El ciclo anual por fase confirma esta evaluación (Figura 15). El Niño no cambia la forma bimodal del ciclo; lo desplaza hacia abajo. En "
     f"la presa, el caudal observado en los meses El Niño es entre {n(-red_obs.max())} % y {n(-red_obs.min())} % menor que en los meses "
     f"neutros, con la mayor reducción en {MESN[int(red_obs.idxmin()) - 1]} ({n(red_obs.min())} %), en plena temporada seca de comienzo de "
     f"año. El simulado reproduce ese patrón, con reducciones entre {n(-red_sim.max())} % y {n(-red_sim.min())} % y el máximo en "
@@ -660,7 +723,7 @@ figura(FG / "fig_ciclo_fases.png", "Ciclo anual del caudal en los meses El Niño
 
 titulo("Relación entre lluvia, humedad del suelo y caudales", 2)
 par("Para cuantificar el almacenamiento y la memoria se calcularon, con las anomalías mensuales de la cuenca, las correlaciones del ONI con "
-    "la lluvia, el suelo, el acuífero y el caudal con rezagos de 0 a 6 meses, y las de la lluvia con las demás variables (Figura 15).")
+    "la lluvia, el suelo, el acuífero y el caudal con rezagos de 0 a 6 meses, y las de la lluvia con las demás variables (Figura 16).")
 figura(FG / "fig_rezagos.png", "Correlación de las anomalías mensuales de la cuenca: a) del ONI con la lluvia, el suelo, el acuífero y el "
        "caudal en la presa según el rezago; b) de la lluvia con el suelo, el acuífero y el caudal.")
 rQ = [rz.loc["Q obs presa", f"ONI → Q obs presa rezago {k}"] for k in range(7)]
@@ -677,6 +740,21 @@ par("La interpretación física es la de una cuenca que funciona como un filtro.
     "que la lluvia que los produce, como ya se había visto en el Trabajo 1 con una variabilidad interanual 2.6 veces mayor, y con unos "
     "dos meses de retraso. Ese rezago tiene valor práctico: el estado del ENSO y la humedad del suelo de hoy contienen información sobre los "
     "caudales de los próximos meses, que es lo que se aprovecha en la sección 5.")
+titulo("Comparación con el GR2M", 2)
+par(f"Los numerales 3 y 4 se repitieron con el GR2M, con la misma lluvia y las mismas fases ENSO (Figura 17). Los dos modelos coinciden en la "
+    f"humedad del suelo: con el GR2M el suelo también se seca en más del 98 % del área en todos los trimestres de El Niño, con anomalías de "
+    f"{n(sg_.xs('El Niño').loc[TR, 'z S cuenca'].max(), 2)} a {n(sg_.xs('El Niño').loc[TR, 'z S cuenca'].min(), 2)}, y sigue seco en marzo-mayo "
+    f"(z = {n(sg_.loc[('El Niño', 'MAM'), 'z S cuenca'], 2)}) aunque la lluvia ya esté cerca de lo normal. La persistencia de la sequía en el suelo "
+    f"no depende, por tanto, del modelo. En el caudal de la presa los dos subestiman el extremo de diciembre-febrero de El Niño "
+    f"({n(zq('Presa', 'DEF', 'El Niño', 'z Q simulado'), 2)} el abcd y {n(zqg('Presa', 'DEF', 'El Niño'), 2)} el GR2M, frente a "
+    f"{n(zq('Presa', 'DEF', 'El Niño', 'z Q observado'), 2)} observado), y en junio-agosto de La Niña el GR2M exagera la creciente "
+    f"({n(zqg('Presa', 'JJA', 'La Niña'), 2)} frente a {n(zq('Presa', 'JJA', 'La Niña', 'z Q observado'), 2)}). La diferencia principal está en "
+    f"la memoria (Figura 17c): el caudal observado sigue correlacionado con la lluvia de dos y tres meses atrás, el abcd reproduce esa "
+    f"relación y el GR2M la pierde antes. La concordancia en el suelo respalda las conclusiones del numeral 3, y la diferencia en el caudal "
+    f"indica que la representación del almacenamiento lento es la principal incertidumbre de modelo en esta cuenca.")
+figura(FG / "fig_modelos_enso.png", "Comparación de los modelos abcd y GR2M: a) anomalía estandarizada de la humedad del suelo en El Niño y La "
+       "Niña; b) anomalía del caudal en la presa, observado y simulado; c) correlación de la anomalía de lluvia con la del caudal en la presa "
+       "según el rezago.")
 titulo("Patrón espacial dominante: funciones ortogonales empíricas", 2)
 e1, eS = eofr.loc["Cubo IDEAM"], eofr.loc["Suelo S (abcd)"]
 par("Para comprobar si el ENSO es la fuente principal de variabilidad de la cuenca sin suponerlo de antemano, se calcularon funciones "
@@ -733,7 +811,7 @@ par(f"**Resultados.** En 1981-2010 la corrección elimina el sesgo de +176 % y d
     f"el modelo abcd, ERA5 corregido pasa de un KGE medio de validación negativo ({n(kmed('abcd semidistribuido', 'ERA5', 'Penman-Monteith'), 2)}) "
     f"a {n(kmed('abcd semidistribuido', 'ERA5 QM', 'Penman-Monteith'), 2)}, todavía lejos de los "
     f"{n(kmed('abcd semidistribuido', 'Cubo IDEAM', 'Penman-Monteith'), 2)} que da el Cubo con la misma configuración (Tabla 5). Tampoco "
-    f"corrige el patrón espacial de la respuesta al ENSO (Tabla 7).")
+    f"corrige el patrón espacial de la respuesta al ENSO (Tabla 8).")
 par("**Interpretación física e hidrológica.** El mapeo de cuantiles corrige la distribución de valores de cada celda, pero conserva el orden "
     "en que el reanálisis los produce. Los errores de ERA5 en esta cuenca no son solo de magnitud: su lluvia proviene de pronósticos de "
     "corto plazo del modelo atmosférico, sin asimilación de pluviómetros, y su resolución no resuelve dos cordilleras y un valle "
@@ -771,10 +849,10 @@ figura(FG / "fig_knn_horizonte.png", "Habilidad del pronóstico de años análog
        "persistencia y la climatología; b) mejora del CRPS frente a la climatología (CRPSS) y cobertura del intervalo del 80 %.")
 par(f"**Resultados.** Para el aporte de los tres meses siguientes, la mediana de los análogos tiene un NSE de {n(mq3.loc[KQ, 'NSE de la mediana'], 2)}, "
     f"frente a {n(mq3.loc['Persistencia', 'NSE de la mediana'], 2)} de la persistencia y {n(mq3.loc['Climatología', 'NSE de la mediana'], 2)} "
-    f"de la climatología, y su CRPS es un {n(100 * mq3.loc[KQ, 'CRPSS'])} % menor que el de la climatología (Tabla 10). Mes a mes, con un mes "
+    f"de la climatología, y su CRPS es un {n(100 * mq3.loc[KQ, 'CRPSS'])} % menor que el de la climatología (Tabla 11). Mes a mes, con un mes "
     f"de anticipación el KNN empata con la persistencia (NSE de {n(hzm.loc[1, 'NSE KNN'], 2)} y {n(hzm.loc[1, 'NSE persistencia'], 2)}), pero "
     f"a partir del segundo mes la supera y a seis meses conserva un NSE de {n(hzm.loc[6, 'NSE KNN'], 2)}, cuando el de la persistencia ya "
-    f"cayó a {n(hzm.loc[6, 'NSE persistencia'], 2)} (Figura 17). El intervalo nominal del 80 % contuvo al caudal observado el "
+    f"cayó a {n(hzm.loc[6, 'NSE persistencia'], 2)} (Figura 19). El intervalo nominal del 80 % contuvo al caudal observado el "
     f"{n(mq3.loc[KQ, 'Cobertura del intervalo 80 % (%)'])} % de las veces y es un "
     f"{n(100 * (1 - mq3.loc[KQ, 'Ancho medio del intervalo 80 % (m³/s)'] / mq3.loc['Climatología', 'Ancho medio del intervalo 80 % (m³/s)']))} % "
     f"más angosto que el de la climatología. Los análogos son, por tanto, algo optimistas sobre su propia precisión, y en la práctica ese "
@@ -782,7 +860,7 @@ par(f"**Resultados.** Para el aporte de los tres meses siguientes, la mediana de
 figura(FG / "fig_knn_ejemplos.png", "Pronósticos de años análogos emitidos al final de agosto de 1997 y de 2015 (inicio de los dos El Niño "
        "más intensos del periodo) y de 2010 (La Niña), frente a la climatología y al caudal observado.")
 e97, e15, e10 = (prs["ejemplos"][k_] for k_ in ["1997-08", "2015-08", "2010-08"])
-par(f"La Figura 18 muestra tres casos. En agosto de 1997, con el ONI en +1.5 °C y el suelo ya seco (z = {n(e97['S'], 2)}), los análogos "
+par(f"La Figura 20 muestra tres casos. En agosto de 1997, con el ONI en +1.5 °C y el suelo ya seco (z = {n(e97['S'], 2)}), los análogos "
     f"pronosticaron caudales por debajo de la climatología para todo el semestre siguiente, y el observado quedó dentro del intervalo. En "
     f"agosto de 2015 el pronóstico también fue de caudales bajos, pero el observado quedó por debajo incluso del percentil 10: la sequía de "
     f"2015-2016 fue más severa que la de cualquiera de los años de entrenamiento, y un método de análogos no puede pronosticar algo que no "
@@ -825,10 +903,10 @@ figura(FG / "fig_prob_trimestre_seco.png", "a) Probabilidad de un trimestre seco
        "diagrama de confiabilidad y c) curvas ROC de la regresión logística y del KNN en la validación cruzada.")
 par(f"**Resultados.** Con solo el ONI, cada desviación estándar adicional del índice multiplica los odds de un trimestre seco por "
     f"{n(orx(LO, 'ONI'), 1)}. Cuando se agrega el suelo, este domina: un suelo una desviación estándar más seco multiplica los odds por "
-    f"{n(1 / orx(LS, 'S'), 1)}, y el efecto del ONI baja a {n(orx(LS, 'ONI'), 1)} (Tabla 11). El modelo con ONI y suelo mejora el puntaje "
+    f"{n(1 / orx(LS, 'S'), 1)}, y el efecto del ONI baja a {n(orx(LS, 'ONI'), 1)} (Tabla 12). El modelo con ONI y suelo mejora el puntaje "
     f"de Brier de la climatología en un {n(100 * mpb.loc[LS, 'BSS'])} % y tiene un AUC de {n(mpb.loc[LS, 'AUC (ROC)'], 2)}; con solo el ONI "
-    f"la mejora es del {n(100 * mpb.loc[LO, 'BSS'])} % (Tabla 12). En el diagrama de confiabilidad sus probabilidades siguen de cerca la "
-    f"frecuencia observada (Figura 19b).")
+    f"la mejora es del {n(100 * mpb.loc[LO, 'BSS'])} % (Tabla 13). En el diagrama de confiabilidad sus probabilidades siguen de cerca la "
+    f"frecuencia observada (Figura 21b).")
 par(f"**Comparación con el KNN.** Las dos técnicas separan igual de bien los trimestres secos de los demás (AUC de "
     f"{n(mpb.loc[LS, 'AUC (ROC)'], 2)} y {n(mpb.loc[KQ, 'AUC (ROC)'], 2)}), pero la regresión logística está mejor calibrada (BSS de "
     f"{n(mpb.loc[LS, 'BSS'], 2)} frente a {n(mpb.loc[KQ, 'BSS'], 2)}). La diferencia está en cómo tratan los casos extremos. La probabilidad "
@@ -845,7 +923,7 @@ tabla(["Nivel", "P(trimestre seco)", "Logística ONI + suelo", f"KNN (k = {K})",
 par("En cada celda: porcentaje de los meses en ese nivel / porcentaje de esos meses en que el trimestre siguiente fue seco.", size=None)
 figura(FG / "fig_alertas_serie.png", "Probabilidad de un trimestre seco estimada por la regresión logística con ONI y suelo en la validación "
        "cruzada (puntos coloreados por nivel de alerta) y trimestres secos observados (barras).")
-par(f"**Umbrales de alerta.** Con la regresión logística con ONI y suelo se definieron tres niveles (Tabla 13 y Figura 20). En verde "
+par(f"**Umbrales de alerta.** Con la regresión logística con ONI y suelo se definieron tres niveles (Tabla 14 y Figura 22). En verde "
     f"(probabilidad menor del 20 %) estuvo el {n(al(LS, 'Verde', PCT))} % de los meses, y solo el {n(al(LS, 'Verde', FRQ))} % de ellos "
     f"fue seguido por un trimestre seco. En amarillo (20-50 %) estuvo el {n(al(LS, 'Amarillo', PCT))} %, con un {n(al(LS, 'Amarillo', FRQ))} % "
     f"de trimestres secos. En rojo (50 % o más) estuvo el {n(al(LS, 'Rojo', PCT))} % de los meses, concentrados en los El Niño de "
@@ -875,13 +953,13 @@ par(f"Las dos técnicas se aplicaron al evento El Niño en curso, que en agosto-
     f"para que el caudal simulado de octubre tuviera la misma anomalía que los aportes diarios a Ituango publicados por XM del 1 al 23 de "
     f"octubre ({n(s26['anomalía XM octubre (%)'])} %), y resultó del {n(s26['lluvia octubre (% de la normal)'])} % de la normal. Entre octubre "
     f"de 2022 y octubre de 2026 las anomalías mensuales simuladas siguen a las de XM con r = {n(s26['r anomalías verificación XM'], 2)} "
-    f"(Figura 21b), lo que respalda el estado inicial.")
+    f"(Figura 23b), lo que respalda el estado inicial.")
 par(f"Al final de octubre de 2026 el suelo de la cuenca está en z = {n(s26['S z'], 2)} y el acuífero en z = {n(s26['G z'], 2)}, mientras que "
     f"el ONI está 2.9 desviaciones estándar por encima de su media. Con estos valores la regresión logística da una probabilidad de "
     f"{n(100 * s26['P(seco) logística ONI+S'])} % de que el trimestre noviembre-enero sea seco, y el KNN de {n(100 * s26['P(seco) KNN'])} %: "
     f"alerta roja con los dos métodos. La mediana de los análogos ubica el aporte de enero a abril de 2027 entre un "
     f"{n(-pr26['mediana frente a la climatología (%)'].iloc[2:].max())} % y un {n(-pr26['mediana frente a la climatología (%)'].iloc[2:].min())} % "
-    f"por debajo de la climatología (Tabla 14 y Figura 21a). Los análogos más cercanos son {', '.join(an26['mes análogo'].head(5))}, es decir, "
+    f"por debajo de la climatología (Tabla 15 y Figura 23a). Los análogos más cercanos son {', '.join(an26['mes análogo'].head(5))}, es decir, "
     f"el comienzo de los El Niño de 1997-1998, 1982-1983, 1987-1988 y 2015-2016.")
 leyenda_tabla("Pronóstico del aporte mensual a la presa emitido al final de octubre de 2026 (KNN, k = 15; m³/s en la escala de Puerto "
               "Valdivia transferido).")
@@ -925,7 +1003,7 @@ par(f"Se revisaron los {len(tam)} modelos del archivo CMIP6 que tienen lluvia, t
     f"cuenca y se comparó su ciclo anual de 1981-2010 con el del Cubo. El criterio principal fue la forma del ciclo, medida con la "
     f"correlación y con el error del ciclo normalizado por su media; el sesgo de la lluvia anual se usó con la mitad del peso, porque la "
     f"corrección posterior lo elimina, pero un sesgo enorme puede indicar una física pobre. Se eligió el mejor modelo de cada familia (los "
-    f"que comparten el componente atmosférico no son independientes), hasta seis (Tabla 15 y Figura 22).")
+    f"que comparten el componente atmosférico no son independientes), hasta seis (Tabla 16 y Figura 24).")
 leyenda_tabla("Modelos CMIP6 elegidos por su ciclo anual de lluvia en la cuenca (1981-2010).")
 fil = [[m, tam.loc[m, "familia"], tam.loc[m, "miembro"], n(tam.loc[m, "resolución (°)"], 2), n(tam.loc[m, "r del ciclo"], 2),
         n(tam.loc[m, "RMSE del ciclo normalizado"], 2), n(tam.loc[m, "sesgo (%)"], 0, True)] for m in EL]
@@ -965,10 +1043,10 @@ figura(FG / "fig_cmip6_cambios.png", "Cambios proyectados frente a 1981-2010 en 
        "trimestres secos. Las barras son la mediana de los seis modelos y los puntos, cada modelo.")
 par(f"**Temperatura y evapotranspiración.** Es el cambio más robusto: los seis modelos coinciden en el aumento. Hacia 2071-2100 la cuenca "
     f"se calienta {n(v('SSP2-4.5', '2071–2100', 'ΔT (°C)'), 1)} °C en SSP2-4.5 y {n(v('SSP5-8.5', '2071–2100', 'ΔT (°C)'), 1)} °C en SSP5-8.5, "
-    f"y la ETo sube un {n(v('SSP2-4.5', '2071–2100', 'ΔETo (%)'))} % y un {n(v('SSP5-8.5', '2071–2100', 'ΔETo (%)'))} % (Tabla 16 y Figura 23).")
+    f"y la ETo sube un {n(v('SSP2-4.5', '2071–2100', 'ΔETo (%)'))} % y un {n(v('SSP5-8.5', '2071–2100', 'ΔETo (%)'))} % (Tabla 17 y Figura 25).")
 par(f"**Lluvia.** La mediana cambia poco, entre {n(md['ΔP (%)'].min(), 0, True)} % y {n(md['ΔP (%)'].max(), 0, True)} % según el escenario y el "
     f"periodo, y los modelos no coinciden en el signo: en SSP5-8.5 hacia 2071-2100 van de {n(mn.loc[('SSP5-8.5', '2071–2100'), 'ΔP (%)'], 0, True)} % "
-    f"(MRI-ESM2-0) a {n(mx.loc[('SSP5-8.5', '2071–2100'), 'ΔP (%)'], 0, True)} % (GISS-E2-1-G). En el espacio (Figura 24), SSP2-4.5 da algo más "
+    f"(MRI-ESM2-0) a {n(mx.loc[('SSP5-8.5', '2071–2100'), 'ΔP (%)'], 0, True)} % (GISS-E2-1-G). En el espacio (Figura 26), SSP2-4.5 da algo más "
     f"de lluvia en casi toda la cuenca, y SSP5-8.5 acentúa el contraste entre estaciones: junio-agosto más húmedo en el alto Cauca y el "
     f"valle, y diciembre-febrero más seco en el cañón antioqueño, la zona que más aporta a la presa. En la mayor parte de la cuenca, sin "
     f"embargo, menos de cinco de los seis modelos coinciden en el signo del cambio de la lluvia.")
@@ -980,7 +1058,7 @@ par(f"**Caudales.** El caudal medio en la presa cambia poco: la mediana va de {n
     f"reducen: en SSP5-8.5 el percentil 10 del caudal mensual cae un {n(-v('SSP5-8.5', '2071–2100', 'ΔQ10 presa (%)'))} % hacia 2071-2100, y "
     f"la frecuencia de trimestres secos (la misma definición de la alerta de la sección 5.3) pasa del 20 % de los meses a "
     f"{n(v('SSP5-8.5', '2071–2100', 'trimestres secos (%)'))} %. La razón es la combinación de más evapotranspiración y menos lluvia en "
-    f"diciembre-febrero. El ciclo anual del aporte conserva su forma bimodal (Figura 25), pero en SSP5-8.5 el estiaje de comienzo de año se "
+    f"diciembre-febrero. El ciclo anual del aporte conserva su forma bimodal (Figura 27), pero en SSP5-8.5 el estiaje de comienzo de año se "
     f"hace más profundo: hacia 2071-2100 el aporte de febrero-marzo baja un {n(-d_fm)} %, mientras que el de mayo sube un {n(d_my)} %.")
 figura(FG / "fig_cmip6_ciclo_presa.png", "Ciclo anual del aporte a la presa simulado con el clima de los seis modelos corregidos (mediana) en "
        "cada periodo, con el rango entre modelos en 2041-2070 y 2071-2100, en los dos escenarios.")
@@ -1014,7 +1092,7 @@ par(f"En 12 de los 15 análogos la central cubre su ENFICC prácticamente todo e
     f"({', '.join(secos)}): con ellos la central queda entre {n(cg.loc[secos, 'Días bajo la ENFICC'].min())} y "
     f"{n(cg.loc[secos, 'Días bajo la ENFICC'].max())} días por debajo de su energía firme, con un faltante de "
     f"{n(cg.loc[secos, 'Faltante ENFICC (GWh)'].min())} a {n(cg.loc[secos, 'Faltante ENFICC (GWh)'].max())} GWh que tendría que comprarse "
-    f"en bolsa (Figura 26a). Reservar agua para febrero-abril reduce ese faltante solo en un "
+    f"en bolsa (Figura 28a). Reservar agua para febrero-abril reduce ese faltante solo en un "
     f"{n(100 * (1 - rs.loc[secos, 'Faltante ENFICC (GWh)'].sum() / cg.loc[secos, 'Faltante ENFICC (GWh)'].sum()))} %, porque el volumen "
     f"útil actual equivale a unos {n(dias_emb)} días del aporte pronosticado: el embalse no alcanza a compensar una sequía de varios meses. "
     f"Como el ONI de 2026 supera al de 2015, el escenario tipo 2015 no debería tratarse como un extremo improbable.")
@@ -1025,7 +1103,7 @@ par(f"**Proyecciones CMIP6.** Para cada modelo, escenario y periodo se construy�
     f"y {n(pbm['Δ Energía media (%)'].max(), 0, True)} % según el escenario y el periodo. La energía de los años secos, en cambio, sí se "
     f"reduce: en SSP5-8.5 la energía anual excedida el 95 % de los años cae un "
     f"{n(-pbm.loc[('SSP5-8.5', '2041–2070'), 'Δ Energía anual excedida 95 % (%)'])} % desde 2041-2070, y la de diciembre-abril un "
-    f"{n(-pbm.loc[('SSP5-8.5', '2071–2100'), 'Δ Energía dic–abr (%)'])} % hacia 2071-2100 (Figura 26b). El rango entre modelos es amplio "
+    f"{n(-pbm.loc[('SSP5-8.5', '2071–2100'), 'Δ Energía dic–abr (%)'])} % hacia 2071-2100 (Figura 28b). El rango entre modelos es amplio "
     f"(de {n(pbn.loc[('SSP5-8.5', '2071–2100'), 'Δ Energía anual excedida 95 % (%)'], 0, True)} % a "
     f"{n(pbx.loc[('SSP5-8.5', '2071–2100'), 'Δ Energía anual excedida 95 % (%)'], 0, True)} % en ese indicador), pero la mediana confirma lo "
     f"que mostraron los caudales: el cambio climático afecta más la energía firme que la energía media.")
@@ -1044,7 +1122,10 @@ par(f"El Cubo de datos del IDEAM es la mejor referencia de lluvia mensual para l
     f"archivo diario trae valores de hasta 4702 mm que inflaban la lluvia media en un "
     f"{n(100 * (P_orig / P_cubo - 1))} % y deformaban el ciclo anual. CHIRPS v2.0 lo iguala casi en todo. ERA5 y ERA5-Land triplican la "
     f"lluvia, y el mapeo de cuantiles corrige su sesgo pero no su secuencia mensual ni su patrón espacial.")
-par(f"El modelo abcd distribuido, con calibración multisitio regionalizada, reproduce los caudales mensuales de diez estaciones (KGE medio "
+par(f"Se compararon dos modelos mensuales con la misma distribución y calibración multisitio: el abcd y el GR2M de la clase. El GR2M usa la mitad "
+    f"de los parámetros y hace explícita la pérdida de agua de la cuenca (X2 = {n(gp0.X2, 2)}), pero su almacenamiento lento de 60 mm le quita "
+    f"memoria y valida peor (KGE medio de {n(vg_.KGE.mean(), 2)}). "
+    f"El modelo abcd distribuido, con calibración multisitio regionalizada, reproduce los caudales mensuales de diez estaciones (KGE medio "
     f"de validación de {n(kv, 2)} y de {n(pres.loc['val', 'KGE'], 2)} en la presa). Para un sistema operativo se recomienda este modelo con "
     f"ETo de Hargreaves y lluvia de CHIRPS v2.0, que se actualiza en tiempo casi real; la ecuación empírica sin memoria no es suficiente.")
 par("El Niño reduce la lluvia de la cuenca sobre todo en diciembre-febrero y junio-agosto, los mismos meses de los estiajes, y la "
@@ -1102,6 +1183,10 @@ refs = [
     "https://www.larepublica.co/especiales/minas-y-energia-marzo-2019/la-oferta-hidraulica-equivale-a-cerca-de-69-de-la-matriz-energetica-del-pais-2842181",
     "Lall, U. y Sharma, A. (1996). A nearest neighbor bootstrap for resampling hydrologic time series. _Water Resources Research_, 32(3), "
     "679-693.",
+    "Mouelhi, S., Michel, C., Perrin, C. y Andréassian, V. (2006). Stepwise development of a two-parameter monthly water balance model. "
+    "_Journal of Hydrology_, 318, 200-214.",
+    "Rojo Hernández, J. D. (2026). _Modelación lluvia-escorrentía de escala mensual_ (clase 6, Hidrometeorología). Universidad Nacional de "
+    "Colombia, sede Medellín.",
     "Martinez, G. F. y Gupta, H. V. (2010). Toward improved identification of hydrological models: A diagnostic evaluation of the \"abcd\" "
     "monthly water balance model for the conterminous United States. _Water Resources Research_, 46, W08507.",
     "Muñoz-Sabater, J. et al. (2021). ERA5-Land: A state-of-the-art global reanalysis dataset for land applications. _Earth System Science "

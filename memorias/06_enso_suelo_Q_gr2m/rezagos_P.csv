@@ -1,0 +1,5 @@
+﻿,rezago 0 meses,rezago 1 meses,rezago 2 meses,rezago 3 meses,rezago 4 meses,rezago 5 meses,rezago 6 meses
+P → S,0.734,0.619,0.562,0.522,0.456,0.418,0.362
+P → G,0.862,0.59,0.506,0.45,0.362,0.321,0.26
+P → Q sim,0.889,0.557,0.471,0.427,0.348,0.321,0.233
+P → Q obs,0.706,0.658,0.551,0.46,0.422,0.383,0.311
